@@ -6,6 +6,7 @@ angular.module('FRCdozer')
     $scope.game = {}; //stores game that operations are being done on
     $scope.curGame = {}; //game that is currently active, to show in table
     $scope.games = []; //stores all games
+    $scope.sample = {};
     $scope.getMatches = function () {
       $http.get ('/api/match')
       .success(function (data) {
@@ -51,7 +52,7 @@ angular.module('FRCdozer')
     $scope.getValue = function (match,calc) {
       var val = 0;
       for (var x=0;x<calc.length;x++) {
-        val=val+(match[calc[x].name]*calc[x].worth || 0);
+        val=val+(Number(match[calc[x].name])*calc[x].worth || 0);
       }
       return val;
     };

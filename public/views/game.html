@@ -1,3 +1,70 @@
-<h2>Game:{{game.name}}</h2>
+<link rel="stylesheet" href="styles/table.css">
+<h2>Game:<input data-ng-model='game.name'></h2>
+<p>ID:{{game._id}}</p>
+<table>
+  <tr>
+    <th colspan='500'>Sample Match</th>
+  </tr>
+  <tr>
+    <td data-ng-repeat='q in game.game'>{{q.name}}</td>
+    <td data-ng-repeat='k in game.calc'>{{k.name}}</td>
+  </tr>
+  <tr>
+    <td data-ng-repeat='w in game.game'><input data-ng-model='sample.elements[w.name]'></td>
+    <td data-ng-repeat='h in game.calc'>{{getValue(sample.elements || [],h.elements || [])}}</td>
+  </tr>
+</table>
+<hr>
+<table>
+  <tr><th colspan='2'>Game Elements</th></tr>
+  <tr>
+    <th>Name</th>
+    <th>Data Type</th>
+  </tr>
+  <tr data-ng-repeat='x in game.game'>
+    <td><input data-ng-model='x.name'></td>
+    <td>
+      <select data-ng-model='x.type'>
+        <option>Number</option>
+        <option>String</option>
+        <option>Boolean</option>
+      </select>
+    </td>
+    <td><button data-ng-click="game.game.splice($index,1)">-</button></td>
+  </tr>
+  <tr><td colspan='2'><button data-ng-click='game.game.push({name:"",type:"String"})'>+</button></td></tr>
+</table>
+<hr>
+<table>
+  <tr><th colspan='2'>Calculated Elements</th></tr>
+  <tr>
+    <th>Name</th>
+    <th>Elements</th>
+  </tr>
+  <tr data-ng-repeat='g in game.calc'>
+    <td><input data-ng-model='g.name'></td>
+    <td>
+      <table>
+        <tr>
+          <td>Element</td>
+          <td>Worth</td>
+        </tr>
+        <tr data-ng-repeat='p in g.elements'>
+          <td>
+            <select data-ng-model='p.name'>
+              <option data-ng-repeat='L in game.game | filter: {type:"!String"} '>{{L.name}}</option>
+            </select>
+          </td>
+          <td><input data-ng-model='p.worth'></td>
+          <td><button data-ng-click='g.elements.splice($index,1)'>-</button></td>
+        </tr>
+        <tr><td><button data-ng-click='g.elements.push({name:"",worth:""})'>+</button></td></tr>
+      </table>
+    </td>
+    <td><button data-ng-click="game.calc.splice($index,1)">-</button></td>
+  </tr>
+  <tr><td colspan='2'><button data-ng-click='game.calc.push({name:"",elements:[{name:"",worth:""}]})'>+</button></td></tr>
+</table>
+<hr>
 <button data-ng-click='editGame(game._id,game)'>Save Changes</button>
-<h3>Name:</h3><input data-ng-model='game.name'></br>
+<button data-ng-click='getGame($routeParams.id || "")'>Cancel</button>
