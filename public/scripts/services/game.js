@@ -1,37 +1,41 @@
-angular.module('testApp')
+angular.module('FRCdozer')
   .factory('game', ['$http',function () {
     return {
       getMatches: function () {
-        $http.get ('http://23.94.13.240:3000/frc/api/game')
+        $http.get ('/api/match')
           .success(function (data) {
             return data;
           });
       },
-      getGame: function (id) {
-
-      },
-      getGames: ['$http',function() {
-        $http.get ('http://23.94.13.240:3000/frc/api/matches')
+      getGame: function () {
+        $http.get('/api/game')
           .success(function (data) {
             return data;
           });
-      }],
-      editMatch: function (params,id) {
-        if(id) {
-          $http.put('http://23.94.13.240:3000/frc/api/match/'+id,params)
-            .success(function () {
-
-            });
-        }
       },
-      addMatch: function (match) {
-        $http.post ('http://23.94.13.240:3000/frc/api/match',match)
+      getMatch: function (id) {
+        $http.get('/api/match/'+id)
+          .success(function (data) {
+            return data;
+          });
+      },
+      editMatch: function (id,elements) {
+        $http.put('/api/match/'+id,elements)
+          .success(function (data) {
+            return data;
+          });
+      },
+      addMatch: function (elements) {
+        $http.post ('/api/match',elements)
           .success(function (data) {
               return data;
           });
       },
-      delMatch: function () {
-
+      delMatch: function (id) {
+        $http.delete ('/api/match',match)
+          .success(function (data) {
+            return data;
+          });
       }
     };
   }]);
