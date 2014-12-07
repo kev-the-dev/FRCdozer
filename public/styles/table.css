@@ -1,0 +1,10 @@
+#matchTable table{
+  border-collapse: collapse;
+}
+#matchTable table,th,td {
+  border: 1px solid black;
+  background-color: lightblue;
+}
+#matchTable input {
+  background-color: red;
+}

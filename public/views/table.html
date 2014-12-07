@@ -1,0 +1,28 @@
+Routing works!
+<!--
+<link rel="stylesheet" href="styles/table.css">
+<div>
+    <input data-ng-model='search'>
+    <button ng-click='update()'>Update</button>
+    <table class='matchTable'>
+        <thead>
+        <tr class="add">
+            <td><button data-ng-click='add()'>ADD</button></td>
+            <td data-ng-repeat='k in game'><input data-ng-model='new[k.name]' /></td>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <th>Links</th>
+              <th data-ng-repeat='z in game'>{{z.name}} ({{z.type}})</th>
+              <th data-ng-repeat='g in rules'>{{g.name}}</th>
+          </tr>
+          <tr data-ng-repeat='x in matches | filter:search'>
+              <td><a href='#/match/{{x._id}}'>+</a><button ng-click='del($index)'>Delete</button></td>
+              <td data-ng-repeat='y in game'><input data-ng-model='x[y.name]' ng-model-options="{updateOn: 'blur'}" data-ng-change='edit(x._id,{"{{y.name}}":x[y.name]},$parent.$index)'></td>
+              <td data-ng-repeat='r in rules'>{{getWorth(r,x)}}</td>
+          </tr>
+        </tbody>
+    </table>
+</div>
+-->
