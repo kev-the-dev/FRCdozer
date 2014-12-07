@@ -1,0 +1,42 @@
+//A game
+{
+  name: "2014",
+  game: [
+    {name:'HighGoals',type:'Number'},
+    {name:'LowGoals',type:'Number'},
+    {name:'Blocks',type:'Number'},
+    {name:'PassPrevention',type:'Number'},
+    {name:'HotGoal',type:'Boolean'},
+    {name:'Comment',type:'String'}
+  ],
+  calculated : [
+    {
+      name: 'Defence',
+      elements:
+        [
+          {item:'Blocks',worth:5},
+          {item:'PassPrevention',worth:10}
+        ]
+    },
+    {
+      name: 'Offence',
+      elements:
+        [
+          {item:'HighGoals',worth:10},
+          {item:'LowGoals',worth:3}
+        ]
+    },
+    {
+      name:'Total',
+      calcElements:
+        [
+          {item:'Defence',worth:0.5},
+          {item:'Offence',worth:0.5}
+        ],
+      elements:
+        [
+          {item:'Hotgoal',worth:10}
+        ]
+    }
+  ]
+}

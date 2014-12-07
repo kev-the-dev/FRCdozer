@@ -1,0 +1,12 @@
+<div>
+    <h2>Match:{{id}}</h2>
+    <br />
+    <table>
+        <tr>
+            <th data-ng-repeat='y in game'>{{y.name}}</th>
+        </tr>
+        <tr>
+            <td data-ng-repeat='x in game'>{{json[x.name]}}</td>
+        </tr>   
+    </table>
+</div>

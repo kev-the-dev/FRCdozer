@@ -1,0 +1,10 @@
+<div class="container">
+    <table>
+        <tr data-ng-repeat='x in game'>
+            <td>{{x.name}}</td>
+            <td><input data-ng-model="params[x.name]"/></td>
+        </tr>
+    </table>
+    <button ng-click='send()'>Send</button>
+    <p>{{res}}</p>
+</div>
