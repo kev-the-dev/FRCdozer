@@ -14,13 +14,13 @@ router.get('/:id', function (req,res) { //gets match with given id
   });
 });
 router.post('/', function (req,res) { //add match
-  console.log("SAY THIS, FFS");
-  /*
-  frc.matches.create (JSON.parse(req.body),function(err,x) {
-    if (err) res.status(500).send(err);
+  frc.matches.create (req.body,function(err,x) {
+    if (err) {
+      res.status(500);
+      res.send(err);
+    }
     else res.send(x);
   });
-  */
 });
 router.put('/:id', function (req,res) { //edit one match
   frc.matches.findByIdAndUpdate(req.params.id,req.body,function(err,x) {

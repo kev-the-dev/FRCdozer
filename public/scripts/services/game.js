@@ -1,5 +1,5 @@
 angular.module('FRCdozer')
-  .factory('game', ['$http',function () {
+  .factory('game', ['$http',function ($http) {
     return {
       getMatches: function () {
         $http.get ('/api/match')
@@ -10,6 +10,7 @@ angular.module('FRCdozer')
       getGame: function () {
         $http.get('/api/game')
           .success(function (data) {
+            console.log(data);
             return data;
           });
       },
