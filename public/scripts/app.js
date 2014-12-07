@@ -7,7 +7,7 @@ angular.module('FRCdozer',['ngRoute'])
     })
     .when('/match/:id', {
       controller: 'matchCtrl',
-      templateUrl: '/views/match.html'
+      templateUrl: '/views/matchid.html'
     })
     .when('/add', {
       controller: 'addCtrl',
@@ -17,39 +17,30 @@ angular.module('FRCdozer',['ngRoute'])
       controller: 'teamCtrl',
       templateUrl: '/views/team.html'
     })
+    .when('/game/', {
+      controller: 'gameCtrl',
+      templateUrl: '/views/game.html'
+    })
+    .when('/game/:id', {
+      controller: 'gameCtrl',
+      templateUrl: '/views/game.html'
+    })
     .otherwise ({redirectTo: '/'});
   }])
-  .controller('tableCtrl',['$scope','game','$http',function ($scope,game,$http){
-    $scope.game = game;
-    $scope.games = {};
-    $scope.matches = [];
-    $scope.add = {};
-    $http.get('/api/game')
-    .success(function (data) {
-      $scope.games = data;
-    });
-    $http.get('/api/match')
-      .success(function (data) {
-        $scope.matches=data;
-      });
-    $scope.addMatch = function (x) {
-      $http.post ('/api/match',x)
-      .success(function (data) {
-        $scope.matches.push(data);
-      });
-    };
+  .controller('tableCtrl',['$scope',function ($scope){
+    $scope.getCurGame();
+    $scope.getMatches();
   }])
-  .controller('matchCtrl',['$scope','game','$routeParams','$http',function ($scope,game,$routeParams,$http){
-    $scope.data = {};
-    $scope.match = $routeParams.id;
-    $http.get('/api/match/'+$scope.match)
-    .success(function (data) {
-      $scope.data=data;
-    });
+  .controller('matchCtrl',['$scope','$routeParams','$http',function ($scope,$routeParams,$http){
+    $scope.getMatch($routeParams.id);
+    $scope.getCurGame();
   }])
-  .controller('addCtrl',['$scope','game',function ($scope,game){
+  .controller('addCtrl',['$scope',function ($scope){
 
   }])
-  .controller('teamCtrl',['$scope','game','$routeParams',function ($scope,game,$routeParams){
+  .controller('teamCtrl',['$scope','$routeParams',function ($scope,$routeParams){
     $scope.team = $routeParams.team;
+  }])
+  .controller('gameCtrl',['$scope','$routeParams',function($scope,$routeParams){
+      $scope.getGame($routeParams.id || "");
   }]);

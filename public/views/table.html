@@ -1,5 +1,3 @@
-Routing works!
-<
 <link rel="stylesheet" href="styles/table.css">
 <div>
     <input data-ng-model='search'>
@@ -9,22 +7,21 @@ Routing works!
         <tr>
           <td><button data-ng-click='addMatch(add)'>Add</button></td>
           <td><input data-ng-model='add.team'></td>
-          <td data-ng-repeat='p in games.game'><input data-ng-model='add.elements[p.name]'></td>
+          <td data-ng-repeat='p in curGame.game'><input data-ng-model='add.elements[p.name]'></td>
         </tr>
           <tr>
             <th>Links</th>
             <th>Team</th>
-            <th data-ng-repeat='z in games.game'>{{z.name}}-{{z.type}}</th>
-            <td data-ng-repeat='g in games.calc'>{{g.name}}</td>
+            <th data-ng-repeat='z in curGame.game'>{{z.name}}-{{z.type}}</th>
+            <td data-ng-repeat='g in curGame.calc'>{{g.name}}</td>
           </tr>
       </thead>
         <tbody>
           <tr data-ng-repeat='x in matches'>
               <td><a ng-href='#/match/{{x._id}}'>+</a></td>
               <td><a ng-href='#/team/{{x.team}}'>{{x.team}}</a></td>
-              <td data-ng-repeat='y in games.game'>{{x.elements[y.name]}}</td>
-              <td data-ng-repeat='r in games.calc'>0</td>
-            -->
+              <td data-ng-repeat='y in curGame.game'>{{x.elements[y.name]}}</td>
+              <td data-ng-repeat='r in curGame.calc'>{{getValue(x,r)}}</td>
           </tr>
     </table>
 </div>

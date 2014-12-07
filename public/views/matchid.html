@@ -1,0 +1,15 @@
+<div>
+  <h2>Match:{{match._id}}</h2>
+  <table>
+    <tr>
+      <td>Team</td>
+      <td data-ng-repeat='x in curGame.game'>{{x.name}}</td>
+      <td data-ng-repeat='y in curGame.calc'>{{y.name}}</td>
+    </tr>
+    <tr>
+      <td>{{match.team}}</td>
+      <td data-ng-repeat='z in curGame.game'>{{match.elements[z.name]}}</td>
+      <td data-ng-repeat='r in curGame.calc'>{{getValue(match,r)}}</td>
+    </tr>
+  </table>
+</div>
