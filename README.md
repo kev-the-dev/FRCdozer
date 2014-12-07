@@ -3,7 +3,7 @@ FRCdozer
 
 A complete scouting app (frontend and backend) for FIRST Robotics Compeition events. Made by FRC team 4118
 
-
+A demo of this app, the same one I use for testing (unstable), can be found at http://23.94.13.240:3000/#/
 To install: 
 
 1. Install requirements: NodeJS, NPM, and MongoDB
