@@ -49,10 +49,12 @@ angular.module('FRCdozer')
         $scope.getMatches();
       });
     };
-    $scope.getValue = function (match,calc) {
+    $scope.getValue = function (matchx,calc) {
+      matchx = matchx || {};
+      calc = calc || [];
       var val = 0;
       for (var x=0;x<calc.length;x++) {
-        val=val+(Number(match[calc[x].name])*calc[x].worth || 0);
+        val=val+(Number(matchx[calc[x].name])*calc[x].worth || 0);
       }
       return val;
     };
@@ -61,8 +63,5 @@ angular.module('FRCdozer')
         .success(function (data) {
           $scope.game = data;
         })
-    };
-    $scope.test = function () {
-      console.log("Blured");
     };
 }]);
