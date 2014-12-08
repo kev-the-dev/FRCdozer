@@ -36,7 +36,7 @@ angular.module('FRCdozer',['ngRoute'])
     $scope.getCurGame();
   }])
   .controller('addCtrl',['$scope',function ($scope){
-
+    $scope.getCurGame();
   }])
   .controller('teamCtrl',['$scope','$routeParams',function ($scope,$routeParams){
     $scope.team = $routeParams.team;

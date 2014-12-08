@@ -1,10 +1,10 @@
-<div class="container">
-    <table>
-        <tr data-ng-repeat='x in game'>
-            <td>{{x.name}}</td>
-            <td><input data-ng-model="params[x.name]"/></td>
-        </tr>
-    </table>
-    <button ng-click='send()'>Send</button>
-    <p>{{res}}</p>
+<div>
+  <p>Team</p>
+  <input data-ng-model='add.team'>
+  <div data-ng-repeat='x in curGame.game'>
+    <p>{{x.name}}</p>
+    <input data-ng-model='add.elements[x.name]'>
+  </div>
+  <button ng-click='addMatch(add)'>Send</button>
+  <p data-ng-repeat='y in curGame.calc'>{{y.name}}: {{getValue(add.elements,y.elements)}}</p>
 </div>

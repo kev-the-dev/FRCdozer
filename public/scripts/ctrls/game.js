@@ -34,7 +34,7 @@ angular.module('FRCdozer')
     $scope.editMatch = function (id,elements) {
       $http.put('/api/match/'+id,elements)
       .success(function (data) {
-        return data;
+        $scope.getMatches();
       });
     };
     $scope.addMatch = function (elements) {
@@ -44,9 +44,9 @@ angular.module('FRCdozer')
       });
     };
     $scope.delMatch = function (id) {
-      $http.delete ('/api/match',match)
+      $http.delete ('/api/match/'+id)
       .success(function (data) {
-        return data;
+        $scope.getMatches();
       });
     };
     $scope.getValue = function (match,calc) {
@@ -61,5 +61,8 @@ angular.module('FRCdozer')
         .success(function (data) {
           $scope.game = data;
         })
+    };
+    $scope.test = function () {
+      console.log("Blured");
     };
 }]);

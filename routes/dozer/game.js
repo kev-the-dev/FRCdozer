@@ -2,7 +2,10 @@ var express = require('express');
 var router = express.Router();
 var frc = require('./vars.js');
 router.get('/', function (req,res) { //get current game
-  res.send(frc.game);
+  frc.games.findById(frc.game, function (err,x) {
+    if (err) res.status(500).send(err);
+    else res.send(x);
+  });
 });
 router.post('/', function (req,res) { //create new game
   frc.games.create(req.body,function(err,x) {

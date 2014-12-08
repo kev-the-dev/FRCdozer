@@ -12,11 +12,11 @@ out.matchesSchema = new sch({
   team: Number,
   elements: Object
 });
-out.games.findById('5483a9f3ceeb864d701f713d', function (err,x) { //finds default game and sets to current game
+out.game = '5483a9f3ceeb864d701f713d';
+out.games.findById(out.game, function (err,x) { //finds default game and sets to current game
   if (err) console.log(err);
   else {
-    out.game = x;
-    out.matches = con.model(out.game.name,out.matchesSchema);
+    out.matches = con.model(x.name,out.matchesSchema);
   }
 });
 module.exports = out;
