@@ -17,6 +17,10 @@ angular.module('FRCdozer',['ngRoute'])
       controller: 'teamCtrl',
       templateUrl: '/views/team.html'
     })
+    .when('/team', {
+      controller: 'teamsCtrl',
+      templateUrl: '/views/teams.html'
+    })
     .when('/game/', {
       controller: 'gameCtrl',
       templateUrl: '/views/game.html'
@@ -40,6 +44,10 @@ angular.module('FRCdozer',['ngRoute'])
   }])
   .controller('teamCtrl',['$scope','$routeParams',function ($scope,$routeParams){
     $scope.team = $routeParams.team;
+  }])
+  .controller('teamsCtrl', ['$scope', function ($scope) {
+    $scope.getCurGame();
+    $scope.getMatches();
   }])
   .controller('gameCtrl',['$scope','$routeParams',function($scope,$routeParams){
     $scope.getGame($routeParams.id || "");

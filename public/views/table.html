@@ -19,7 +19,7 @@
         <tbody>
           <tr data-ng-repeat='x in matches'>
               <td><a ng-href='#/match/{{x._id}}'>+</a><button data-ng-click='delMatch(x._id)'>-</button></td>
-              <td><input data-ng-model='x.team' data-ng-blur='editMatch(x._id,x)'></td>
+              <td><a ng-href='#/team/{{x.team}}'><input data-ng-model='x.team' data-ng-blur='editMatch(x._id,x)'></a></td>
               <td data-ng-repeat='y in curGame.game'><input data-ng-model='x.elements[y.name]' data-ng-blur='editMatch(x._id,x)'></td>
               <td data-ng-repeat='r in curGame.calc'>{{getValue(x.elements,r.elements)}}</td>
           </tr>

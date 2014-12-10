@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="styles/table.css">
+<div>
+  <link src='/styles/table.'
+  <h2>Teams</h2>
+  <button ng-click='getTeams()'>Get em'</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Team</th>
+        <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}}</th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-ng-repeat='x in teams'>
+        <td>{{x.team}}</td>
+        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'>{{x.averages[z.name]}}</td>
+        <td data-ng-repeat='y in curGame.calc'>{{getValue(x.averages,y.elements)}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
