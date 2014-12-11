@@ -9,6 +9,16 @@ angular.module('FRCdozer')
     $scope.sample = {};
     $scope.teams = [];
     $scope.team={};
+    $scope.filt="";
+    $scope.revr=false;
+    $scope.sort = function (prop) {
+      console.log(prop);
+      if ($scope.filt === prop) $scope.revr=!$scope.revr;
+      else {
+        $scope.filt=prop;
+        $scope.revr=true;
+      }
+    };
     $scope.getMatches = function (def) {
       if (!def) return $http.get ('/api/match');
       else {
