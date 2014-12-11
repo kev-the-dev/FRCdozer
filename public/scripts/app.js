@@ -35,7 +35,9 @@ angular.module('FRCdozer',['ngRoute'])
     $scope.init();
   }])
   .controller('matchCtrl',['$scope','$routeParams','$http',function ($scope,$routeParams,$http){
-    $scope.init();
+    $scope.init(function () {
+      $scope.getMatch($routeParams.id,true);
+    });
   }])
   .controller('addCtrl',['$scope',function ($scope){
     $scope.init();
