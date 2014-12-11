@@ -12,9 +12,9 @@
       </tr>
     </thead>
     <tbody>
-      <tr data-ng-repeat='x in teams| orderBy:filt:revr'>
-        <td>{{x.team}}</td>
-        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'>{{x.averages[z.name]}}</td>
+      <tr data-ng-repeat='(team,x) in teams | orderBy:averages.Goals:false'>
+        <td>{{team}}</td>
+        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'>{{x.averages[z.name] = getAverage(z.name,x.matches)}}</td>
         <td data-ng-repeat='y in curGame.calc'>{{x.calc[y.name] = getValue(x.averages,y.elements)}}</td>
       </tr>
     </tbody>

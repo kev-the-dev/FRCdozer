@@ -44,7 +44,8 @@ angular.module('FRCdozer',['ngRoute'])
   }])
   .controller('teamCtrl',['$scope','$routeParams',function ($scope,$routeParams){
     $scope.init(function () {
-      $scope.getTeam($routeParams.team,true);
+      $scope.team=$scope.teams[$routeParams.team];
+      $scope.num = $routeParams.team
     });
   }])
   .controller('teamsCtrl', ['$scope', function ($scope) {

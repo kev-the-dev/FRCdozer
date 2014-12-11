@@ -7,7 +7,7 @@ angular.module('FRCdozer')
     $scope.curGame = {}; //game that is currently active, to show in table
     $scope.games = []; //stores all games
     $scope.sample = {};
-    $scope.teams = [];
+    $scope.teams = {};
     $scope.team={};
     $scope.filt="";
     $scope.revr=false;
@@ -54,15 +54,6 @@ angular.module('FRCdozer')
         });
       }
     };
-    $scope.getTeam = function (team,def) {
-      for (x in $scope.teams || []) {
-        if (Number($scope.teams[x].team) === Number(team)) {
-          if (!def) return $scope.teams[x];
-          else $scope.team = $scope.teams[x];
-          break;
-        }
-      }
-    }
     $scope.editMatch = function (id,elements,def) {
       if (!def) return $http.put('/api/match/'+id,elements);
       else {
@@ -106,7 +97,7 @@ angular.module('FRCdozer')
       for (var x=0;x<calc.length;x++) {
         val=val+(Number(matchx[calc[x].name])*calc[x].worth || 0);
       }
-      return val;
+      return Math.round(val*100)/100;
     };
     $scope.editGame = function (id,elements,def) {
       if (!def) return $http.put('/api/game/'+id,elements);
@@ -117,50 +108,37 @@ angular.module('FRCdozer')
         })
       }
     };
-    $scope.getTeams = function (def,team) {
-      var teams = [];
-      mSearch: for (var x =0; x<$scope.matches.length; x++) { //sorts matches into teams
-        var m = $scope.matches[x];
-        for (var y=0; y<teams.length;y++) {
-          var t = teams[y];
-          if (t.team === m.team) {
-            t.matches.push(m.elements);
-            continue mSearch;
-          }
+    $scope.updateTeams = function (mats) {
+      for (var x=0;x<mats.length;x++) {
+        if ($scope.teams[mats[x].team]) {
+          if ($scope.teams[mats[x].team].matches) $scope.teams[mats[x].team].matches.push (mats[x].elements);
+          else $scope.teams[mats[x].team].matches = [mats[x].elements];
         }
-        teams.push({team:m.team,matches:[m.elements],averages:{}});
+        else $scope.teams[mats[x].team] = {matches:[mats[x].elements]};
       }
-      for (var z=0; z<teams.length;z++) { //for each team
-        for (var x=0; x<$scope.curGame.game.length;x++) {
-          if ($scope.curGame.game[x].type !== "String") {
-            for (var p=0; p<teams[z].matches.length;p++) {
-              if (teams[z].matches[p][$scope.curGame.game[x].name]) {
-                teams[z].averages[$scope.curGame.game[x].name]=((Number(teams[z].averages[$scope.curGame.game[x].name]) || 0) + Number(teams[z].matches[p][$scope.curGame.game[x].name])) /(p+1);
-              }
-            }
-          }
+    };
+    $scope.getTeams = function () {
+      var mats = $scope.matches;
+      $scope.teams = {};
+      for (var x=0;x<mats.length;x++) {
+        if ($scope.teams[mats[x].team]) {
+          if ($scope.teams[mats[x].team].matches) $scope.teams[mats[x].team].matches.push (mats[x].elements);
+          else $scope.teams[mats[x].team].matches = [mats[x].elements];
         }
+        else $scope.teams[mats[x].team] = {matches:[mats[x].elements]};
       }
-
-      if (team) {
-        team = Number(team);
-        for (g in teams) {
-          if (teams[g].team===team.team) {
-            $scope.team=teams[g];
-            console.log($scope.team);
-            break;
-          }
-        }
-      }
-      if (!def) return teams;
-      else $scope.teams = teams;
+    };
+    $scope.getAverage = function (prop,mats) {
+      var avr = 0;
+      for (x in mats) avr = (avr + (mats[x][prop] || 0)) / (x+1);
+      return Math.round(avr*100)/100;
     };
     $scope.init = function (aft) {
       $scope.getCurGame().success(function (data) {
         $scope.curGame=data;
         $scope.getMatches().success(function (data2) {
           $scope.matches=data2;
-          $scope.getTeams(true);
+          $scope.getTeams();
           if(aft) aft();
         });
       });

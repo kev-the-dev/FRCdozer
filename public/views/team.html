@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="styles/table.css">
 <div>
-  <h1>Team: {{team.team}}</h1>
+  <h1>Team: {{num}}</h1>
   <table>
     <thead>
       <tr>
@@ -10,14 +10,18 @@
     </thead>
     <tbody>
       <tr>
-        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'>{{team.averages[z.name]}}</td>
-        <td data-ng-repeat='y in curGame.calc'>{{getValue(team.averages,y.elements)}}</td>
+        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'>{{team.averages[z.name] = getAverage(z.name,team.matches)}}</td>
+        <td data-ng-repeat='y in curGame.calc'>{{team.calc[y.name] = getValue(team.averages,y.elements)}}</td>
       </tr>
     </tbody>
   </table>
   <hr>
   <table>
     <thead>
+      <tr>
+        <th colspan="{{curGame.game.length}}">Elements</th>
+        <th colspan="{{curGame.calc.length}}">Calculated</th>
+      </tr>
       <tr>
         <th data-ng-repeat='x in curGame.game'>{{x.name}}</th>
         <th data-ng-repeat='y in curGame.calc'>{{y.name}}</th>

@@ -6,8 +6,12 @@ table,th,td {
   border: 1px solid black;
   background-color: lightblue;
 }
+td {
+  font-size: 130%;
+}
 input {
   background-color: yellow;
   padding:0px;
   margin:0px;
+  font-size: 80%;
 }
