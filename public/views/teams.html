@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="styles/table.css">
+<div>
+  <h2>Teams</h2>
+  <h3 ng-show='filt'>Filtering by: {{filt}}<span ng-show='!revr'>, descending</span></h3>
+  <button ng-click='getTeams(true)'>Get em'</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Team<button ng-click='sort("team")'>Sort</button></th>
+        <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}}<button ng-click='sort("averages."+x.name)'>Sort</button></th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}}<button ng-click='sort("calc."+y.name)'>Sort</button></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-ng-repeat='x in teams| orderBy:filt:revr'>
+        <td>{{x.team}}</td>
+        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'>{{x.averages[z.name]}}</td>
+        <td data-ng-repeat='y in curGame.calc'>{{x.calc[y.name] = getValue(x.averages,y.elements)}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

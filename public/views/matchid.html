@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="styles/table.css">
 <div>
   <h2>Match:{{match._id}}</h2>
   <table>
@@ -9,7 +10,7 @@
     <tr>
       <td>{{match.team}}</td>
       <td data-ng-repeat='z in curGame.game'>{{match.elements[z.name]}}</td>
-      <td data-ng-repeat='r in curGame.calc'>{{getValue(match,r)}}</td>
+      <td data-ng-repeat='r in curGame.calc'>{{getValue(match.elements,r.elements)}}</td>
     </tr>
   </table>
 </div>
