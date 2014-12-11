@@ -9,9 +9,10 @@
     <script src='scripts/app.js'></script>
     <script src='scripts/ctrls/game.js'></script>
 </head>
-<body>
+<body data-ng-controller='frcCtrl'>
     <header>
         <h1>FRC dozer</h1>
+        <button data-ng-click='init()'>Update</button>
         <nav>
           <ul>
             <li><a ng-href="#/home">Home</a></li>
@@ -21,7 +22,7 @@
           </ul>
         </nav>
     </header>
-    <div data-ng-controller='frcCtrl'>
+    <div>
       <div data-ng-view></div>
     </div>
     <div id='scripts'>

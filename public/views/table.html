@@ -5,7 +5,7 @@
     <table class='matchTable'>
       <thead>
         <tr>
-          <td><button data-ng-click='addMatch(add)'>Add</button></td>
+          <td><button data-ng-click='addMatch(add,true)'>Add</button></td>
           <td><input data-ng-model='add.team'></td>
           <td data-ng-repeat='p in curGame.game'><input data-ng-model='add.elements[p.name]'></td>
         </tr>
@@ -18,9 +18,9 @@
       </thead>
         <tbody>
           <tr data-ng-repeat='x in matches'>
-              <td><a ng-href='#/match/{{x._id}}'>+</a><button data-ng-click='delMatch(x._id)'>-</button></td>
-              <td><a ng-href='#/team/{{x.team}}'><input data-ng-model='x.team' data-ng-blur='editMatch(x._id,x)'></a></td>
-              <td data-ng-repeat='y in curGame.game'><input data-ng-model='x.elements[y.name]' data-ng-blur='editMatch(x._id,x)'></td>
+              <td><a ng-href='#/match/{{x._id}}'>+</a><button data-ng-click='delMatch(x._id,true)'>-</button></td>
+              <td><a ng-href='#/team/{{x.team}}'><input data-ng-model='x.team' data-ng-blur='editMatch(x._id,x,true)'></a></td>
+              <td data-ng-repeat='y in curGame.game'><input data-ng-model='x.elements[y.name]' data-ng-blur='editMatch(x._id,x,true)'></td>
               <td data-ng-repeat='r in curGame.calc'>{{getValue(x.elements,r.elements)}}</td>
           </tr>
     </table>
