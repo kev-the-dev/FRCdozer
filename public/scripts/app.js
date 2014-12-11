@@ -32,23 +32,25 @@ angular.module('FRCdozer',['ngRoute'])
     .otherwise ({redirectTo: '/'});
   }])
   .controller('tableCtrl',['$scope',function ($scope){
-    $scope.getCurGame(true);
-    $scope.getMatches(true);
+    $scope.init();
   }])
   .controller('matchCtrl',['$scope','$routeParams','$http',function ($scope,$routeParams,$http){
-    $scope.getMatch($routeParams.id,true);
-    $scope.getCurGame(true);
+    $scope.init();
   }])
   .controller('addCtrl',['$scope',function ($scope){
-    $scope.getCurGame(true);
+    $scope.init();
   }])
   .controller('teamCtrl',['$scope','$routeParams',function ($scope,$routeParams){
-    $scope.getTeams($routeParams.team,true);
+    $scope.init(function () {
+      $scope.getTeam($routeParams.team,true);
+    });
   }])
   .controller('teamsCtrl', ['$scope', function ($scope) {
-    $scope.getCurGame(true);
-    $scope.getMatches(true);
+    $scope.init();
   }])
   .controller('gameCtrl',['$scope','$routeParams',function($scope,$routeParams){
-    $scope.getGame($routeParams.id || "", true);
+    $scope.init(function() {
+      if (!$routeParams.id) $scope.game=$scope.curGame;
+      else $scope.getGame($routeParams.id,true);
+    });
   }]);

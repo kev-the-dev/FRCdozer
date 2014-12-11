@@ -12,7 +12,6 @@ angular.module('FRCdozer')
     $scope.filt="";
     $scope.revr=false;
     $scope.sort = function (prop) {
-      console.log(prop);
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
         $scope.filt=prop;
@@ -55,6 +54,15 @@ angular.module('FRCdozer')
         });
       }
     };
+    $scope.getTeam = function (team,def) {
+      for (x in $scope.teams || []) {
+        if (Number($scope.teams[x].team) === Number(team)) {
+          if (!def) return $scope.teams[x];
+          else $scope.team = $scope.teams[x];
+          break;
+        }
+      }
+    }
     $scope.editMatch = function (id,elements,def) {
       if (!def) return $http.put('/api/match/'+id,elements);
       else {
@@ -109,7 +117,7 @@ angular.module('FRCdozer')
         })
       }
     };
-    $scope.getTeams = function (def) {
+    $scope.getTeams = function (def,team) {
       var teams = [];
       mSearch: for (var x =0; x<$scope.matches.length; x++) { //sorts matches into teams
         var m = $scope.matches[x];
@@ -133,31 +141,28 @@ angular.module('FRCdozer')
           }
         }
       }
-      /*
+
       if (team) {
         team = Number(team);
         for (g in teams) {
-          if (teams[g].team===team) {
+          if (teams[g].team===team.team) {
             $scope.team=teams[g];
+            console.log($scope.team);
             break;
           }
         }
       }
-      */
       if (!def) return teams;
       else $scope.teams = teams;
-      console.log (teams);
     };
-    $scope.init = function () {
-      console.log("init started");
+    $scope.init = function (aft) {
       $scope.getCurGame().success(function (data) {
         $scope.curGame=data;
         $scope.getMatches().success(function (data2) {
           $scope.matches=data2;
           $scope.getTeams(true);
+          if(aft) aft();
         });
       });
-      console.log("init done");
     };
-    $scope.init();
 }]);

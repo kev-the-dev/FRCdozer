@@ -1,28 +1,33 @@
+<link rel="stylesheet" href="styles/table.css">
 <div>
   <h1>Team: {{team.team}}</h1>
   <table>
     <thead>
       <tr>
-        <th>Team</th>
         <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>Average {{x.name}}</th>
         <th data-ng-repeat='y in curGame.calc'>Average {{y.name}}</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>{{team.team}}</td>
         <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'>{{team.averages[z.name]}}</td>
         <td data-ng-repeat='y in curGame.calc'>{{getValue(team.averages,y.elements)}}</td>
       </tr>
     </tbody>
   </table>
+  <hr>
   <table>
     <thead>
       <tr>
-        <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}}</th>
+        <th data-ng-repeat='x in curGame.game'>{{x.name}}</th>
         <th data-ng-repeat='y in curGame.calc'>{{y.name}}</th>
       </tr>
     </thead>
-    <tb
+    <tbody>
+      <tr data-ng-repeat='g in team.matches'>
+        <td data-ng-repeat='x in curGame.game'>{{g[x.name]}}</td>
+        <td data-ng-repeat='y in curGame.calc'>{{getValue(g,y.elements)}}</td>
+      </tr>
+    </tbody>
   </table>
 </div>
