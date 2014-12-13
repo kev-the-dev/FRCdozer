@@ -15,7 +15,11 @@
         <input type="radio" ng-model="add.elements[p.name]" ng-value="sTrue">True<br/>
         <input type="radio" ng-model="add.elements[p.name]" ng-value="sFalse">False<br/>
       </span>
-      <input data-ng-if='p.type==="Number"' type="number" data-ng-model='add.elements[p.name]'>
+      <span data-ng-if='p.type==="Number"'>
+        <p>{{add.elements[p.name] || 0 }}</p>
+        <button ng-click="add.elements[p.name] = add.elements[p.name] + 1">+</button>
+        <button ng-click="add.elements[p.name] = add.elements[p.name] - 1">-</button>
+      </span>
     </div>
   </form>
   <button class="btn btn-success" ng-click='addMatch(add)'>Send</button>

@@ -9,10 +9,10 @@ angular.module('FRCdozer')
     $scope.sample = {};
     $scope.teams = [];
     $scope.team={};
-    $scope.filt="";
-    $scope.revr=false;
     $scope.sTrue = true;
     $scope.sFalse = false;
+    $scope.filt="";
+    $scope.revr=false;
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
@@ -65,10 +65,10 @@ angular.module('FRCdozer')
         }
       }
     }
-    $scope.editMatch = function (id,elements,def) {
-      if (!def) return $http.put('/api/match/'+id,elements);
+    $scope.editMatch = function (id,params,def) {
+      if (!def) return $http.put('/api/match/'+id,params);
       else {
-        $http.put('/api/match/'+id,elements)
+        $http.put('/api/match/'+id,{team:params.team,elements:params.elements})
         .success(function (data) {
           $scope.getMatches();
         });
@@ -107,7 +107,7 @@ angular.module('FRCdozer')
       calc = calc || [];
       var val = 0;
       for (x in calc) val=val+(Number(matchx[calc[x].name])*calc[x].worth || 0);
-      return val;
+      return Math.round(val*100)/100;
     };
     $scope.editGame = function (id,elements,def) {
       if (!def) return $http.put('/api/game/'+id,elements);
