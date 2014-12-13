@@ -1,10 +1,23 @@
 <div>
-  <p>Team</p>
-  <input data-ng-model='add.team'>
-  <div data-ng-repeat='x in curGame.game'>
-    <p>{{x.name}}</p>
-    <input data-ng-model='add.elements[x.name]'>
-  </div>
+  <p>New Match:{{add.team}}</p>
+  <select data-ng-model='add.team'>
+      <option ng-value="newTeam">new</option>
+      <option data-ng-repeat='x in teams' ng-value='x.team'>{{x.team}}</option>
+  </select>
+  <input data-ng-model='newTeam' type="number">
+  <ul>
+    <li data-ng-repeat='p in curGame.game'>
+      {{p.name}}<br>
+      <input data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'>
+      <form data-ng-if='p.type==="Boolean"'>
+        <input type="radio" ng-model="add.elements[p.name]" ng-value="sTrue">True<br/>
+        <input type="radio" ng-model="add.elements[p.name]" ng-value="sFalse">False<br/>
+      </form>
+      <input data-ng-if='p.type==="Number"' type="number" data-ng-model='add.elements[p.name]'>
+    </li>
+  </ul>
   <button ng-click='addMatch(add)'>Send</button>
-  <p data-ng-repeat='y in curGame.calc'>{{y.name}}: {{getValue(add.elements,y.elements)}}</p>
+  <ul>
+    <li data-ng-repeat='y in curGame.calc'>{{y.name}}:{{getValue(add.elements,y.elements)}}</li>
+  </ul>
 </div>
