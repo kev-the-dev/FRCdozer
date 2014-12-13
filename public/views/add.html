@@ -1,10 +1,36 @@
 <div>
-  <p>Team</p>
-  <input data-ng-model='add.team'>
-  <div data-ng-repeat='x in curGame.game'>
-    <p>{{x.name}}</p>
-    <input data-ng-model='add.elements[x.name]'>
+  <div class='row'>
+    <div>Team</div>
+    <div>
+      <select data-ng-model='add.team'>
+        <option ng-value="newTeam">new</option>
+        <option data-ng-repeat='x in teams' ng-value='x.team'>{{x.team}}</option>
+      </select>
+      <input data-ng-model='newTeam' type="number">
+    </div>
+    <hr>
   </div>
-  <button ng-click='addMatch(add)'>Send</button>
-  <p data-ng-repeat='y in curGame.calc'>{{y.name}}: {{getValue(add.elements,y.elements)}}</p>
+  <div class='row' data-ng-repeat='p in curGame.game'>
+    <div>
+      {{p.name}}
+    </div>
+    <div>
+      <input data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'>
+      <span data-ng-if='p.type==="Boolean"'>
+        <input type="radio" ng-model="add.elements[p.name]" ng-value="sTrue">True<br/>
+        <input type="radio" ng-model="add.elements[p.name]" ng-value="sFalse">False<br/>
+      </span>
+      <span data-ng-if='p.type==="Number"'>
+        <p>{{add.elements[p.name] || 0 }}</p>
+        <button ng-click="add.elements[p.name] = add.elements[p.name] + 1">+</button>
+        <button ng-click="add.elements[p.name] = add.elements[p.name] - 1">-</button>
+      </span>
+    </div>
+    <hr>
+  </div>
+  <button class="btn btn-success" ng-click='addMatch(add)'>Send</button>
+  <hr>
+  <ul>
+    <li data-ng-repeat='y in curGame.calc'>{{y.name}}:{{getValue(add.elements,y.elements)}}</li>
+  </ul>
 </div>

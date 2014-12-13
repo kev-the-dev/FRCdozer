@@ -1,0 +1,20 @@
+<tr>
+  <td>
+    <a ng-href='#/match/{{Match._id}}'></a>
+    <button data-ng-click='delMatch(Match._id,true)' class='btn btn-danger'>-</button>
+    <button data-ng-click='editMatch(Match._id,Match,true)' class='btn btn-success'>Save</button>
+  </td>
+  <td><a ng-href='#/team/{{Match.team}}'>{{Match.team}}</a></td>
+  <td data-ng-repeat='y in Game.game'>
+    <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='Match.elements[y.name]' placeholder='wow!'>
+    <form data-ng-if='y.type==="Boolean"'>
+      <input type="radio" ng-model="Match.elements[y.name]" ng-value="sTrue">True
+      <input type="radio" ng-model="Match.elements[y.name]" ng-value="sFalse">False
+    </form>
+    <h4 data-ng-if='y.type==="Number"'>{{Match.elements[y.name] || 0 }}
+      <button ng-click="Match.elements[y.name] = Match.elements[y.name] + 1" class="btn btn-info">+</button>
+      <button ng-click="Match.elements[y.name] = Match.elements[y.name] - 1" class="btn btn-warning">-</button>
+    </h4>
+  </td>
+  <td data-ng-repeat='r in Game.calc'>{{Match.calc[r.name] = getValue(Match.elements,r.elements)}}</td>
+</tr>
