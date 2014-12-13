@@ -46,11 +46,11 @@
       <tbody>
         <tr data-ng-repeat='x in matches | orderBy:filt:revr'>
           <td>
-            <a ng-href='#/match/{{x._id}}'></a>
+            <a ng-href='#/match/{{x._id}}'>&#60;a&#62;</a>
             <button data-ng-click='delMatch(x._id,true)' class='btn btn-danger'>-</button>
             <button data-ng-click='editMatch(x._id,x,true)' class='btn btn-success'>Save</button>
           </td>
-          <td><a ng-href='#/team/{{x.team}}'><h3>{{x.team}}</h3></a></td>
+          <td><a ng-href='#/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
           <td data-ng-repeat='y in curGame.game'>
             <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'>
             <form data-ng-if='y.type==="Boolean"'>

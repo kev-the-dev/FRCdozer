@@ -48,6 +48,10 @@ angular.module('FRCdozer')
       }
     };
     $scope.getMatch = function (id,def) {
+      for (x in $scope.matches) if ($scope.matches[x]._id = id) {
+        if (!def) return $scope.matches[x];
+        else return $scope.match = $scope.matches[x];
+      }
       if (!def) return $http.get('/api/match/'+id);
       else {
         $http.get('/api/match/'+id)
@@ -109,16 +113,7 @@ angular.module('FRCdozer')
       for (x in calc) val=val+(Number(matchx[calc[x].name])*calc[x].worth || 0);
       return Math.round(val*100)/100;
     };
-    $scope.editGame = function (id,elements,def) {
-      if (!def) return $http.put('/api/game/'+id,elements);
-      else {
-        $http.put('/api/game/'+id,elements)
-        .success(function (data) {
-          $scope.game = data;
-        })
-      }
-    };
-    $scope.getTeams = function (def,mats) {
+    $scope.getTeams = function (def,mats,noReset) {
       var teams = [];
       mats = mats || $scope.matches;
       mSearch: for (x in mats) { //sorts matches into teams
