@@ -7,7 +7,15 @@
         <tr>
           <td><button data-ng-click='addMatch(add,true)'>Add</button></td>
           <td><input data-ng-model='add.team'></td>
-          <td data-ng-repeat='p in curGame.game'><input data-ng-model='add.elements[p.name]'></td>
+          <td data-ng-repeat='p in curGame.game'>
+            <input data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'>
+            <form data-ng-if='p.type==="Boolean"'>
+              <input type="radio" ng-model="add.elements[p.name]" ng-value="sTrue">True<br/>
+              <input type="radio" ng-model="add.elements[p.name]" ng-value="sFalse">False<br/>
+            </form>
+            <input data-ng-if='p.type==="Number"' type="number" data-ng-model='add.elements[p.name]'>
+          </td>
+          <td data-ng-repeat='r in curGame.calc'>{{getValue(add.elements,r.elements)}}</td>
         </tr>
           <tr>
             <th>Links</th>
@@ -20,7 +28,14 @@
           <tr data-ng-repeat='x in matches'>
               <td><a ng-href='#/match/{{x._id}}'>+</a><button data-ng-click='delMatch(x._id,true)'>-</button></td>
               <td><a ng-href='#/team/{{x.team}}'>{{x.team}}</a></td>
-              <td data-ng-repeat='y in curGame.game'><input data-ng-model='x.elements[y.name]' data-ng-blur='editMatch(x._id,x,true)'></td>
+              <td data-ng-repeat='y in curGame.game'>
+                <input data-ng-if='y.type==="String"' data-ng-model='x.elements[y.name]' data-ng-blur='editMatch(x._id,x,true)'>
+                <form data-ng-if='y.type==="Boolean"' data-ng-update='editMatch(x._id,x,true)'>
+                  <input type="radio" ng-model="x.elements[y.name]" ng-value="sTrue">True<br/>
+                  <input type="radio" ng-model="x.elements[y.name]" ng-value="sFalse">False<br/>
+                </form>
+                <input data-ng-if='y.type==="Number"' data-ng-blur='editMatch(x._id,x,true)' type="number" data-ng-model='x.elements[y.name]'>
+              </td>
               <td data-ng-repeat='r in curGame.calc'>{{getValue(x.elements,r.elements)}}</td>
           </tr>
     </table>
