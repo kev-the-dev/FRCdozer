@@ -50,7 +50,7 @@
             <button data-ng-click='delMatch(x._id,true)' class='btn btn-danger'>-</button>
             <button data-ng-click='editMatch(x._id,x,true)' class='btn btn-success'>Save</button>
           </td>
-          <td><a ng-href='#/team/{{x.team}}'>{{x.team}}</a></td>
+          <td><a ng-href='#/team/{{x.team}}'><h3>{{x.team}}</h3></a></td>
           <td data-ng-repeat='y in curGame.game'>
             <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'>
             <form data-ng-if='y.type==="Boolean"'>
@@ -62,7 +62,7 @@
               <button ng-click="x.elements[y.name] = x.elements[y.name] - 1" class="btn btn-warning">-</button>
             </h4>
           </td>
-          <td data-ng-repeat='r in curGame.calc'>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</td>
+          <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>
         </tr>
       </tbody>
     </table>
