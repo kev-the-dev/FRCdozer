@@ -1,22 +1,24 @@
 <div>
-  <p>New Match:{{add.team}}</p>
-  <select data-ng-model='add.team'>
-      <option ng-value="newTeam">new</option>
-      <option data-ng-repeat='x in teams' ng-value='x.team'>{{x.team}}</option>
-  </select>
-  <input data-ng-model='newTeam' type="number">
-  <ul>
-    <li data-ng-repeat='p in curGame.game'>
-      {{p.name}}<br>
+  <form role="form">
+    <div class="form-group">
+      <label>Team</label>
+      <select data-ng-model='add.team'>
+        <option ng-value="newTeam">new</option>
+        <option data-ng-repeat='x in teams' ng-value='x.team'>{{x.team}}</option>
+      </select>
+      <input data-ng-model='newTeam' type="number">
+    </div>
+    <div class="form-group" data-ng-repeat='p in curGame.game'>
+      <label>{{p.name}}</label>
       <input data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'>
-      <form data-ng-if='p.type==="Boolean"'>
+      <span data-ng-if='p.type==="Boolean"'>
         <input type="radio" ng-model="add.elements[p.name]" ng-value="sTrue">True<br/>
         <input type="radio" ng-model="add.elements[p.name]" ng-value="sFalse">False<br/>
-      </form>
+      </span>
       <input data-ng-if='p.type==="Number"' type="number" data-ng-model='add.elements[p.name]'>
-    </li>
-  </ul>
-  <button ng-click='addMatch(add)'>Send</button>
+    </div>
+  </form>
+  <button class="btn btn-success" ng-click='addMatch(add)'>Send</button>
   <ul>
     <li data-ng-repeat='y in curGame.calc'>{{y.name}}:{{getValue(add.elements,y.elements)}}</li>
   </ul>

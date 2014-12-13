@@ -1,11 +1,8 @@
-<link rel="stylesheet" href="styles/table.css">
 <div>
-    <input data-ng-model='search'>
-    <button ng-click='update()'>Update</button>
-    <table class='matchTable'>
+    <table class='table table-bordered table-striped table-hover'>
       <thead>
         <tr>
-          <td><button data-ng-click='addMatch(add,true)'>Add</button></td>
+          <td><button data-ng-click='addMatch(add,true)' class='btn btn-success'>Add</button></td>
           <td><input data-ng-model='add.team'></td>
           <td data-ng-repeat='p in curGame.game'>
             <input data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'>
@@ -26,7 +23,7 @@
       </thead>
         <tbody>
           <tr data-ng-repeat='x in matches'>
-              <td><a ng-href='#/match/{{x._id}}'>+</a><button data-ng-click='delMatch(x._id,true)'>-</button></td>
+              <td><a ng-href='#/match/{{x._id}}'>+</a><button data-ng-click='delMatch(x._id,true)' class='btn btn-danger'>-</button></td>
               <td><a ng-href='#/team/{{x.team}}'>{{x.team}}</a></td>
               <td data-ng-repeat='y in curGame.game'>
                 <input data-ng-if='y.type==="String"' data-ng-model='x.elements[y.name]' data-ng-blur='editMatch(x._id,x,true)'>

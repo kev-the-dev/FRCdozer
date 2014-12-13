@@ -1,31 +1,46 @@
-<!doctype HTML>
+<!DOCTYPE html>
 <html data-ng-app='FRCdozer'>
 <head>
     <title>FRC dozer</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js'></script>
     <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js'></script>
     <script src='scripts/app.js'></script>
     <script src='scripts/ctrls/game.js'></script>
 </head>
 <body data-ng-controller='frcCtrl'>
-    <header>
-        <h1>FRC dozer</h1>
-        <button data-ng-click='init()'>Update</button>
-        <nav>
-          <ul>
+    <nav class="navbar" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">FRC Dozer</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
             <li><a ng-href="#/home">Home</a></li>
             <li><a ng-href="#/add">Add</a></li>
             <li><a ng-href='#/game'>Game</a></li>
             <li><a ng-href='#/team'>Teams</a></li>
+            <li><button data-ng-click='init()' class='btn btn-primary'>Update</button></li>
           </ul>
-        </nav>
-    </header>
-    <div>
-      <div data-ng-view></div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+    <div data-ng-view></div>
     </div>
-    <div id='scripts'>
-    </div>
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">Please support us on <a href="https://github.com/ironmig/FRCdozer">github</a></p>
+      </div>
+    </footer>
 </body>
 </html>

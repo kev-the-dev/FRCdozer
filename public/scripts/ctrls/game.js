@@ -79,6 +79,7 @@ angular.module('FRCdozer')
       else {
         $http.post ('/api/match',elements)
         .success(function (data) {
+          $scope.add = {};
           $scope.getMatches(true);
         });
       }

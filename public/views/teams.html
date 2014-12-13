@@ -1,9 +1,8 @@
-<link rel="stylesheet" href="styles/table.css">
+
 <div>
   <h2>Teams</h2>
   <h3 ng-show='filt'>Filtering by: {{filt}}<span ng-show='!revr'>, descending</span></h3>
-  <button ng-click='getTeams(true)'>Get em'</button>
-  <table>
+  <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
         <th><span ng-show="!revr">-</span>{{filt}}</th>

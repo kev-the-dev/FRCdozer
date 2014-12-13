@@ -1,7 +1,7 @@
-<link rel="stylesheet" href="styles/table.css">
+
 <div>
   <h1>Team: {{team.team}}</h1>
-  <table>
+  <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
         <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>Average {{x.name}}</th>
@@ -16,7 +16,7 @@
     </tbody>
   </table>
   <hr>
-  <table>
+  <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
         <th data-ng-repeat='x in curGame.game'>{{x.name}}</th>
