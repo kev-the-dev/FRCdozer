@@ -15,6 +15,7 @@ angular.module('FRCdozer')
     $scope.revr=false;
     $scope.socket = io();
     $scope.connected = false;
+    $scope.newTeam;
     function discon () {
       $scope.$apply(function() {
         $scope.connected=false;
