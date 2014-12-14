@@ -6,9 +6,9 @@
     <thead>
       <tr>
         <th>Place</th>
-        <th>Team <button class="btn btn-primary" ng-click='sort("team")'>Sort</button></th>
-        <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}} <button class="btn btn-primary" ng-click='sort("averages."+x.name)'>Sort</button></th>
-        <th data-ng-repeat='y in curGame.calc'>{{y.name}} <button class="btn btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
+        <th>Team <button class="btn btn-xs btn-primary" ng-click='sort("team")'>Sort</button></th>
+        <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}} <button class="btn btn-xs btn-primary" ng-click='sort("averages."+x.name)'>Sort</button></th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}} <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
       </tr>
     </thead>
     <tbody>
