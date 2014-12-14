@@ -19,13 +19,11 @@ angular.module('FRCdozer')
       $scope.$apply(function() {
         $scope.connected=false;
       });
-      console.log('disconnected');
     }
     function con() {
       $scope.$apply(function() {
         $scope.connected=true;
       });
-      console.log('connected');
     }
     $scope.socket
       .on('connect', con)
