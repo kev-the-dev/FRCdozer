@@ -11,7 +11,7 @@
       <tbody>
         <tr>
           <td>
-            <button data-ng-click='addMatch(add,true)' class='btn btn-xs btn-success'>Add</button>
+            <button data-ng-click='addMatch(add)' class='btn btn-xs btn-success'>Add</button>
             <button data-ng-click='add = {}' class="btn btn-xs btn-danger">Reset</button>
           </td>
           <td><input class="form-control" data-ng-model='add.team' placeholder='4118'></td>
@@ -47,8 +47,8 @@
         <tr data-ng-repeat='x in matches | orderBy:filt:revr'>
           <td>
             <a class="btn btn-xs btn-info" ng-href='#/match/{{x._id}}'>&#60;a&#62;</a>
-            <button data-ng-click='delMatch(x._id,true)' class='btn btn-xs btn-danger'>-</button>
-            <button data-ng-click='editMatch(x._id,x,true)' class='btn btn-xs btn-success'>Save</button>
+            <button data-ng-click='delMatch(x._id)' class='btn btn-xs btn-danger'>-</button>
+            <button data-ng-click='editMatch(x)' class='btn btn-xs btn-success'>Save</button>
           </td>
           <td><a ng-href='#/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
           <td data-ng-repeat='y in curGame.game'>

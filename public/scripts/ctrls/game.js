@@ -35,7 +35,8 @@ angular.module('FRCdozer')
       .on('newMatch', function(x){$scope.appendMatch(x);})
       .on('delMatch', function(x){$scope.removeMatch(x);})
       .on('editMatch',function(x){$scope.changeMatch(x);})
-      .on('editGame',function(x){$scope.changeGame(x);});
+      .on('editGame',function(x){$scope.changeGame(x);})
+      .on('error',function(x){console.log(x);});
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
@@ -111,42 +112,21 @@ angular.module('FRCdozer')
           break;
       }
     }
-    $scope.editMatch = function (id,params,def) {
-      if (!def) return $http.put('/api/match/'+id,params);
-      else {
-        $http.put('/api/match/'+id,{team:params.team,elements:params.elements})
-        .success(function (data) {
-          $scope.getMatches();
-        });
-      }
+    $scope.editMatch = function (x) {
+      if ($scope.connected) $scope.socket.emit('editMatch',{_id:x._id,team:x.team,elements:x.elements});
+      else $http.put('/api/match/'+x._id,x);
     };
-    $scope.addMatch = function (elements,def) {
-      if (!def) return $http.post ('/api/match',elements);
-      else {
-        $http.post ('/api/match',elements)
-        .success(function (data) {
-          $scope.add = {};
-          //$scope.getMatches(true);
-        });
-      }
+    $scope.addMatch = function (elements) {
+      if ($scope.connected) $scope.socket.emit('newMatch',elements);
+      else $http.post ('/api/match',elements);
     };
-    $scope.delMatch = function (id,def) {
-      if (!def) return $http.delete ('/api/match/'+id);
-      else {
-        $http.delete ('/api/match/'+id)
-        .success(function (data) {
-          //$scope.getMatches(true);
-        });
-      }
+    $scope.delMatch = function (id) {
+      if ($scope.connected) $scope.socket.emit('delMatch',id);
+      else $http.delete ('/api/match/'+id);
     };
-    $scope.editGame = function (id,elements,def) {
-      if (!def) return $http.put('/api/game/'+id,elements);
-      else {
-        $http.put('/api/game/'+id,elements)
-        .success(function (data) {
-          //$scope.game = data;
-        })
-      }
+    $scope.editGame = function (x) {
+      if ($scope.connected) $scope.socket.emit('editGame',angular.toJson(x));
+      else $http.put('/api/game/'+x._id,x);
     };
     $scope.getValue = function (matchx,calc) {
       matchx = matchx || {};
@@ -181,6 +161,7 @@ angular.module('FRCdozer')
         $scope.getMatches().success(function (data2) {
           $scope.matches=data2;
           $scope.getTeams(true);
+          $scope.add = {};
         });
       });
     };
