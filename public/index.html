@@ -10,26 +10,25 @@
     <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js'></script>
     <script src='scripts/app.js'></script>
     <script src='scripts/ctrls/game.js'></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.1.js"></script>
 </head>
 <body data-ng-controller='frcCtrl'>
-    <nav class="navbar" role="navigation">
+    <nav class="navbar bg-primary" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">FRC Dozer</a>
+          <a class="navbar-brand bg-primary" ng-href="#">FRC Dozer</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a ng-href="#/home">Home</a></li>
-            <li><a ng-href="#/add">Add</a></li>
-            <li><a ng-href='#/game'>Game</a></li>
-            <li><a ng-href='#/team'>Teams</a></li>
-            <li><button data-ng-click='init()' class='btn btn-primary'>Update</button></li>
+          <ul class="nav navbar-nav nav-pills">
+            <li role="presentation"><a class='bg-primary' ng-href="#/home">Home</a></li>
+            <li role="presentation"><a class='bg-primary' ng-href="#/add">Add</a></li>
+            <li role="presentation"><a class='bg-primary' ng-href='#/game'>Game</a></li>
+            <li role="presentation"><a class='bg-primary' ng-href='#/team'>Teams</a></li>
+            <li><button data-ng-show='!connected' class='bg-primary' data-ng-click='init()' class='bg-success btn btn-success'>Update</button></li>
+            <li>
+              <span data-ng-show='!connected'class='label label-danger bg-primary'>Disconnected!</span>
+              <span data-ng-show='connected' class='label label-success bg-primary'>Connected!</span>
+            </li>
           </ul>
         </div>
       </div>

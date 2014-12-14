@@ -19,19 +19,28 @@ router.post('/', function (req,res) { //add match
       res.status(500);
       res.send(err);
     }
-    else res.send(x);
+    else {
+      res.send(x);
+      frc.io.emit('newMatch',x);
+    }
   });
 });
 router.put('/:id', function (req,res) { //edit one match
   frc.matches.findByIdAndUpdate(req.params.id,req.body,function(err,x) {
     if (err) res.status(500).send(err);
-    else res.send(x);
+    else {
+      frc.io.emit('editMatch',x);
+      res.send(x);
+    }
   });
 });
 router.delete('/:id', function (req,res) {
   frc.matches.findByIdAndRemove(req.params.id,function(err,x) {
     if (err) res.status(500).send(err);
-    else res.send(x);
+    else {
+      frc.io.emit('delMatch',x._id);
+      res.send(x);
+    }
   }); //delete one match
 })
 module.exports = router;

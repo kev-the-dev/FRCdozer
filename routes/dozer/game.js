@@ -22,7 +22,10 @@ router.get('/:id', function (req,res) { //get given game with id
 router.put('/:id', function (req,res) { //edit game with id
   frc.games.findByIdAndUpdate(req.params.id,req.body,function(err,x) {
     if (err) res.status(500).send(err);
-    else res.send(x);
+    else {
+      frc.io.emit('editGame',x);
+      res.send(x);
+    }
   });
 });
 router.delete('/:id', function (req,res) { //delete game with id

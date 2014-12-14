@@ -1,15 +1,33 @@
 <div>
-  <h2>Match:{{match._id}}</h2>
+  <h2>Match:{{match=getMatch(matchId);match._id}}</h2>
   <table class='table table-bordered table-striped table-hover'>
-    <tr>
-      <td>Team</td>
-      <td data-ng-repeat='x in curGame.game'>{{x.name}}</td>
-      <td data-ng-repeat='y in curGame.calc'>{{y.name}}</td>
-    </tr>
-    <tr>
-      <td>{{match.team}}</td>
-      <td data-ng-repeat='z in curGame.game'>{{match.elements[z.name]}}</td>
-      <td data-ng-repeat='r in curGame.calc'>{{getValue(match.elements,r.elements)}}</td>
-    </tr>
-  </table>
+    <thead>
+      <tr>
+        <th>Links</th>
+        <th>Team</th>
+        <th data-ng-repeat='x in curGame.game'>{{x.name}}</th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <button data-ng-click='delMatch(match._id,true)' class='btn btn-xs btn-danger'>-</button>
+          <button data-ng-click='editMatch(match._id,match,true)' class='btn btn-xs btn-success'>Save</button>
+        </td>
+        <td><a ng-href='#/team/{{match.team}}'><h4>{{match.team}}</h4></a></td>
+        <td data-ng-repeat='y in curGame.game'>
+          <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='match.elements[y.name]' placeholder='wow!'>
+          <form data-ng-if='y.type==="Boolean"'>
+            <input type="radio" ng-model="match.elements[y.name]" ng-value="sTrue">True
+            <input type="radio" ng-model="match.elements[y.name]" ng-value="sFalse">False
+          </form>
+          <h4 data-ng-if='y.type==="Number"'>{{match.elements[y.name] || 0 }}
+            <button ng-click="match.elements[y.name] = match.elements[y.name] + 1" class="btn btn-xs btn-info">+</button>
+            <button ng-click="match.elements[y.name] = match.elements[y.name] - 1" class="btn btn-xs btn-warning">-</button>
+          </h4>
+        </td>
+        <td data-ng-repeat='r in curGame.calc'><h4>{{match.calc[r.name] = getValue(match.elements,r.elements)}}</h4></td>
+      </tr>
+    </tbody>
 </div>

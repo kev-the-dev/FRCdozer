@@ -1,5 +1,4 @@
-
-<h2>Game:{{game.name}}</h2>
+<h2>{{game.name}}</h2>
 <p>ID:{{game._id}}</p>
 <table class='table table-bordered table-striped table-hover'>
   <tr>
@@ -18,8 +17,8 @@
       </form>
       <span data-ng-if='p.type==="Number"'>
         <h4>{{sample.elements[p.name] || 0 }}
-          <button ng-click="sample.elements[p.name] = sample.elements[p.name] + 1" class="btn btn-info">+</button>
-          <button ng-click="sample.elements[p.name] = sample.elements[p.name] - 1" class="btn btn-warning">-</button>
+          <button ng-click="sample.elements[p.name] = sample.elements[p.name] + 1" class="btn btn-xs btn-info">+</button>
+          <button ng-click="sample.elements[p.name] = sample.elements[p.name] - 1" class="btn btn-xs btn-warning">-</button>
         </h4>
       </span>
     </td>
@@ -42,9 +41,9 @@
         <option>Boolean</option>
       </select>
     </td>
-    <td><button class='btn btn-danger' data-ng-click="game.game.splice($index,1)">-</button></td>
+    <td><button class='btn btn-sm btn-danger' data-ng-click="game.game.splice($index,1)">-</button></td>
   </tr>
-  <tr><td colspan='2'><button class="btn btn-success" data-ng-click='game.game.push({name:"",type:"String"})'>+</button></td></tr>
+  <tr><td colspan='2'><button class="btn btn-sm btn-success" data-ng-click='game.game.push({name:"",type:"String"})'>+</button></td></tr>
 </table>
 <hr>
 <table class='table table-bordered table-striped table-hover'>
@@ -68,15 +67,15 @@
             </select>
           </td>
           <td><input class="form-control" type='number' data-ng-model='p.worth'></td>
-          <td><button class='btn btn-danger' data-ng-click='g.elements.splice($index,1)'>-</button></td>
+          <td><button class='btn btn-sm btn-danger' data-ng-click='g.elements.splice($index,1)'>-</button></td>
         </tr>
-        <tr><td><button class="btn btn-success" data-ng-click='g.elements.push({name:"",worth:""})'>+</button></td></tr>
+        <tr><td><button class="btn btn-sm btn-success" data-ng-click='g.elements.push({name:"",worth:""})'>+</button></td></tr>
       </table>
     </td>
-    <td><button class='btn btn-danger' data-ng-click="game.calc.splice($index,1)">-</button></td>
+    <td><button class='btn btn-sm btn-danger' data-ng-click="game.calc.splice($index,1)">-</button></td>
   </tr>
-  <tr><td colspan='2'><button class="btn btn-success" data-ng-click='game.calc.push({name:"",elements:[{name:"",worth:""}]})'>+</button></td></tr>
+  <tr><td colspan='2'><button class="btn btn-sm btn-success" data-ng-click='game.calc.push({name:"",elements:[{name:"",worth:""}]})'>+</button></td></tr>
 </table>
 <hr>
-<button class='btn btn-primary' data-ng-click='editGame(game._id,game)'>Save Changes</button>
-<button class="btn btn-warning" data-ng-click='getGame($routeParams.id || "")'>Cancel</button>
+<button class='btn btn-primary' data-ng-click='editGame(curGame._id,game)'>Save Changes</button>
+<button class="btn btn-warning" data-ng-click='game=curGame'>Reset</button>

@@ -11,8 +11,8 @@
       <tbody>
         <tr>
           <td>
-            <button data-ng-click='addMatch(add,true)' class='btn btn-success'>Add</button>
-            <button data-ng-click='add = {}' class="btn btn-danger">Reset</button>
+            <button data-ng-click='addMatch(add,true)' class='btn btn-xs btn-success'>Add</button>
+            <button data-ng-click='add = {}' class="btn btn-xs btn-danger">Reset</button>
           </td>
           <td><input class="form-control" data-ng-model='add.team' placeholder='4118'></td>
           <td data-ng-repeat='p in curGame.game'>
@@ -23,8 +23,8 @@
               </form>
               <span data-ng-if='p.type==="Number"'>
                 <h4>{{add.elements[p.name] || 0 }}
-                  <button ng-click="add.elements[p.name] = add.elements[p.name] + 1" class="btn btn-info">+</button>
-                  <button ng-click="add.elements[p.name] = add.elements[p.name] - 1" class="btn btn-warning">-</button>
+                  <button ng-click="add.elements[p.name] = add.elements[p.name] + 1" class="btn btn-xs btn-info">+</button>
+                  <button ng-click="add.elements[p.name] = add.elements[p.name] - 1" class="btn btn-xs btn-warning">-</button>
                 </h4>
               </span>
           </td>
@@ -39,16 +39,16 @@
         <tr>
           <th>Links</th>
           <th>Team</th>
-          <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-primary" ng-click='sort("elements."+x.name)'>Sort</button></th>
-          <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
+          <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements."+x.name)'>Sort</button></th>
+          <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
         </tr>
       </thead>
       <tbody>
         <tr data-ng-repeat='x in matches | orderBy:filt:revr'>
           <td>
-            <a ng-href='#/match/{{x._id}}'>&#60;a&#62;</a>
-            <button data-ng-click='delMatch(x._id,true)' class='btn btn-danger'>-</button>
-            <button data-ng-click='editMatch(x._id,x,true)' class='btn btn-success'>Save</button>
+            <a class="btn btn-xs btn-info" ng-href='#/match/{{x._id}}'>&#60;a&#62;</a>
+            <button data-ng-click='delMatch(x._id,true)' class='btn btn-xs btn-danger'>-</button>
+            <button data-ng-click='editMatch(x._id,x,true)' class='btn btn-xs btn-success'>Save</button>
           </td>
           <td><a ng-href='#/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
           <td data-ng-repeat='y in curGame.game'>
@@ -58,8 +58,8 @@
               <input type="radio" ng-model="x.elements[y.name]" ng-value="sFalse">False
             </form>
             <h4 data-ng-if='y.type==="Number"'>{{x.elements[y.name] || 0 }}
-              <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" class="btn btn-info">+</button>
-              <button ng-click="x.elements[y.name] = x.elements[y.name] - 1" class="btn btn-warning">-</button>
+              <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" class="btn btn-xs btn-info">+</button>
+              <button ng-click="x.elements[y.name] = x.elements[y.name] - 1" class="btn btn-xs btn-warning">-</button>
             </h4>
           </td>
           <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>
