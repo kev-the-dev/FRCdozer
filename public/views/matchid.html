@@ -12,8 +12,8 @@
     <tbody>
       <tr>
         <td>
-          <button data-ng-click='delMatch(match._id,true)' class='btn btn-xs btn-danger'>-</button>
-          <button data-ng-click='editMatch(match._id,match,true)' class='btn btn-xs btn-success'>Save</button>
+          <button data-ng-click='delMatch(match._id)' class='btn btn-xs btn-danger'>-</button>
+          <button data-ng-click='editMatch(match._id)' class='btn btn-xs btn-success'>Save</button>
         </td>
         <td><a ng-href='#/team/{{match.team}}'><h4>{{match.team}}</h4></a></td>
         <td data-ng-repeat='y in curGame.game'>

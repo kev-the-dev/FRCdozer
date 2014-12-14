@@ -112,56 +112,21 @@ angular.module('FRCdozer')
           break;
       }
     }
-    $scope.editMatch = function (id,params,def) {
-      console.log(params);
-      if ($scope.connected) $scope.socket.emit('editMatch',{_id:params._id,team:params.team,elements:params.elements});
-      /*
-      if (!def) return $http.put('/api/match/'+id,params);
-      else {
-        $http.put('/api/match/'+id,{team:params.team,elements:params.elements})
-        .success(function (data) {
-          $scope.getMatches();
-        });
-      }
-      */
+    $scope.editMatch = function (x) {
+      if ($scope.connected) $scope.socket.emit('editMatch',{_id:x._id,team:x.team,elements:x.elements});
+      else $http.put('/api/match/'+x._id,x);
     };
-    $scope.addMatch = function (elements,def) {
+    $scope.addMatch = function (elements) {
       if ($scope.connected) $scope.socket.emit('newMatch',elements);
-      /*
-      else {
-        $http.post ('/api/match',elements)
-        .success(function (data) {
-          $scope.add = {};
-          //$scope.getMatches(true);
-        });
-      }
-      */
+      else $http.post ('/api/match',elements);
     };
-    $scope.delMatch = function (id,def) {
+    $scope.delMatch = function (id) {
       if ($scope.connected) $scope.socket.emit('delMatch',id);
-      /*
-      if (!def) return $http.delete ('/api/match/'+id);
-      else {
-        $http.delete ('/api/match/'+id)
-        .success(function (data) {
-          //$scope.getMatches(true);
-        });
-      }
-      */
+      else $http.delete ('/api/match/'+id);
     };
     $scope.editGame = function (x) {
-      x = angular.toJson(x);
-      console.log(x);
-      if ($scope.connected) $scope.socket.emit('editGame',x);
-      /*
-      if (!def) return $http.put('/api/game/'+id,elements);
-      else {
-        $http.put('/api/game/'+id,elements)
-        .success(function (data) {
-          //$scope.game = data;
-        })
-      }
-      */
+      if ($scope.connected) $scope.socket.emit('editGame',angular.toJson(x));
+      else $http.put('/api/game/'+x._id,x);
     };
     $scope.getValue = function (matchx,calc) {
       matchx = matchx || {};
