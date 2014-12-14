@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -6,6 +7,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongo = require('mongoose');
 var app = express();
+var debug = require('debug')('expressTest');
+
 app.use(favicon(__dirname + '/public/favicon.ico'));
 
 app.use(logger('dev'));
@@ -13,6 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
+
 app.use('/',require('./routes/dozer/index.js'));
 
 // catch 404 and forward to error handler
@@ -39,6 +43,9 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.send("Error: "+err);
 });
-
-
-module.exports = app;
+var debug = require('debug')('expressTest');
+app.set('port', process.env.PORT || 3000);
+var server = app.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
+  require('./routes/dozer/socket.js')(server);
+});

@@ -35,7 +35,8 @@ angular.module('FRCdozer')
       .on('newMatch', function(x){$scope.appendMatch(x);})
       .on('delMatch', function(x){$scope.removeMatch(x);})
       .on('editMatch',function(x){$scope.changeMatch(x);})
-      .on('editGame',function(x){$scope.changeGame(x);});
+      .on('editGame',function(x){$scope.changeGame(x);})
+      .on('error',function(x){console.log(x);});
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
@@ -112,6 +113,9 @@ angular.module('FRCdozer')
       }
     }
     $scope.editMatch = function (id,params,def) {
+      console.log(params);
+      if ($scope.connected) $scope.socket.emit('editMatch',{_id:params._id,team:params.team,elements:params.elements});
+      /*
       if (!def) return $http.put('/api/match/'+id,params);
       else {
         $http.put('/api/match/'+id,{team:params.team,elements:params.elements})
@@ -119,9 +123,11 @@ angular.module('FRCdozer')
           $scope.getMatches();
         });
       }
+      */
     };
     $scope.addMatch = function (elements,def) {
-      if (!def) return $http.post ('/api/match',elements);
+      if ($scope.connected) $scope.socket.emit('newMatch',elements);
+      /*
       else {
         $http.post ('/api/match',elements)
         .success(function (data) {
@@ -129,8 +135,11 @@ angular.module('FRCdozer')
           //$scope.getMatches(true);
         });
       }
+      */
     };
     $scope.delMatch = function (id,def) {
+      if ($scope.connected) $scope.socket.emit('delMatch',id);
+      /*
       if (!def) return $http.delete ('/api/match/'+id);
       else {
         $http.delete ('/api/match/'+id)
@@ -138,8 +147,13 @@ angular.module('FRCdozer')
           //$scope.getMatches(true);
         });
       }
+      */
     };
-    $scope.editGame = function (id,elements,def) {
+    $scope.editGame = function (x) {
+      x = angular.toJson(x);
+      console.log(x);
+      if ($scope.connected) $scope.socket.emit('editGame',x);
+      /*
       if (!def) return $http.put('/api/game/'+id,elements);
       else {
         $http.put('/api/game/'+id,elements)
@@ -147,6 +161,7 @@ angular.module('FRCdozer')
           //$scope.game = data;
         })
       }
+      */
     };
     $scope.getValue = function (matchx,calc) {
       matchx = matchx || {};
