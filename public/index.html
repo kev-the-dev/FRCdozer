@@ -31,6 +31,10 @@
             <li><a ng-href='#/game'>Game</a></li>
             <li><a ng-href='#/team'>Teams</a></li>
             <li><button data-ng-click='init()' class='btn btn-primary'>Update</button></li>
+            <li>
+              <span data-ng-show='!connected'class='label label-danger'>Disconnected!</span>
+              <span data-ng-show='connected' class='label label-success'>Connected!</span>
+            </li>
           </ul>
         </div>
       </div>

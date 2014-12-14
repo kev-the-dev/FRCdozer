@@ -14,13 +14,13 @@ angular.module('FRCdozer')
     $scope.filt="";
     $scope.revr=false;
     $scope.socket = io();
-    $scope.socket.on('message', function(msg){
-      console.log(msg);
-    });
-    $scope.socket.on('newMatch', function (match) {
-      console.log(match);
-      $scope.matches.push(match);
-    });
+    $scope.connected = false;
+    $scope.socket
+      .on('connect', function () {$scope.connected=true;})
+      .on('connect_timeout', function () {$scope.connected=false;})
+      .on('newMatch', function(x){$scope.appendMatch(x);})
+      .on('delMatch', function (id) {$scope.removeMatch(id)})
+      .on('editMatch',function(mat){$scope.changeMatch(mat);});
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
@@ -28,6 +28,30 @@ angular.module('FRCdozer')
         $scope.revr=true;
       }
     };
+    $scope.appendMatch = function (match) {
+      $scope.$apply(function() {
+        $scope.matches.push(match);
+        $scope.getTeams(true);
+      });
+    };
+    $scope.removeMatch = function (id) {
+      for (x in $scope.matches) if (id === $scope.matches[x]._id) {
+        $scope.$apply(function() {
+          $scope.matches.splice(x,1);
+          $scope.getTeams(true);
+        });
+        break;
+      };
+    };
+    $scope.changeMatch = function (match) {
+      for (x in $scope.matches) if (match._id === $scope.matches[x]._id) {
+        $scope.$apply(function() {
+          $scope.matches[x]=match;
+          $scope.getTeams(true);
+        });
+        break;
+      }
+    }
     $scope.getMatches = function (def) {
       if (!def) return $http.get ('/api/match');
       else {
@@ -101,7 +125,7 @@ angular.module('FRCdozer')
       else {
         $http.delete ('/api/match/'+id)
         .success(function (data) {
-          $scope.getMatches(true);
+          //$scope.getMatches(true);
         });
       }
     };

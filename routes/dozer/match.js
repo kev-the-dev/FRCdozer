@@ -21,7 +21,6 @@ router.post('/', function (req,res) { //add match
     }
     else {
       res.send(x);
-      console.log(frc.io);
       frc.io.emit('newMatch',x);
     }
   });
@@ -29,13 +28,19 @@ router.post('/', function (req,res) { //add match
 router.put('/:id', function (req,res) { //edit one match
   frc.matches.findByIdAndUpdate(req.params.id,req.body,function(err,x) {
     if (err) res.status(500).send(err);
-    else res.send(x);
+    else {
+      frc.io.emit('editMatch',x);
+      res.send(x);
+    }
   });
 });
 router.delete('/:id', function (req,res) {
   frc.matches.findByIdAndRemove(req.params.id,function(err,x) {
     if (err) res.status(500).send(err);
-    else res.send(x);
+    else {
+      frc.io.emit('delMatch',x._id);
+      res.send(x);
+    }
   }); //delete one match
 })
 module.exports = router;
