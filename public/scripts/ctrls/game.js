@@ -152,7 +152,9 @@ angular.module('FRCdozer')
     };
     $scope.getAverage = function (prop,mats) {
       var avr = 0;
-      for (x in mats) avr = Math.round(((avr+(Number(mats[x].elements[prop])||0))/(x+1))*100)/100;
+      for (x in mats) avr = avr+(Number(mats[x].elements[prop])||0);
+      avr = avr / (mats.length);
+      avr = Math.round(avr*100)/100;
       return avr;
     };
     $scope.init = function () {
