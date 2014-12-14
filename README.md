@@ -3,6 +3,8 @@ FRCdozer
 
 A complete scouting app (frontend and backend) for FIRST Robotics Compeition events. Made by FRC team 4118
 
+![alt tag](http://i.imgur.com/NKJoBUr.png)
+
 A demo of this app, the same one I use for testing (unstable), can be found at http://23.94.13.240:3000/#/
 To install: 
 
