@@ -91,15 +91,6 @@ angular.module('FRCdozer')
         });
       }
     };
-    $scope.getGame = function (id,def) {
-      if (!def) return $http.get('/api/game/'+id);
-      else {
-        $http.get('/api/game/'+id)
-        .success(function (data) {
-          $scope.game = data;
-        });
-      }
-    };
     $scope.getMatch = function (id) {
       for (x in $scope.matches) if ($scope.matches[x]._id === id) {
         return $scope.matches[x];
@@ -119,6 +110,7 @@ angular.module('FRCdozer')
     $scope.addMatch = function (elements) {
       if ($scope.connected) $scope.socket.emit('newMatch',elements);
       else $http.post ('/api/match',elements);
+      $scope.add = {};
     };
     $scope.delMatch = function (id) {
       if ($scope.connected) $scope.socket.emit('delMatch',id);
@@ -158,13 +150,11 @@ angular.module('FRCdozer')
       return avr;
     };
     $scope.init = function () {
-      $scope.getCurGame().success(function (data) {
-        $scope.curGame=data;
-        $scope.getMatches().success(function (data2) {
-          $scope.matches=data2;
+      $scope.getCurGame(true);
+      $scope.getMatches().success(function (data) {
+          $scope.matches=data;
           $scope.getTeams(true);
           $scope.add = {};
-        });
       });
     };
     $scope.init();
