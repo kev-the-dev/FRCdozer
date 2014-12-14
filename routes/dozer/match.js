@@ -19,7 +19,10 @@ router.post('/', function (req,res) { //add match
       res.status(500);
       res.send(err);
     }
-    else res.send(x);
+    else {
+      res.send(x);
+      //frc.io.emit('newMatch',x);
+    }
   });
 });
 router.put('/:id', function (req,res) { //edit one match

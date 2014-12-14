@@ -2,7 +2,6 @@ var mon = require('mongoose');
 var con = mon.createConnection("mongodb://localhost/FRC");
 var sch = mon.Schema;
 var out = {};
-
 out.games = con.model ('games', new sch({
   name: String,
   game: Array,

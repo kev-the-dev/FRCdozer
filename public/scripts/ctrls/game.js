@@ -13,6 +13,13 @@ angular.module('FRCdozer')
     $scope.sFalse = false;
     $scope.filt="";
     $scope.revr=false;
+    $scope.socket = io();
+    $scope.socket.on('message', function(msg){
+      console.log(msg);
+    });
+    $scope.socket.on('newMatch', function (match) {
+      $socket.matches.push(match);
+    });
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
@@ -84,7 +91,7 @@ angular.module('FRCdozer')
         $http.post ('/api/match',elements)
         .success(function (data) {
           $scope.add = {};
-          $scope.getMatches(true);
+          //$scope.getMatches(true);
         });
       }
     };
