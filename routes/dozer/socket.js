@@ -26,6 +26,6 @@ module.exports = function (server) {
         if (err) io.emit('error',err);
         else io.emit('editGame',y);
       });
-    })
+    });
   });
 };

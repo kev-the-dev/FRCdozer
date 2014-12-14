@@ -161,6 +161,7 @@ angular.module('FRCdozer')
         $scope.getMatches().success(function (data2) {
           $scope.matches=data2;
           $scope.getTeams(true);
+          $scope.add = {};
         });
       });
     };
