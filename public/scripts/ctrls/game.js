@@ -15,12 +15,28 @@ angular.module('FRCdozer')
     $scope.revr=false;
     $scope.socket = io();
     $scope.connected = false;
+    function discon () {
+      $scope.$apply(function() {
+        $scope.connected=false;
+      });
+      console.log('disconnected');
+    }
+    function con() {
+      $scope.$apply(function() {
+        $scope.connected=true;
+      });
+      console.log('connected');
+    }
     $scope.socket
-      .on('connect', function () {$scope.connected=true;})
-      .on('connect_timeout', function () {$scope.connected=false;})
-      .on('newMatch', function(x){$scope.appendMatch(x);})
-      .on('delMatch', function (id) {$scope.removeMatch(id)})
-      .on('editMatch',function(mat){$scope.changeMatch(mat);});
+      .on('connect', con)
+      .on('reconnect',con)
+      .on('connect_timeout', discon)
+      .on('reconnecting', discon)
+      .on('reconnect_error',discon)
+      .on('reconnect_failed',discon)
+      .on('newMatch', discon)
+      .on('delMatch', discon)
+      .on('editMatch',discon);
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
