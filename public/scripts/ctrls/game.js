@@ -79,26 +79,16 @@ angular.module('FRCdozer')
         });
       }
     };
-    $scope.getMatch = function (id,def) {
-      for (x in $scope.matches) if ($scope.matches[x]._id = id) {
-        if (!def) return $scope.matches[x];
-        else return $scope.match = $scope.matches[x];
-      }
-      if (!def) return $http.get('/api/match/'+id);
-      else {
-        $http.get('/api/match/'+id)
-        .success(function (data) {
-          $scope.match=data;
-        });
+    $scope.getMatch = function (id) {
+      for (x in $scope.matches) if ($scope.matches[x]._id === id) {
+        return $scope.matches[x];
       }
     };
-    $scope.getTeam = function (team,def) {
-      for (x in $scope.teams || []) {
-        if (Number($scope.teams[x].team) === Number(team)) {
-          if (!def) return $scope.teams[x];
-          else $scope.team = $scope.teams[x];
+    $scope.getTeam = function (team) {
+      team = Number(team);
+      for (x in $scope.teams) if (Number($scope.teams[x].team) === team){
+          return $scope.teams[x];
           break;
-        }
       }
     }
     $scope.editMatch = function (id,params,def) {
@@ -165,14 +155,14 @@ angular.module('FRCdozer')
       for (x in mats) avr = Math.round(((avr+(Number(mats[x][prop])||0))/(x+1))*100)/100;
       return avr;
     };
-    $scope.init = function (aft) {
+    $scope.init = function () {
       $scope.getCurGame().success(function (data) {
         $scope.curGame=data;
         $scope.getMatches().success(function (data2) {
           $scope.matches=data2;
           $scope.getTeams(true);
-          if(aft) aft();
         });
       });
     };
+    $scope.init();
 }]);

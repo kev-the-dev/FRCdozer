@@ -25,35 +25,21 @@ angular.module('FRCdozer',['ngRoute'])
       controller: 'gameCtrl',
       templateUrl: '/views/game.html'
     })
-    .when('/game/:id', {
-      controller: 'gameCtrl',
-      templateUrl: '/views/game.html'
-    })
     .otherwise ({redirectTo: '/'});
   }])
   .controller('tableCtrl',['$scope',function ($scope){
-    $scope.init();
   }])
   .controller('matchCtrl',['$scope','$routeParams','$http',function ($scope,$routeParams,$http){
-    $scope.init(function () {
-      $scope.getMatch($routeParams.id,true);
-    });
+    $scope.matchId = $routeParams.id;
   }])
   .controller('addCtrl',['$scope',function ($scope){
-    $scope.init();
     $scope.addteam="def";
   }])
   .controller('teamCtrl',['$scope','$routeParams',function ($scope,$routeParams){
-    $scope.init(function () {
-      $scope.getTeam($routeParams.team,true);
-    });
+    $scope.teamNum = $routeParams.team;
   }])
   .controller('teamsCtrl', ['$scope', function ($scope) {
-    $scope.init();
   }])
   .controller('gameCtrl',['$scope','$routeParams',function($scope,$routeParams){
-    $scope.init(function() {
-      if (!$routeParams.id) $scope.game=$scope.curGame;
-      else $scope.getGame($routeParams.id,true);
-    });
+    $scope.game=$scope.curGame;
   }]);

@@ -78,5 +78,5 @@
   <tr><td colspan='2'><button class="btn btn-success" data-ng-click='game.calc.push({name:"",elements:[{name:"",worth:""}]})'>+</button></td></tr>
 </table>
 <hr>
-<button class='btn btn-primary' data-ng-click='editGame(game._id,game)'>Save Changes</button>
-<button class="btn btn-warning" data-ng-click='getGame($routeParams.id || "")'>Cancel</button>
+<button class='btn btn-primary' data-ng-click='editGame(curGame._id,game)'>Save Changes</button>
+<button class="btn btn-warning" data-ng-click='game=curGame''>Reset</button>
