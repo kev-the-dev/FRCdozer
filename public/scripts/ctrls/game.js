@@ -34,13 +34,19 @@ angular.module('FRCdozer')
       .on('reconnect_failed',discon)
       .on('newMatch', function(x){$scope.appendMatch(x);})
       .on('delMatch', function(x){$scope.removeMatch(x);})
-      .on('editMatch',function(x){$scope.changeMatch(x);});
+      .on('editMatch',function(x){$scope.changeMatch(x);})
+      .on('editGame',function(x){$scope.changeGame(x);});
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
         $scope.filt=prop;
         $scope.revr=true;
       }
+    };
+    $scope.changeGame = function (game) {
+      $scope.$apply(function() {
+        $scope.curGame = game;
+      });
     };
     $scope.appendMatch = function (match) {
       $scope.$apply(function() {
@@ -138,7 +144,7 @@ angular.module('FRCdozer')
       else {
         $http.put('/api/game/'+id,elements)
         .success(function (data) {
-          $scope.game = data;
+          //$scope.game = data;
         })
       }
     };
@@ -155,18 +161,18 @@ angular.module('FRCdozer')
       mSearch: for (x in mats) { //sorts matches into teams
         for (y in teams) {
           if (teams[y].team === mats[x].team) {
-            teams[y].matches.push(mats[x].elements);
+            teams[y].matches.push(mats[x]);
             continue mSearch;
           }
         }
-        teams.push({team:mats[x].team,matches:[mats[x].elements],averages:{}});
+        teams.push({team:mats[x].team,matches:[mats[x]],averages:{}});
       }
       if (!def) return teams;
       else $scope.teams = teams;
     };
     $scope.getAverage = function (prop,mats) {
       var avr = 0;
-      for (x in mats) avr = Math.round(((avr+(Number(mats[x][prop])||0))/(x+1))*100)/100;
+      for (x in mats) avr = Math.round(((avr+(Number(mats[x].elements[prop])||0))/(x+1))*100)/100;
       return avr;
     };
     $scope.init = function () {

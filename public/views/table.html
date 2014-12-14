@@ -46,7 +46,7 @@
       <tbody>
         <tr data-ng-repeat='x in matches | orderBy:filt:revr'>
           <td>
-            <a ng-href='#/match/{{x._id}}'>&#60;a&#62;</a>
+            <a class="btn btn-info" ng-href='#/match/{{x._id}}'>&#60;a&#62;</a>
             <button data-ng-click='delMatch(x._id,true)' class='btn btn-danger'>-</button>
             <button data-ng-click='editMatch(x._id,x,true)' class='btn btn-success'>Save</button>
           </td>

@@ -1,5 +1,9 @@
-
-<h2>Game:{{game.name}}</h2>
+<div class="form-group form-inline">
+  <label class="control-label form-inline">Game:</label>
+  <div>
+    <input class="form-control form-inline" data-ng-model='game.name'>
+  </div>
+</div>
 <p>ID:{{game._id}}</p>
 <table class='table table-bordered table-striped table-hover'>
   <tr>
@@ -79,4 +83,4 @@
 </table>
 <hr>
 <button class='btn btn-primary' data-ng-click='editGame(curGame._id,game)'>Save Changes</button>
-<button class="btn btn-warning" data-ng-click='game=curGame''>Reset</button>
+<button class="btn btn-warning" data-ng-click='game=curGame'>Reset</button>
