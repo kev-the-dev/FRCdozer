@@ -32,9 +32,9 @@ angular.module('FRCdozer')
       .on('reconnecting', discon)
       .on('reconnect_error',discon)
       .on('reconnect_failed',discon)
-      .on('newMatch', discon)
-      .on('delMatch', discon)
-      .on('editMatch',discon);
+      .on('newMatch', function(x){$scope.appendMatch(x);})
+      .on('delMatch', function(x){$scope.removeMatch(x);})
+      .on('editMatch',function(x){$scope.changeMatch(x);});
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
