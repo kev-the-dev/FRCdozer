@@ -21,7 +21,8 @@ router.post('/', function (req,res) { //add match
     }
     else {
       res.send(x);
-      //frc.io.emit('newMatch',x);
+      console.log(frc.io);
+      frc.io.emit('newMatch',x);
     }
   });
 });

@@ -18,7 +18,8 @@ angular.module('FRCdozer')
       console.log(msg);
     });
     $scope.socket.on('newMatch', function (match) {
-      $socket.matches.push(match);
+      console.log(match);
+      $scope.matches.push(match);
     });
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
