@@ -53,17 +53,29 @@ angular.module('FRCdozer')
     $scope.appendMatch = function (match) {
       $scope.$apply(function() {
         $scope.matches.push(match);
-        $scope.getTeams(true);
+        $scope.getTeams(true,[match],true);
       });
     };
     $scope.removeMatch = function (id) {
+      var a,b,c;
       for (x in $scope.matches) if (id === $scope.matches[x]._id) {
-        $scope.$apply(function() {
-          $scope.matches.splice(x,1);
-          $scope.getTeams(true);
-        });
+        a=x;
+        var team =  $scope.matches[x].team;
+        for (y in $scope.teams) if ($scope.teams[y].team===team) {
+          b=y;
+          var m = $scope.teams[y].matches;
+          for (z in m) if (m[z]._id = id) {
+            c=z;
+            break;
+          }
+          break;
+        }
         break;
       };
+      $scope.$apply(function() {
+        $scope.matches.splice(a,1);
+        $scope.teams[b].matches.splice(c,1);
+      });
     };
     $scope.changeMatch = function (match) {
       for (x in $scope.matches) if (match._id === $scope.matches[x]._id) {
@@ -129,7 +141,7 @@ angular.module('FRCdozer')
       return Math.round(val*100)/100;
     };
     $scope.getTeams = function (def,mats,noReset) {
-      var teams = [];
+      var teams = noReset ?  $scope.teams : [];
       mats = mats || $scope.matches;
       mSearch: for (x in mats) { //sorts matches into teams
         for (y in teams) {
