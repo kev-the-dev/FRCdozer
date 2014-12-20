@@ -44,14 +44,14 @@ router.route('/game/:id/sub/:s')
     });
   })
   .delete(function (req,res) {
-    games.findById(req.params.id,function(err,x) {
+    games.findById(req.params.id,function(err,z) {
       if (err) res.status(500).send(err);
-      else {
-        y = x.submissions.id(req.params.s);
+      else if (z) {
+        var y = z.submissions.id(req.params.s);
         if (y) {
           y.remove();
-          x.save (function (err) {
-            if(err) res.send (err)
+          z.save (function (err) {
+            if (err) res.status(500).send (err);
             else res.send("Removed: "+y._id);
           });
         }
