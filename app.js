@@ -25,7 +25,7 @@ app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/',require('./routes/dozer/index.js'));
-
+require('./routes/dozer/socket.js')(server);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -43,5 +43,4 @@ var debug = require('debug')('expressTest');
 app.set('port', process.env.PORT || 3000);
 server.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
-  require('./routes/dozer/socket.js')(server);
 });
