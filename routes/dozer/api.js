@@ -83,17 +83,9 @@ router.route('/game/:id')
     });
   })
   .put(function (req,res) { //edit game with id
-    games.findById(req.params.id,function(err,x) {
+    games.findByIdAndUpdate(req.params.id,{$set:req.body||null},function(err,x) {
       if (err) res.status(500).send(err);
-      else {
-        y = x.submissions;
-        x = req.body;
-        x.submissions = y;
-        x.save(function (err,x) {
-          if (err) res.status(500).send (err);
-          else res.send(x);
-        });
-      }
+      else res.send(x);
     });
   })
   .delete(function (req,res) { //delete game with id
