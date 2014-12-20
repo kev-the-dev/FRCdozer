@@ -32,15 +32,14 @@ router.route('/game/:id/sub/:s')
       if (err) res.status(500).send(err);
       else {
         var y = x.submissions.id(req.params.s);
-        console.log(JSON.stringify(y));
         if (y) {
-          y = req.body;
+          y.set(req.body);
           x.save(function (err) {
             if (err) res.status(500).send(err);
             else res.send(y);
           });
         }
-        else res.status(500).send('Error: submission not found')
+        else res.status(500).send('Error: submission not found');
       }
     });
   })
