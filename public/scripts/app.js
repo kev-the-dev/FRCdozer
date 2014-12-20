@@ -2,8 +2,11 @@ angular.module('FRCdozer',['ngRoute'])
   .config(['$routeProvider',function ($routeProvider) {
     $routeProvider
     .when('/', {
-      controller: 'tableCtrl',
-      templateUrl: '/views/table.html'
+      controller: 'homeCtrl',
+      templateUrl: '/views/home.html'
+    })
+    .when('/g/:id',{
+
     })
     .when('/match/:id', {
       controller: 'matchCtrl',
@@ -42,4 +45,7 @@ angular.module('FRCdozer',['ngRoute'])
   }])
   .controller('gameCtrl',['$scope','$routeParams',function($scope,$routeParams){
     $scope.game=$scope.curGame;
+  }])
+  .controller('homeCtrl',['$scope',function ($scope) {
+    $scope.test = "world.";
   }]);
