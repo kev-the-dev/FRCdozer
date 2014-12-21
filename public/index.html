@@ -20,16 +20,35 @@
         <div class="navbar-header">
           <a class="navbar-brand bg-primary" ng-href="#/">FRC Dozer</a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
+        <div id="navbar">
           <ul class="nav navbar-nav nav-pills">
             <li role="presentation"><a class='bg-primary' ng-href="#/home">Home</a></li>
+            <li role="presentation"><a class='bg-primary' ng-href="#/g">Submissions</a></li>
             <li role="presentation"><a class='bg-primary' ng-href="#/add">Add</a></li>
             <li role="presentation"><a class='bg-primary' ng-href='#/game'>Game</a></li>
             <li role="presentation"><a class='bg-primary' ng-href='#/team'>Teams</a></li>
-            <li><button data-ng-show='!connected' class='bg-primary' data-ng-click='init()' class='bg-success btn btn-success'>Update</button></li>
+            <li><button data-ng-show='!connected' class='btn btn-default' data-ng-click='init()' class='bg-success btn btn-success'>Update</button></li>
             <li>
               <span data-ng-show='!connected'class='label label-danger bg-primary'>Disconnected!</span>
               <span data-ng-show='connected' class='label label-success bg-primary'>Connected!</span>
+            </li>
+            <li data-ng-if='!user'>
+              <form class="form-inline" role="form">
+                <div class="form-group">
+                  <div class="input-group">
+                    <label class="sr-only">Email address</label>
+                    <input data-ng-model='userName' type="text" class="form-control" placeholder="Enter username">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="sr-only">Password</label>
+                  <input data-ng-model='password' type="password" class="form-control" placeholder="Password">
+                </div>
+                <button data-ng-click='login(userName,password)' type="submit" class="btn btn-default">Sign in</button>
+              </form>
+            </li>
+            <li data-ng-if='user'>
+              <h4>Hello, {{user.username}}! <button class="btn btn-default" ng-click='logout()'>Logout</button></h4>
             </li>
           </ul>
         </div>

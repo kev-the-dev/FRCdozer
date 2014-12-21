@@ -6,8 +6,8 @@ var sch = mon.Schema;
 var crypto = require('crypto');
 var passport = require('passport');
 var passportLocal = require('passport-local');
-var games = con.model ('games', new sch({
-  name: String,
+var games = con.model ('FRCgames', new sch({
+  name: {type:String,unique:true},
   description: String,
   game: [new sch({name:String,type:String})],
   calc: [{name:String,elements:[{name:String,worth:Number}]}],
@@ -18,7 +18,7 @@ var games = con.model ('games', new sch({
   })]
 }));
 var users = con.model('users', new sch({
-  username: { type: String, required: true, index: { unique: true } },
+  username: { type: String, required: true, unique: true},
   password: { type: String, required: true },
   salt:String,
   info:Object
@@ -26,7 +26,7 @@ var users = con.model('users', new sch({
 passport.use(new passportLocal.Strategy(function(name,pass,done) {
   users.findOne({username:name}, function (err,x) {
     if (err) done(err,null);
-    else {
+    else if (x) {
       crypto.pbkdf2(pass,x.salt, 10000, 64, function(err, derivedKey) {
         if (err) done(err,null);
         else {
@@ -37,6 +37,7 @@ passport.use(new passportLocal.Strategy(function(name,pass,done) {
         }
       });
     }
+    else done(null,null);
   });
 }));
 passport.serializeUser(function (user,done) {
@@ -76,6 +77,10 @@ router.post('/register', function (req,res) {
   }
   else res.status(500).send('No username or password');
 });
+router.get('/hello', function (req,res) {
+  if (req.user) res.send (req.user);
+  else res.status(500).send("Not logged in");
+})
 router.route('/game/:id/sub/:s')
   .get(function (req,res) { //gets match with given id
     games.findById(req.params.id,function(err,x) {
@@ -143,7 +148,7 @@ router.route('/game/:id/sub')
 
 router.route('/game/:id')
   .get(function (req,res) { //get game with givin id,
-    games.findById(req.params.id, function (err,x) {
+    games.findOne({$or : [{_id: req.params.id}, {name: req.params.id}]}, function (err,x) {
       if (err) res.status(500).send(err);
       else res.send(x);
     });

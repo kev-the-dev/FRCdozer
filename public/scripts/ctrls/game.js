@@ -13,9 +13,12 @@ angular.module('FRCdozer')
     $scope.sFalse = false;
     $scope.filt="";
     $scope.revr=false;
+    $scope.userName = null;
+    $scope.password = null;
     //$scope.socket = io();
     $scope.connected = false;
     $scope.newTeam;
+    $scope.user = undefined;
     /*
     function discon () {
       $scope.$apply(function() {
@@ -40,6 +43,26 @@ angular.module('FRCdozer')
       .on('editGame',function(x){$scope.changeGame(x);})
       .on('error',function(x){console.log(x);});
     */
+    $scope.userInit = function () {
+      $http.get('/api/hello')
+        .success(function (data) {
+          $scope.user=data;
+        });
+    };
+    $scope.login = function (user,pass) {
+      $http.post('/api/login',{username:user,password:pass})
+        .success(function (data) {
+          $scope.user = data;
+        });
+      $scope.userName = null;
+      $scope.password = null;
+    };
+    $scope.logout = function () {
+      $http.post('/api/logout')
+        .success(function () {
+          $scope.user = undefined;
+        });
+    };
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
@@ -219,6 +242,7 @@ angular.module('FRCdozer')
           $scope.getTeams(true);
         }
       });
+      $scope.userInit();
     };
     $scope.init();
 }]);
