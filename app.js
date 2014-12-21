@@ -23,13 +23,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(expressSession({
-  secret:'badkey',
-  resave: false,
-  saveUninitialized: false,
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+
 app.use('/',require('./routes/dozer/index.js'));
 //require('./routes/dozer/socket.js')(server);
 // catch 404 and forward to error handler

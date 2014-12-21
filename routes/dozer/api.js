@@ -6,6 +6,16 @@ var sch = mon.Schema;
 var crypto = require('crypto');
 var passport = require('passport');
 var passportLocal = require('passport-local');
+var expressSession = require('express-session');
+
+router.use(expressSession({
+  secret:'badkey',
+  resave: false,
+  saveUninitialized: false,
+}));
+router.use(passport.initialize());
+router.use(passport.session());
+
 var games = con.model ('FRCgames', new sch({
   name: {type:String,unique:true},
   description: String,
