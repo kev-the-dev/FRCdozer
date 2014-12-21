@@ -49,8 +49,3 @@ angular.module('FRCdozer',['ngRoute'])
   .controller('homeCtrl',['$scope',function ($scope) {
     $scope.test = "world.";
   }])
-  .directive('myCustomer', function() {
-    return {
-      templateUrl: 'subs.html'
-    };
-  });

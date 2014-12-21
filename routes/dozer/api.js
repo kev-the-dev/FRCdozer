@@ -45,7 +45,7 @@ passport.use(new passportLocal.Strategy(function(name,pass,done) {
         if (err) done(err,null);
         else {
           if (derivedKey.toString('base64')===x.password.toString('base64')) {
-            done(null,safe(x));
+            done(null,x);
           }
           else done(null,null);
         }
@@ -60,12 +60,12 @@ passport.serializeUser(function (user,done) {
 passport.deserializeUser(function (id,done) {
   users.findById(id, function (err,x) {
     if (err) done (err,null);
-    else if (x) done(null,safe(x));
+    else if (x) done(null,x);
     else done(null,null);
   })
 });
 router.post('/login',passport.authenticate('local'),function (req,res) {
-  res.send(req.user);
+  res.send(safe(req.user));
 });
 router.post('/logout', function (req,res) {
   req.logout();
@@ -94,7 +94,26 @@ router.post('/register', function (req,res) {
 router.get('/hello', function (req,res) {
   if (req.user) res.send (safe(req.user));
   else res.status(500).send("Not logged in");
-})
+});
+router.put('/password', function (req,res) {
+  if (req.user && req.body.password && req.user.salt) users.findById(req.user._id, function (err,x) {
+    if (err) res.status(500).send(err);
+    else if (x) crypto.pbkdf2(req.body.password, req.user.salt, 10000, 64, function(err, derivedKey) {
+      if (err) res.status(500).send(err)
+      else if (derivedKey) {
+        x.password = derivedKey.toString('base64');
+        x.save(function (err,x) {
+          if (err) res.status(500).send(err);
+          else if (x) res.send("Password changed for "+x.username);
+          else res.status(500).send("Not saved.");
+        });
+      }
+      else res.status(500).send("No key made");
+    });
+    else res.status(500).send("No user found");
+  });
+  else res.status(500).send("You are not logged in");
+});
 router.route('/game/:id/sub/:s')
   .get(function (req,res) { //gets match with given id
     games.findById(req.params.id,function(err,x) {
@@ -161,9 +180,14 @@ router.route('/game/:id/sub')
 
 router.route('/game/:id')
   .get(function (req,res) { //get game with givin id,
-    games.findOne({$or : [{_id: req.params.id}, {name: req.params.id}]}, function (err,x) {
-      if (err) res.status(500).send(err);
-      else res.send(x);
+    games.findById(req.params.id, function (err,x) {
+      if (err) games.findOne({name:req.params.id}, function (err,x) {
+        if (err) res.status(500).send(err);
+        else if (x) res.send(x);
+        else res.status(500).send("not found");
+      });
+      else if (x) res.send(x);
+      else res.status(500).send("not found");
     });
   })
   .put(function (req,res) { //edit game with id
