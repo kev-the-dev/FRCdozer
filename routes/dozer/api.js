@@ -33,20 +33,23 @@ var users = con.model('users', new sch({
   salt:String,
   info:Object
 }));
+function safe (x) {
+  x.password = undefined;
+  x.salt = undefined;
+  return x;
+}
 passport.use(new passportLocal.Strategy(function(name,pass,done) {
   users.findOne({username:name}, function (err,x) {
     if (err) done(err,null);
-    else if (x) {
-      crypto.pbkdf2(pass,x.salt, 10000, 64, function(err, derivedKey) {
+    else if (x) crypto.pbkdf2(pass,x.salt, 10000, 64, function(err, derivedKey) {
         if (err) done(err,null);
         else {
           if (derivedKey.toString('base64')===x.password.toString('base64')) {
-            done(null,{_id:x._id,username:x.username,info:x.info});
+            done(null,safe(x));
           }
           else done(null,null);
         }
-      });
-    }
+    });
     else done(null,null);
   });
 }));
@@ -56,8 +59,9 @@ passport.serializeUser(function (user,done) {
 });
 passport.deserializeUser(function (id,done) {
   users.findById(id, function (err,x) {
-    if (err) done (null,null);
-    else done(null,x);
+    if (err) done (err,null);
+    else if (x) done(null,safe(x));
+    else done(null,null);
   })
 });
 router.post('/login',passport.authenticate('local'),function (req,res) {
@@ -88,7 +92,7 @@ router.post('/register', function (req,res) {
   else res.status(500).send('No username or password');
 });
 router.get('/hello', function (req,res) {
-  if (req.user) res.send (req.user);
+  if (req.user) res.send (safe(req.user));
   else res.status(500).send("Not logged in");
 })
 router.route('/game/:id/sub/:s')
