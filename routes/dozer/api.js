@@ -3,6 +3,9 @@ var router = express.Router();
 var mon = require('mongoose');
 var con = mon.createConnection("mongodb://localhost/FRC");
 var sch = mon.Schema;
+var crypto = require('crypto');
+var passport = require('passport');
+var passportLocal = require('passport-local');
 var games = con.model ('games', new sch({
   name: String,
   description: String,
@@ -14,11 +17,64 @@ var games = con.model ('games', new sch({
     elements: Object
   })]
 }));
-router.post('/login',function (req,res) {
-  res.send("You have logged in");
+var users = con.model('users', new sch({
+  username: { type: String, required: true, index: { unique: true } },
+  password: { type: String, required: true },
+  salt:String,
+  info:Object
+}));
+passport.use(new passportLocal.Strategy(function(name,pass,done) {
+  users.findOne({username:name}, function (err,x) {
+    if (err) done(err,null);
+    else {
+      crypto.pbkdf2(pass,x.salt, 10000, 64, function(err, derivedKey) {
+        if (err) done(err,null);
+        else {
+          if (derivedKey.toString('base64')===x.password.toString('base64')) {
+            done(null,{_id:x._id,username:x.username,info:x.info});
+          }
+          else done(null,null);
+        }
+      });
+    }
+  });
+}));
+passport.serializeUser(function (user,done) {
+  if (user._id) done(null,user._id);
+  else done(null,null);
+});
+passport.deserializeUser(function (id,done) {
+  users.findById(id, function (err,x) {
+    if (err) done (null,null);
+    else done(null,x);
+  })
+});
+router.post('/login',passport.authenticate('local'),function (req,res) {
+  res.send(req.user);
 });
 router.post('/logout', function (req,res) {
+  req.logout();
   res.send('You have logged out');
+});
+router.post('/register', function (req,res) {
+  var user = req.body.username;
+  var pass = req.body.password;
+  if (user && pass) {
+    crypto.randomBytes(32, function(ex,buf) { //generates salt
+      if (ex) res.status(500).send("random bytes crypto error");
+      else {
+        var salt = buf.toString('base64');
+        crypto.pbkdf2(pass, salt, 10000, 64, function(err, derivedKey) {
+          if (err) res.status(500).send ("pdkdf2 crypto error");
+          else users.create({username:user,password:derivedKey.toString('base64'),salt:salt}, function (err,x) {
+            if (err) res.status(500).send (err);
+            else res.send('User created: '+x.username);
+          });
+        });
+      }
+    });
+  }
+  else res.status(500).send('No username or password');
 });
 router.route('/game/:id/sub/:s')
   .get(function (req,res) { //gets match with given id

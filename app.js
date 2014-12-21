@@ -11,7 +11,7 @@ var mongo = require('mongoose');
 var app = express();
 var debug = require('debug')('expressTest');
 var passport = require('passport');
-var passportLocal = require('passport-local');
+var expressSession = require('express-session');
 var server = https.createServer({
   cert: fs.readFileSync('/etc/nginx/ssl/ssl-unified.crt'),
   key: fs.readFileSync('/etc/nginx/ssl/riptiderobotics-dec.key')
@@ -23,8 +23,11 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(expressSession({
+  secret:'badkey',
+  resave: false,
+  saveUninitialized: false,
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use('/',require('./routes/dozer/index.js'));
