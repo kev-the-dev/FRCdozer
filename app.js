@@ -10,7 +10,8 @@ var bodyParser = require('body-parser');
 var mongo = require('mongoose');
 var app = express();
 var debug = require('debug')('expressTest');
-
+var passport = require('passport');
+var passportLocal = require('passport-local');
 var server = https.createServer({
   cert: fs.readFileSync('/etc/nginx/ssl/ssl-unified.crt'),
   key: fs.readFileSync('/etc/nginx/ssl/riptiderobotics-dec.key')
@@ -24,6 +25,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/',require('./routes/dozer/index.js'));
 //require('./routes/dozer/socket.js')(server);
 // catch 404 and forward to error handler

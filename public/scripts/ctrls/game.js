@@ -81,10 +81,10 @@ angular.module('FRCdozer')
     };
     $scope.changeMatch = function (match) {
       for (x in $scope.matches) if (match._id === $scope.matches[x]._id) {
-        $scope.$apply(function() {
+        //$scope.$apply(function() {
           $scope.matches[x]=match;
           $scope.getTeams(true);
-        });
+        //});
         break;
       }
     }
@@ -160,7 +160,7 @@ angular.module('FRCdozer')
       //else $http.put('/api/match/'+x._id,x);
       $http.put('/api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
         .success(function (data) {
-          changeMatch(data);
+          $scope.changeMatch(data);
         });
     };
     $scope.addMatch = function (elements) {

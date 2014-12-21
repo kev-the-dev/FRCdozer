@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-
 var mon = require('mongoose');
 var con = mon.createConnection("mongodb://localhost/FRC");
 var sch = mon.Schema;
@@ -15,7 +14,12 @@ var games = con.model ('games', new sch({
     elements: Object
   })]
 }));
-
+router.post('/login',function (req,res) {
+  res.send("You have logged in");
+});
+router.post('/logout', function (req,res) {
+  res.send('You have logged out');
+});
 router.route('/game/:id/sub/:s')
   .get(function (req,res) { //gets match with given id
     games.findById(req.params.id,function(err,x) {
