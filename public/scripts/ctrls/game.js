@@ -88,7 +88,7 @@ angular.module('FRCdozer')
         break;
       }
     }
-    $scope.getMatches = function (def) {
+    $scope.getCurMatches = function (def) {
       if (!def) return $http.get ('/api/match');
       else {
         $http.get ('/api/match')
@@ -158,18 +158,24 @@ angular.module('FRCdozer')
     $scope.editMatch = function (x) {
       //if ($scope.connected) $scope.socket.emit('editMatch',{_id:x._id,team:x.team,elements:x.elements});
       //else $http.put('/api/match/'+x._id,x);
-      $http.put('/api/match/'+x._id,x);
+      $http.put('/api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
+        .success(function (data) {
+          changeMatch(data);
+        });
     };
     $scope.addMatch = function (elements) {
       //if ($scope.connected) $scope.socket.emit('newMatch',elements);
       //else
-      $http.post ('/api/match',elements);
-      $scope.add = {};
+      $http.post ('/api/game/'+$scope.curGame._id+'/sub',elements)
+        .success(function (data) {
+          $scope.appendMatch(data);
+          $scope.add={};
+        });
     };
     $scope.delMatch = function (id) {
       //if ($scope.connected) $scope.socket.emit('delMatch',id);
       //else
-      $http.delete ('/api/match/'+id);
+      $http.delete ('/api/game/'+$scope.curGame._id+'/sub/'+id);
     };
     $scope.editGame = function (x) {
       //if ($scope.connected) $scope.socket.emit('editGame',angular.toJson(x));
@@ -205,15 +211,14 @@ angular.module('FRCdozer')
       avr = Math.round(avr*100)/100;
       return avr;
     };
-    /*
     $scope.init = function () {
-      $scope.getCurGame(true);
-      $scope.getMatches().success(function (data) {
-          $scope.matches=data;
+      $scope.getGame('5495eb1b46fea7c15102dc7f', function (err,data) {
+        if (data) {
+          $scope.curGame = data;
+          $scope.matches = data.submissions;
           $scope.getTeams(true);
-          $scope.add = {};
+        }
       });
     };
     $scope.init();
-    */
 }]);

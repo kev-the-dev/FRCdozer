@@ -5,8 +5,8 @@ angular.module('FRCdozer',['ngRoute'])
       controller: 'homeCtrl',
       templateUrl: '/views/home.html'
     })
-    .when('/g/:id',{
-
+    .when('/g/',{
+      templateUrl: '/views/table.html'
     })
     .when('/match/:id', {
       controller: 'matchCtrl',

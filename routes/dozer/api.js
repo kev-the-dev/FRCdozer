@@ -12,7 +12,7 @@ var games = con.model ('games', new sch({
   submissions: [new sch({
     match: String,
     team: Number,
-    elements: Array
+    elements: Object
   })]
 }));
 
@@ -60,19 +60,26 @@ router.route('/game/:id/sub/:s')
     });
   });
 
-router.post('/game/:id/sub', function (req,res) { //add match
-  games.findById(req.params.id, function (err,x) {
-    if (err) res.status(500).send(err);
-    else {
-      y = x.submissions.push(req.body);
-      console.log(y);
-      x.save(function (err) {
-        if (err) res.status(500).send(err);
-        else res.send(x.submissions[y-1]);
-      });
-    }
+router.route('/game/:id/sub')
+  .get(function (req,res) {
+    games.findById(req.params.id, function (err,x) {
+      if (err) res.status(500).send(err);
+      else res.send(x.submissions);
+    });
+  })
+  .post(function (req,res) { //add match
+    games.findById(req.params.id, function (err,x) {
+      if (err) res.status(500).send(err);
+      else {
+        y = x.submissions.push(req.body);
+        console.log(y);
+        x.save(function (err) {
+          if (err) res.status(500).send(err);
+          else res.send(x.submissions[y-1]);
+        });
+      }
+    });
   });
-});
 
 router.route('/game/:id')
   .get(function (req,res) { //get game with givin id,
@@ -94,11 +101,19 @@ router.route('/game/:id')
     });
   });
 
-router.post('/game', function (req,res) {
-  req.body.submissions=[];
-  games.create(req.body,function(err,x) {
-    if (err) res.status(500).send(err);
-    else res.send(x);
+router.route('/game')
+  .post(function (req,res) {
+    req.body.submissions=[];
+    games.create(req.body,function(err,x) {
+      if (err) res.status(500).send(err);
+      else res.send(x);
+    });
+  })
+  .get(function (req,res) {
+    games.find({}, function (err,x) {
+      if (err) res.status(500).send(err);
+      else res.send(x);
+    });
   });
-})
+
 module.exports = router;
