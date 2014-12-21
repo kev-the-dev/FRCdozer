@@ -151,7 +151,6 @@ router.route('/game/:id/sub')
       if (err) res.status(500).send(err);
       else {
         y = x.submissions.push(req.body);
-        console.log(y);
         x.save(function (err) {
           if (err) res.status(500).send(err);
           else res.send(x.submissions[y-1]);
