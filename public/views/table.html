@@ -18,8 +18,8 @@
           <td data-ng-repeat='p in curGame.game'>
             <input data-ng-if='p.type==="String"' class="form-control" data-ng-model='add.elements[p.name]' placeholder='wow!'>
               <form data-ng-if='p.type==="Boolean"'>
-                <input type="radio" ng-model="add.elements[p.name]" ng-value="sTrue">True<br/>
-                <input type="radio" ng-model="add.elements[p.name]" ng-value="sFalse">False<br/>
+                <input type="radio" ng-model="add.elements[p.name]" ng-value="true">True<br/>
+                <input type="radio" ng-model="add.elements[p.name]" ng-value="false">False<br/>
               </form>
               <span data-ng-if='p.type==="Number"'>
                 <h4>{{add.elements[p.name] || 0 }}
@@ -54,8 +54,8 @@
           <td data-ng-repeat='y in curGame.game'>
             <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'>
             <form data-ng-if='y.type==="Boolean"'>
-              <input type="radio" ng-model="x.elements[y.name]" ng-value="sTrue">True
-              <input type="radio" ng-model="x.elements[y.name]" ng-value="sFalse">False
+              <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
+              <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
             </form>
             <h4 data-ng-if='y.type==="Number"'>{{x.elements[y.name] || 0 }}
               <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" class="btn btn-xs btn-info">+</button>

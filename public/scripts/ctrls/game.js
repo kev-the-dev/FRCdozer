@@ -9,8 +9,6 @@ angular.module('FRCdozer')
     $scope.sample = {};
     $scope.teams = [];
     $scope.team={};
-    $scope.sTrue = true;
-    $scope.sFalse = false;
     $scope.filt="";
     $scope.revr=false;
     $scope.userName = null;
