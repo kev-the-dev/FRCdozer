@@ -7,7 +7,6 @@ angular.module('FRCdozer',['ui.router'])
     $stateProvider
       .state('home', {
         url: "/",
-        controller: 'homeCtrl',
         templateUrl: '/views/home.html'
       })
       .state('game', {
@@ -32,6 +31,35 @@ angular.module('FRCdozer',['ui.router'])
         templateUrl: '/views/teams.html'
       });
   }])
-  .controller('homeCtrl',['$scope',function ($scope) {
+  .controller('mainCtrl',['$scope','$http',function ($scope,$http) {
     $scope.test = "world.";
+    $scope.user = undefined;
+    $scope.userInit = function () {
+      $http.get('/api/hello')
+      .success(function (data) {
+        $scope.user=data;
+      });
+    };
+    $scope.login = function (user,pass) {
+      $http.post('/api/login',{username:user,password:pass})
+      .success(function (data) {
+        $scope.user = data;
+      });
+      $scope.userName = null;
+      $scope.password = null;
+    };
+    $scope.logout = function () {
+      $http.post('/api/logout')
+      .success(function () {
+        $scope.user = undefined;
+      });
+    };
+    $scope.register = function (user,pass) {
+      $http.post('/api/register',{username:user,password:pass})
+        .success(function (x) {
+          console.log("registered");
+          $scope.login(user,pass);
+        });
+    };
+    $scope.userInit();
   }]);

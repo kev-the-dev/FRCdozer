@@ -83,7 +83,8 @@ router.post('/register', function (req,res) {
           if (err) res.status(500).send ("pdkdf2 crypto error");
           else users.create({username:user,password:derivedKey.toString('base64'),salt:salt}, function (err,x) {
             if (err) res.status(500).send (err);
-            else res.send('User created: '+x.username);
+            else if (x) res.send(safe(x));
+            else res.status(500).send("mongo messed up");
           });
         });
       }
