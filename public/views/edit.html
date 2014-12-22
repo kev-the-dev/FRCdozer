@@ -13,8 +13,8 @@
       <td data-ng-repeat='p in curGame.game'>
         <input data-ng-if='p.type==="String"' class="form-control" data-ng-model='sample.elements[p.name]' placeholder='wow!'>
         <form data-ng-if='p.type==="Boolean"'>
-          <input type="radio" ng-model="sample.elements[p.name]" ng-value="sTrue">True<br/>
-          <input type="radio" ng-model="sample.elements[p.name]" ng-value="sFalse">False<br/>
+          <input type="radio" ng-model="sample.elements[p.name]" ng-value="true">True<br/>
+          <input type="radio" ng-model="sample.elements[p.name]" ng-value="false">False<br/>
         </form>
         <span data-ng-if='p.type==="Number"'>
           <h4>{{sample.elements[p.name] || 0 }}

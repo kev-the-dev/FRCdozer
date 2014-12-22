@@ -17,8 +17,8 @@
     <div>
       <input data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'>
       <span data-ng-if='p.type==="Boolean"'>
-        <input type="radio" ng-model="add.elements[p.name]" ng-value="sTrue">True<br/>
-        <input type="radio" ng-model="add.elements[p.name]" ng-value="sFalse">False<br/>
+        <input type="radio" ng-model="add.elements[p.name]" ng-value="true">True<br/>
+        <input type="radio" ng-model="add.elements[p.name]" ng-value="false">False<br/>
       </span>
       <span data-ng-if='p.type==="Number"'>
         <p>{{add.elements[p.name] || 0 }}</p>
