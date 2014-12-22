@@ -7,12 +7,9 @@
     <link rel="stylesheet" href="styles/style.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js'></script>
-    <!-- script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js'></script -->
-    <!-- script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-resource.min.js'></script -->
     <script src='scripts/angular-ui-router.min.js'></script>
     <script src='scripts/app.js'></script>
     <script src='scripts/ctrls/game.js'></script>
-    <!-- script src="https://cdn.socket.io/socket.io-1.2.1.js"></script -->
 </head>
 <body>
     <nav class="navbar bg-primary" role="navigation">
@@ -23,28 +20,15 @@
         <div id="navbar">
           <ul class="nav navbar-nav nav-pills">
             <li role="presentation"><a class='bg-primary' ng-href="#/home">Home</a></li>
-            <li role="presentation"><a class='bg-primary' ng-href="#/g">Submissions</a></li>
-            <li role="presentation"><a class='bg-primary' ng-href="#/add">Add</a></li>
-            <li role="presentation"><a class='bg-primary' ng-href='#/game'>Game</a></li>
-            <li role="presentation"><a class='bg-primary' ng-href='#/team'>Teams</a></li>
-            <li><button data-ng-show='!connected' class='btn btn-default' data-ng-click='init()' class='bg-success btn btn-success'>Update</button></li>
-            <li>
-              <span data-ng-show='!connected'class='label label-danger bg-primary'>Disconnected!</span>
-              <span data-ng-show='connected' class='label label-success bg-primary'>Connected!</span>
-            </li>
             <li data-ng-if='!user'>
-              <form class="form-inline" role="form">
+              <form class="navbar-form navbar-right" role="form">
                 <div class="form-group">
-                  <div class="input-group">
-                    <label class="sr-only">Email address</label>
-                    <input data-ng-model='userName' type="text" class="form-control" placeholder="Enter username">
-                  </div>
+                  <input data-ng-model='userName' placeholder="Username" class="form-control" type="text">
                 </div>
                 <div class="form-group">
-                  <label class="sr-only">Password</label>
-                  <input data-ng-model='password' type="password" class="form-control" placeholder="Password">
+                  <input data-ng-model='password' placeholder="Password" class="form-control" type="password">
                 </div>
-                <button data-ng-click='login(userName,password)' type="submit" class="btn btn-default">Sign in</button>
+                <button data-ng-click='login(userName,password)' type="submit" class="btn btn-success">Sign in</button>
               </form>
             </li>
             <li data-ng-if='user'>

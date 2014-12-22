@@ -7,7 +7,19 @@
       <li><a href="#/game/{{curGame.name}}/add">Add</a></li>
       <li><a href='#/game/{{curGame.name}}/edit'>Edit Game</a></li>
       <li><a href='#/game/{{curGame.name}}/subs'>Submissions</a></li>
+      <li><a href='#/game/{{curGame.name}}/teams'>Teams</a></li>
     </ul>
   </nav>
-  <div data-ui-view></div>
+  <div data-ui-view>
+    <div class="jumbotron">
+      <div class="container">
+        <h1>{{curGame.name}}</h1>
+        <p>{{curGame.description}}</p>
+        <p><a class="btn btn-primary btn-lg" href='#/game/{{curGame.name}}/add' role='button'>Add data</a></p>
+        <p><a class="btn btn-primary btn-lg" href='#/game/{{curGame.name}}/teams' role='button'>View teams</a></p>
+        <p><a class="btn btn-primary btn-lg" href='#/game/{{curGame.name}}/teams' role='button'>Edit game</a></p>
+        <p><a class="btn btn-primary btn-lg" href='#/game/{{curGame.name}}/teams' role='button'>View submissions</a></p>
+      </div>
+    </div>
+  </div>
 </div>
