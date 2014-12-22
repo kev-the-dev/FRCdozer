@@ -49,15 +49,15 @@ angular.module('FRCdozer')
       }
     };
     $scope.changeGame = function (game) {
-      $scope.$apply(function() {
+      //$scope.$apply(function() {
         $scope.curGame = game;
-      });
+      //});
     };
     $scope.appendMatch = function (match) {
-      $scope.$apply(function() {
+      //$scope.$apply(function() {
         $scope.matches.push(match);
         $scope.getTeams(true,[match],true);
-      });
+      //});
     };
     $scope.removeMatch = function (id) {
       var a,b,c;
@@ -75,10 +75,10 @@ angular.module('FRCdozer')
         }
         break;
       };
-      $scope.$apply(function() {
+      //$scope.$apply(function() {
         $scope.matches.splice(a,1);
         $scope.teams[b].matches.splice(c,1);
-      });
+      //});
     };
     $scope.changeMatch = function (match) {
       for (x in $scope.matches) if (match._id === $scope.matches[x]._id) {
@@ -176,7 +176,10 @@ angular.module('FRCdozer')
     $scope.delMatch = function (id) {
       //if ($scope.connected) $scope.socket.emit('delMatch',id);
       //else
-      $http.delete ('/api/game/'+$scope.curGame._id+'/sub/'+id);
+      $http.delete ('/api/game/'+$scope.curGame._id+'/sub/'+id)
+      	.success(function() {
+      		$scope.removeMatch(id);
+      	});
     };
     $scope.editGame = function (x) {
       //if ($scope.connected) $scope.socket.emit('editGame',angular.toJson(x));

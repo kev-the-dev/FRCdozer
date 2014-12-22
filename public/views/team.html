@@ -27,7 +27,7 @@
     <tbody>
       <tr data-ng-repeat='x in team.matches | orderBy:filt:revr'>
         <td>
-          <a class="btn btn-xs btn-info" ng-href='#/match/{{x._id}}'>&#60;a&#62;</a>
+          <a class="btn btn-xs btn-info" ng-href='#/game/{{curGame.name}}/match/{{x._id}}'>&#60;a&#62;</a>
           <button data-ng-click='delMatch(x._id)' class='btn btn-xs btn-danger'>-</button>
           <button data-ng-click='editMatch(x._id)' class='btn btn-xs btn-success'>Save</button>
         </td>
@@ -39,7 +39,7 @@
           </form>
           <h4 data-ng-if='y.type==="Number"'>{{x.elements[y.name] || 0 }}
             <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" class="btn btn-xs btn-info">+</button>
-            <button ng-click="x.elements[y.name] = x.elements[y.name] - 1" class="btn btn-xs btn-warning">-</button>
+            <button ng-if='x.elements[y.name]>0' ng-click="x.elements[y.name] = x.elements[y.name] - 1" class="btn btn-xs btn-warning">-</button>
           </h4>
         </td>
         <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>

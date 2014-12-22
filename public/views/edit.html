@@ -19,7 +19,7 @@
         <span data-ng-if='p.type==="Number"'>
           <h4>{{sample.elements[p.name] || 0 }}
             <button ng-click="sample.elements[p.name] = sample.elements[p.name] + 1" class="btn btn-xs btn-info">+</button>
-            <button ng-click="sample.elements[p.name] = sample.elements[p.name] - 1" class="btn btn-xs btn-warning">-</button>
+            <button ng-if='sample.elements[p.name]>0' ng-click="sample.elements[p.name] = sample.elements[p.name] - 1" class="btn btn-xs btn-warning">-</button>
           </h4>
         </span>
       </td>

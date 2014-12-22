@@ -23,7 +23,7 @@
       <span data-ng-if='p.type==="Number"'>
         <p>{{add.elements[p.name] || 0 }}</p>
         <button ng-click="add.elements[p.name] = add.elements[p.name] + 1">+</button>
-        <button ng-click="add.elements[p.name] = add.elements[p.name] - 1">-</button>
+        <button ng-if='add.elements[p.name]>0' ng-click="add.elements[p.name] = add.elements[p.name] - 1">-</button>
       </span>
     </div>
     <hr>

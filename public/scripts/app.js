@@ -29,6 +29,20 @@ angular.module('FRCdozer',['ui.router'])
       .state('game.teams', {
         url: '/teams',
         templateUrl: '/views/teams.html'
+      })
+      .state('game.team', {
+        url: '/team/:num',
+        templateUrl: '/views/team.html',
+        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+          $scope.teamNum = $stateParams.num;
+        }]
+      })
+      .state('game.match', {
+        url: '/match/:id',
+        templateUrl: '/views/matchid.html',
+        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+          $scope.matchId= $stateParams.id;
+        }]
       });
   }])
   .controller('mainCtrl',['$scope','$http',function ($scope,$http) {

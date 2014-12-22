@@ -24,7 +24,7 @@
           </form>
           <h4 data-ng-if='y.type==="Number"'>{{match.elements[y.name] || 0 }}
             <button ng-click="match.elements[y.name] = match.elements[y.name] + 1" class="btn btn-xs btn-info">+</button>
-            <button ng-click="match.elements[y.name] = match.elements[y.name] - 1" class="btn btn-xs btn-warning">-</button>
+            <button ng-if='match.elements[y.name]>0' ng-click="match.elements[y.name] = match.elements[y.name] - 1" class="btn btn-xs btn-warning">-</button>
           </h4>
         </td>
         <td data-ng-repeat='r in curGame.calc'><h4>{{match.calc[r.name] = getValue(match.elements,r.elements)}}</h4></td>
