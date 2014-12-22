@@ -23,8 +23,8 @@
               </form>
               <span data-ng-if='p.type==="Number"'>
                 <h4>{{add.elements[p.name] || 0 }}
-                  <button ng-click="add.elements[p.name] = add.elements[p.name] + 1" class="btn btn-xs btn-info">+</button>
-                  <button ng-if='add.elements[p.name]>0' ng-click="add.elements[p.name] = add.elements[p.name] - 1" class="btn btn-xs btn-warning">-</button>
+                  <button ng-click="add.elements[p.name] = add.elements[p.name] + 1" class="btn btn-xs btn-success">+</button>
+                  <button ng-if='add.elements[p.name]>0' ng-click="add.elements[p.name] = add.elements[p.name] - 1" class="btn btn-xs btn-danger">-</button>
                 </h4>
               </span>
           </td>
@@ -58,8 +58,8 @@
               <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
             </form>
             <h4 data-ng-if='y.type==="Number"'>{{x.elements[y.name] || 0 }}
-              <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" class="btn btn-xs btn-info">+</button>
-              <button ng-if='x.elements[y.name]>0' ng-click="x.elements[y.name] = x.elements[y.name] - 1" class="btn btn-xs btn-warning">-</button>
+              <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" class="btn btn-xs btn-success">+</button>
+              <button ng-if='x.elements[y.name]>0' ng-click="x.elements[y.name] = x.elements[y.name] - 1" class="btn btn-xs btn-danger">-</button>
             </h4>
           </td>
           <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>
