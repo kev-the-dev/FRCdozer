@@ -1,5 +1,5 @@
 angular.module('FRCdozer')
-.controller('frcCtrl',['$scope','$http',function($scope,$http) {
+.controller('frcCtrl',['$scope','$http','$stateParams',function($scope,$http,$stateParams) {
     $scope.matches= undefined; //stores matches for current game
     $scope.match=[]; //stores single match that operations are currently being done on
     $scope.add = {} //stores un-posted add
@@ -233,7 +233,7 @@ angular.module('FRCdozer')
       return avr;
     };
     $scope.init = function () {
-      $scope.getGame('5495eb1b46fea7c15102dc7f', function (err,data) {
+      $scope.getGame($stateParams.name, function (err,data) { //'5495eb1b46fea7c15102dc7f'
         if (data) {
           $scope.curGame = data;
           $scope.matches = data.submissions;
