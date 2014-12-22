@@ -52,6 +52,7 @@ angular.module('FRCdozer',['ui.router'])
   .controller('mainCtrl',['$scope','$http',function ($scope,$http) {
     $scope.test = "world.";
     $scope.user = undefined;
+    $scope.error = {};
     $scope.userInit = function () {
       $http.get('/api/hello')
       .success(function (data) {
@@ -62,6 +63,10 @@ angular.module('FRCdozer',['ui.router'])
       $http.post('/api/login',{username:user,password:pass})
       .success(function (data) {
         $scope.user = data;
+        $scope.error.login = false;
+      })
+      .error(function (data) {
+        $scope.error.login = true;
       });
       $scope.userName = null;
       $scope.password = null;
