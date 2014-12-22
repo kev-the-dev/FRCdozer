@@ -49,7 +49,7 @@ angular.module('FRCdozer',['ui.router'])
         }]
       });
   }])
-  .controller('mainCtrl',['$scope','$http',function ($scope,$http) {
+  .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
     $scope.test = "world.";
     $scope.user = undefined;
     $scope.error = {};
@@ -67,7 +67,9 @@ angular.module('FRCdozer',['ui.router'])
       })
       .error(function (data) {
         $scope.error.login = true;
-        setTimeout(function(){ $scope.error.login=false; }, 3000);
+        $timeout(function () {
+          $scope.error.login=false;
+        },3000);
       });
       $scope.userName = null;
       $scope.password = null;
