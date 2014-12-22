@@ -18,6 +18,7 @@
   
   <div class="form-group">
 	<p ng-if="NewUser.ConfirmPassword != NewUser.Password" class="bg-danger">Your passwords don't match</p>
+	<p ng-if=class="bg-primary">...</p>
     <div class="col-sm-offset-2 col-sm-10">
       <button ng-if="NewUser.ConfirmPassword === NewUser.Password" ng-click="register(NewUser.Username, NewUser.Password)" type="submit" class="btn btn-default">Register</button>
     </div>
