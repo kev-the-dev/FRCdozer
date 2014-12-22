@@ -69,7 +69,7 @@ angular.module('FRCdozer',['ui.router'])
         $scope.error.login = true;
         $timeout(function () {
           $scope.error.login=false;
-        },3000);
+        },5000);
       });
       $scope.userName = null;
       $scope.password = null;
