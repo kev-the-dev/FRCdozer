@@ -9,6 +9,10 @@ angular.module('FRCdozer',['ui.router'])
         url: "/",
         templateUrl: '/views/home.html'
       })
+      .state('register', {
+        url: '/register',
+        templateUrl: '/views/register.html'
+      })
       .state('game', {
         url: '/game/:name',
         templateUrl: '/views/game.html',
