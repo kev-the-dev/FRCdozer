@@ -29,6 +29,7 @@
                   <input data-ng-model='password' placeholder="Password" class="form-control" type="password">
                 </div>
                 <button data-ng-click='login(userName,password)' type="submit" class="btn btn-success">Sign in</button>
+				<p ng-if="error.login" class="bg-warning">Your username/password is incorrect. Please try again.</p>
               </form>
             </li>
             <li data-ng-if='user'>
