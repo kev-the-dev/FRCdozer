@@ -1,6 +1,18 @@
 <div>
-  <h3>Name: <input data-ng-model='curGame.name'></h3>
-  <h3>Description:</h3><textarea data-ng-model='curGame.description'></textarea>
+  <form class="form-horizontal">
+    <div class="form-group">
+      <label class="control-label">Name: </label>
+      <div>
+        <input data-ng-model='curGame.name' class="form-control" placeholder="name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Description: </label>
+      <div>
+        <textarea data-ng-model='curGame.description' class="form-control" placeholder="description"></textarea>
+      </div>
+    </div>
+  </form>
   <table class='table table-bordered table-striped table-hover'>
     <tr>
       <th colspan='500'>Sample Match</th>
@@ -16,12 +28,11 @@
           <input type="radio" ng-model="sample.elements[p.name]" ng-value="true">True<br/>
           <input type="radio" ng-model="sample.elements[p.name]" ng-value="false">False<br/>
         </form>
-        <span data-ng-if='p.type==="Number"'>
-          <h4>{{sample.elements[p.name] || 0 }}
-            <button ng-click="sample.elements[p.name] = sample.elements[p.name] + 1" class="btn btn-xs btn-success">+</button>
-            <button ng-if='sample.elements[p.name]>0' ng-click="sample.elements[p.name] = sample.elements[p.name] - 1" class="btn btn-xs btn-danger">-</button>
-          </h4>
-        </span>
+        <div data-ng-if='p.type==="Number"' class="btn-group-vertical" role="group">
+          <button ng-click="sample.elements[p.name] = sample.elements[p.name] + 1" type="button" class="btn btn-xs btn-success">+</button>
+          <button type="button" class="btn btn-sm btn-default">{{sample.elements[p.name] || 0 }}</button>
+          <button ng-disabled="(sample.elements[p.name] || 0)<=0" ng-click="sample.elements[p.name] = sample.elements[p.name] - 1" type="button" class="btn btn-xs btn-danger">-</button>
+        </div>
       </td>
       <td data-ng-repeat='h in curGame.calc'>{{getValue(sample.elements || [],h.elements || [])}}</td>
     </tr>
