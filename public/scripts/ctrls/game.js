@@ -13,7 +13,14 @@ angular.module('FRCdozer')
     $scope.team={};
     $scope.filt="";
     $scope.revr=false;
-    //$scope.socket = io();
+    $scope.socket = io();
+    $scope.socket.emit('joinGame',"test");
+    $scope.socket.on('message', function (data) {
+      console.log(data);
+    });
+    setTimeout(function () {
+      $scope.socket.emit('joinGame',"test2");
+    });
     $scope.connected = false;
     $scope.newTeam;
 

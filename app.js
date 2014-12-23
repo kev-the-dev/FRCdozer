@@ -7,7 +7,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongo = require('mongoose');
 var app = express();
 var debug = require('debug')('expressTest');
 var passport = require('passport');
@@ -17,6 +16,8 @@ var server = https.createServer({
   key: fs.readFileSync('/etc/nginx/ssl/riptiderobotics-dec.key')
 },app);
 
+require('./routes/dozer/vars.js').io=require("socket.io")(server);
+
 app.use(favicon(__dirname + '/public/favicon.ico'));
 
 app.use(logger('dev'));
@@ -25,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/',require('./routes/dozer/index.js'));
-//require('./routes/dozer/socket.js')(server);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

@@ -22,5 +22,6 @@ var users = con.model('users', new sch({
 }));
 module.exports = {
   users: users,
-  games: games
+  games: games,
+  io: undefined
 };

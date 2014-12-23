@@ -3,11 +3,21 @@ var router = express.Router();
 var crypto = require('crypto');
 var passport = require('passport');
 var passportLocal = require('passport-local');
-var expressSession = require('express-session');
-var users = require('./vars.js').users;
+var session = require('express-session'),
+    sessionStore = new session.MemoryStore();
+var cookie = require('cookie');
+var cookieParser = require('cookie-parser');
+var vars= require('./vars.js'),
+    users=vars.users,
+    io=vars.io
 
-router.use(expressSession({
-  secret:'badkey',
+var COOKIE_SECRET = 'badkey';
+var COOKIE_NAME = 'connect.sid';
+
+router.use(session({
+  name : COOKIE_NAME,
+  secret: COOKIE_SECRET,
+  store: sessionStore,
   resave: false,
   saveUninitialized: false,
 }));
@@ -95,5 +105,40 @@ router.put('/password', function (req,res) {
     });
     else res.status(500).send("You are not logged in");
 });
+io.on('connection', function (socket) {
+  socket.on('joinGame', function (data) {
+    console.log("joinGame",data);
+    if (socket.session.passport.user) console.log(socket.session.passport.user);
+  });
+  io.emit('message',"Hi!");
+});
+io.use(function(socket, next) {
+  try {
+    var data = socket.handshake || socket.request;
+    if (! data.headers.cookie) {
+      return next(new Error('Missing cookie headers'));
+    }
+    var cookies = cookie.parse(data.headers.cookie);
+    if (! cookies[COOKIE_NAME]) {
+      return next(new Error('Missing cookie ' + COOKIE_NAME));
+    }
+    var sid = cookieParser.signedCookie(cookies[COOKIE_NAME], COOKIE_SECRET);
+    if (! sid) {
+      return next(new Error('Cookie signature is not valid'));
+    }
+    data.sid = sid;
+    sessionStore.get(sid, function(err, session) {
+      console.log(err,session);
 
+      //if (err) return next(err);
+      //if (! session) return next(new Error('session not found'));
+      socket.session = session || null;
+      //console.log(session);
+      next();
+      //*/
+    });
+  } catch (err) {
+    console.error(err);
+  }
+});
 module.exports = router;
