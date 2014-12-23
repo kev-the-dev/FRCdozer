@@ -15,7 +15,7 @@
       <tr data-ng-repeat='x in teams| orderBy:filt:revr'>
         <td>{{$index+1}}</td>
         <td><a ng-href='#/game/{{curGame.name}}/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
-        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name] = getAverage(z.name,x.matches)}}</h4></td>
+        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name] = getAverage(z.name,x.subs)}}</h4></td>
         <td data-ng-repeat='y in curGame.calc'><h4>{{x.calc[y.name] = getValue(x.averages,y.elements)}}</h4></td>
       </tr>
     </tbody>
