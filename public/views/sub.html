@@ -1,0 +1,35 @@
+<div>
+  <h2>Submission: {{sub=getSub(subId);sub._id}}</h2>
+  <table class='table table-bordered table-striped table-hover'>
+    <thead>
+      <tr>
+        <th>Links</th>
+        <th>Match</th>
+        <th>Team</th>
+        <th data-ng-repeat='x in curGame.game'>{{x.name}}</th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <button data-ng-click='delSub(sub._id)' class='btn btn-xs btn-danger'>-</button>
+          <button data-ng-click='editSub(sub._id)' class='btn btn-xs btn-success'>Save</button>
+        </td>
+        <td><input ng-model='sub.match'></td>
+        <td><a ng-href='#/game/{{curGame.name}}/team/{{sub.team}}'><h4>{{sub.team}}</h4></a></td>
+        <td data-ng-repeat='y in curGame.game'>
+          <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='sub.elements[y.name]' placeholder='wow!'>
+          <form data-ng-if='y.type==="Boolean"'>
+            <input type="radio" ng-model="sub.elements[y.name]" ng-value="sTrue">True
+            <input type="radio" ng-model="sub.elements[y.name]" ng-value="sFalse">False
+          </form>
+          <h4 data-ng-if='y.type==="Number"'>{{sub.elements[y.name] || 0 }}
+            <button ng-click="sub.elements[y.name] = sub.elements[y.name] + 1" class="btn btn-xs btn-success">+</button>
+            <button ng-if='sub.elements[y.name]>0' ng-click="sub.elements[y.name] = sub.elements[y.name] - 1" class="btn btn-xs btn-danger">-</button>
+          </h4>
+        </td>
+        <td data-ng-repeat='r in curGame.calc'><h4>{{sub.calc[r.name] = getValue(sub.elements,r.elements)}}</h4></td>
+      </tr>
+    </tbody>
+</div>

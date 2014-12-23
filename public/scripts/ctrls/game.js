@@ -88,7 +88,10 @@ angular.module('FRCdozer')
         //});
         break;
       }
-    }
+    };
+    $scope.getMatch = function (match) {
+      for (x in $scope.matches) if ($scope.matches[x].match = match) return $scope.matches[x];
+    };
     $scope.getCurSubs = function (def) {
       if (!def) return $http.get ('/api/match');
       else {
@@ -108,9 +111,17 @@ angular.module('FRCdozer')
         });
       }
     }; */
-    $scope.sortMatches = function (mats) {
-      var mats = mats || $scope.matches;
-      //for (x in mats)
+    $scope.sortMatches = function (subs) { //sorts array of submissions, or the scope submissions, into matches
+      var subs = subs || $scope.subs;
+      var matches = [];
+      z: for (x in subs) {
+        for (y in matches) if (matches[y].match === subs[x].match) {
+              matches[y].subs.push(subs[x]);
+              continue z;
+        }
+        matches.push({match:subs[x].match,subs:[subs[x]]});
+      }
+      $scope.matches = matches;
     };
     $scope.getGame = function (id,call) {
       $http.get('/api/game/'+id)
@@ -225,6 +236,7 @@ angular.module('FRCdozer')
           $scope.curGame = data;
           $scope.subs = data.submissions;
           $scope.getTeams(true);
+          $scope.sortMatches();
         }
       });
     };

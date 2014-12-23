@@ -1,0 +1,33 @@
+<h2>Match: {{match = getMatch(matchId);match.match}}</h2>
+<table class='table table-bordered table-striped table-hover'>
+  <thead>
+    <tr>
+      <th>Links</th>
+      <th>Team</th>
+      <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements."+x.name)'>Sort</button></th>
+      <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr data-ng-repeat='x in match.subs | orderBy:filt:revr'>
+      <td>
+        <a class="btn btn-xs btn-info" ng-href='#/game/{{curGame.name}}/sub/{{x._id}}'>&#60;a&#62;</a>
+        <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'>-</button>
+        <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'>Save</button>
+      </td>
+      <td><a ng-href='#/game/{{curGame.name}}/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
+      <td data-ng-repeat='y in curGame.game'>
+        <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'>
+        <form data-ng-if='y.type==="Boolean"'>
+          <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
+          <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
+        </form>
+        <h4 data-ng-if='y.type==="Number"'>{{x.elements[y.name] || 0 }}
+          <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" class="btn btn-xs btn-success">+</button>
+          <button ng-if='x.elements[y.name]>0' ng-click="x.elements[y.name] = x.elements[y.name] - 1" class="btn btn-xs btn-danger">-</button>
+        </h4>
+      </td>
+      <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>
+    </tr>
+  </tbody>
+</table>

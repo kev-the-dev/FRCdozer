@@ -3,6 +3,7 @@
       <thead>
         <tr>
           <th>Links</th>
+          <th>Match</th>
           <th>Team</th>
           <th data-ng-repeat='z in curGame.game'>{{z.name}}</th>
           <th data-ng-repeat='g in curGame.calc'>{{g.name}}</td>
@@ -14,6 +15,7 @@
             <button data-ng-click='addSub(add)' class='btn btn-xs btn-success'>Add</button>
             <button data-ng-click='add = {}' class="btn btn-xs btn-danger">Reset</button>
           </td>
+          <td><input class="form-control" data-ng-model='add.match'></input></td>
           <td><input class="form-control" data-ng-model='add.team' placeholder='4118'></td>
           <td data-ng-repeat='p in curGame.game'>
             <input data-ng-if='p.type==="String"' class="form-control" data-ng-model='add.elements[p.name]' placeholder='wow!'>
@@ -38,6 +40,7 @@
       <thead>
         <tr>
           <th>Links</th>
+          <th>Match</th>
           <th>Team</th>
           <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements."+x.name)'>Sort</button></th>
           <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
@@ -50,6 +53,7 @@
             <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'>-</button>
             <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'>Save</button>
           </td>
+          <td><input ng-model='x.match'></td>
           <td><a ng-href='#/game/{{curGame.name}}/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
           <td data-ng-repeat='y in curGame.game'>
             <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'>
