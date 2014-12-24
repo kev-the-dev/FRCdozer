@@ -106,10 +106,8 @@ router.put('/password', function (req,res) {
     else res.status(500).send("You are not logged in");
 });
 io.on('connection', function (socket) {
-  socket.on('joinGame', function (data) {
-    console.log("joinGame",data);
-    if (socket.session.passport.user) console.log(socket.session.passport.user);
-  });
+  console.log('connected');
+  io.to('Demo').emit('message','test');
   io.emit('message',"Hi!");
 });
 io.use(function(socket, next) {

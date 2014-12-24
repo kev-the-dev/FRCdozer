@@ -13,14 +13,6 @@ angular.module('FRCdozer')
     $scope.team={};
     $scope.filt="";
     $scope.revr=false;
-    $scope.socket = io();
-    $scope.socket.emit('joinGame',"test");
-    $scope.socket.on('message', function (data) {
-      console.log(data);
-    });
-    setTimeout(function () {
-      $scope.socket.emit('joinGame',"test2");
-    });
     $scope.connected = false;
     $scope.newTeam;
     $scope.getDate = function (id) {
@@ -250,6 +242,10 @@ angular.module('FRCdozer')
           $scope.subs = data.submissions;
           $scope.getTeams(true);
           $scope.sortMatches();
+          $scope.socket = io('/'+$scope.curGame.name);
+          $scope.socket.on('message', function (data) {
+            console.log(data);
+          });
         }
       });
     };
