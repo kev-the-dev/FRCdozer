@@ -23,7 +23,13 @@ angular.module('FRCdozer')
     });
     $scope.connected = false;
     $scope.newTeam;
-
+    $scope.getDate = function (id) {
+      if (id) {
+        var date = new Date(parseInt(id.substring(0, 8), 16) * 1000);
+        console.log(date);
+        return date;
+      }
+    };
     /*
     function discon () {
       $scope.$apply(function() {
