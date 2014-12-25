@@ -113,7 +113,6 @@ var game = io.of('/game')
     if (name) {
       //auth code here
       socket.join(name);
-      console.log('added socket to: '+name);
       game.emit('message','Will receive from: '+name);
       game.to(name).emit('message','to a room!');
     }

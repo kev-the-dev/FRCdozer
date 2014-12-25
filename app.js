@@ -44,7 +44,7 @@ var configApp = function () {
     debug('Express server listening on port ' + server.address().port);
   });
 }
-fs.readFile('/etc/nginx/ssl/riptiderobotics-dec.key', function (err,keyfile) {
+fs.readFile('/etc/nginx/ssl/riptiderobotics-dec.key', function (err,keyfile) { //tries to find key and cert file, makes http server if not found
   if (err || !keyfile) {
     server = http.createServer(app);
     configApp();
