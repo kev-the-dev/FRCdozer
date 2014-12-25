@@ -22,7 +22,6 @@ angular.module('FRCdozer')
         return date;
       }
     };
-    /*
     function discon () {
       $scope.$apply(function() {
         $scope.connected=false;
@@ -33,6 +32,7 @@ angular.module('FRCdozer')
         $scope.connected=true;
       });
     }
+    /*
     $scope.socket
       .on('connect', con)
       .on('reconnect',con)
@@ -62,6 +62,7 @@ angular.module('FRCdozer')
       //$scope.$apply(function() {
         $scope.subs.push(sub);
         $scope.getTeams(true,[sub],true);
+        $scope.sortMatches();
       //});
     };
     $scope.removeSub = function (id) {
@@ -83,6 +84,7 @@ angular.module('FRCdozer')
       //$scope.$apply(function() {
         $scope.subs.splice(a,1);
         $scope.teams[b].subs.splice(c,1);
+        $scope.sortMatches();
       //});
     };
     $scope.changeSub = function (sub) {
@@ -93,6 +95,7 @@ angular.module('FRCdozer')
         //});
         break;
       }
+      $scope.sortMatches();
     };
     $scope.getMatch = function (match) {
       for (x in $scope.matches) if ($scope.matches[x].match = match) return $scope.matches[x];
@@ -124,7 +127,7 @@ angular.module('FRCdozer')
               matches[y].subs.push(subs[x]);
               continue z;
         }
-        matches.push({match:subs[x].match,subs:[subs[x]]});
+        matches.push({match:subs[x].match || "n/a",subs:[subs[x]]});
       }
       $scope.matches = matches;
     };
@@ -179,27 +182,27 @@ angular.module('FRCdozer')
     $scope.editSub = function (x) {
       //if ($scope.connected) $scope.socket.emit('editMatch',{_id:x._id,team:x.team,elements:x.elements});
       //else $http.put('/api/match/'+x._id,x);
-      $http.put('/api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
-        .success(function (data) {
+      var req = $http.put('/api/game/'+$scope.curGame._id+'/sub/'+x._id,x);
+      if (!$scope.connected) req.success(function (data) {
           $scope.changeSub(data);
-        });
+      });
     };
     $scope.addSub = function (elements) {
       //if ($scope.connected) $scope.socket.emit('newMatch',elements);
       //else
-      $http.post ('/api/game/'+$scope.curGame._id+'/sub',elements)
-        .success(function (data) {
+      var req = $http.post ('/api/game/'+$scope.curGame._id+'/sub',elements);
+      if (!$scope.connected) req.success(function (data) {
           $scope.appendSub(data);
           $scope.add={};
-        });
+      });
     };
     $scope.delSub = function (id) {
       //if ($scope.connected) $scope.socket.emit('delMatch',id);
       //else
-      $http.delete ('/api/game/'+$scope.curGame._id+'/sub/'+id)
-      	.success(function() {
+      var req = $http.delete ('/api/game/'+$scope.curGame._id+'/sub/'+id);
+      if (!$scope.connected) req.success(function() {
       		$scope.removeSub(id);
-      	});
+      });
     };
     $scope.editGame = function (x) {
       //if ($scope.connected) $scope.socket.emit('editGame',angular.toJson(x));
@@ -235,6 +238,21 @@ angular.module('FRCdozer')
       avr = Math.round(avr*100)/100;
       return avr;
     };
+    function socketConf () {
+      $scope.socket = io('/game?name='+$scope.curGame.name)
+        .on('message', function (data) {console.log(data);})
+        .on('connect', con)
+        .on('reconnect',con)
+        .on('connect_timeout', discon)
+        .on('reconnecting', discon)
+        .on('reconnect_error',discon)
+        .on('reconnect_failed',discon)
+        .on('newSub', function(x){$scope.$apply(function () {$scope.appendSub(x);});})
+        .on('delSub', function(x){$scope.$apply(function () {$scope.removeSub(x._id);});})
+        .on('editSub',function(x){$scope.$apply(function () {$scope.changeSub(x);});})
+        .on('editGame',function(x){$scope.$apply(function () {$scope.changeGame(x);});})
+        .on('error',function(x){console.log(x);});
+    }
     $scope.init = function () {
       $scope.getGame($stateParams.name, function (err,data) { //'5495eb1b46fea7c15102dc7f'
         if (data) {
@@ -242,10 +260,7 @@ angular.module('FRCdozer')
           $scope.subs = data.submissions;
           $scope.getTeams(true);
           $scope.sortMatches();
-          $scope.socket = io('/'+$scope.curGame.name);
-          $scope.socket.on('message', function (data) {
-            console.log(data);
-          });
+          socketConf();
         }
       });
     };

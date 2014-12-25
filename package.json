@@ -16,6 +16,7 @@
     "socket.io":"~1.2.1",
     "passport":"*",
     "passport-local":"*",
-    "express-session":"*"
+    "express-session":"*",
+    "cookie":"*"
   }
 }

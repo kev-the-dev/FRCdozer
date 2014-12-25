@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var games = require('./vars.js').games;
+var vars = require('./vars.js'),
+    games = vars.games,
+    io = vars.io.of('/game');
 
 router.use(require('./auth.js'));
 
@@ -24,7 +26,10 @@ router.route('/game/:id/sub/:s')
           y.set(req.body);
           x.save(function (err) {
             if (err) res.status(500).send(err);
-            else res.send(y);
+            else {
+              res.send(y)
+              io.to(x.name).emit('editSub',y);
+            };
           });
         }
         else res.status(500).send('Error: submission not found');
@@ -40,7 +45,10 @@ router.route('/game/:id/sub/:s')
           y.remove();
           z.save (function (err) {
             if (err) res.status(500).send (err);
-            else res.send("Removed: "+y._id);
+            else {
+              io.to(z.name).emit('delSub',y);
+              res.send("Removed: "+y._id)
+            };
           });
         }
         else res.status(500).send('Error: submission not found');
@@ -62,7 +70,10 @@ router.route('/game/:id/sub')
         y = x.submissions.push(req.body);
         x.save(function (err) {
           if (err) res.status(500).send(err);
-          else res.send(x.submissions[y-1]);
+          else {
+            io.to(x.name).emit('newSub',x.submissions[y-1]);
+            res.send(x.submissions[y-1])
+          };
         });
       }
     });
@@ -83,7 +94,10 @@ router.route('/game/:id')
   .put(function (req,res) { //edit game with id
     games.findByIdAndUpdate(req.params.id,{$set:req.body||null},function(err,x) {
       if (err) res.status(500).send(err);
-      else res.send(x);
+      else {
+        io.to(x.name).emit('editGame',x);
+        res.send(x);
+      };
     });
   })
   .delete(function (req,res) { //delete game with id

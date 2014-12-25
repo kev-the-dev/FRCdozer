@@ -105,11 +105,21 @@ router.put('/password', function (req,res) {
     });
     else res.status(500).send("You are not logged in");
 });
-io.on('connection', function (socket) {
-  console.log('connected');
-  io.to('Demo').emit('message','test');
-  io.emit('message',"Hi!");
-});
+
+
+var game = io.of('/game')
+  .on('connection', function (socket) {
+    var name = socket.handshake.query.name;
+    if (name) {
+      //auth code here
+      socket.join(name);
+      console.log('added socket to: '+name);
+      game.emit('message','Will receive from: '+name);
+      game.to(name).emit('message','to a room!');
+    }
+    else socket.disconnect();
+  });
+/*
 io.use(function(socket, next) {
   try {
     var data = socket.handshake || socket.request;
@@ -132,11 +142,13 @@ io.use(function(socket, next) {
       //if (! session) return next(new Error('session not found'));
       socket.session = session || null;
       //console.log(session);
-      next();
-      //*/
+      return next();
+      //
     });
   } catch (err) {
+    next();
     console.error(err);
   }
 });
+*/
 module.exports = router;
