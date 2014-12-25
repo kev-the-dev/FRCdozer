@@ -17,6 +17,7 @@
     "passport":"*",
     "passport-local":"*",
     "express-session":"*",
-    "cookie":"~0.1.2"
+    "cookie":"~0.1.2",
+    "compression":"~1.2.2"
   }
 }
