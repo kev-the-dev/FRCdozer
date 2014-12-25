@@ -12,6 +12,7 @@ var app = express();
 var debug = require('debug')('expressTest');
 var passport = require('passport');
 var expressSession = require('express-session');
+var compression = require('compression');
 var server;
 var configApp = function () {
   require('./routes/dozer/vars.js').io=require("socket.io")(server);
@@ -22,7 +23,8 @@ var configApp = function () {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(cookieParser());
-
+  app.use(compression());
+  
   app.use('/',require('./routes/dozer/index.js'));
 
   // catch 404 and forward to error handler

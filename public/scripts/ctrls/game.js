@@ -18,7 +18,6 @@ angular.module('FRCdozer')
     $scope.getDate = function (id) {
       if (id) {
         var date = new Date(parseInt(id.substring(0, 8), 16) * 1000);
-        console.log(date);
         return date;
       }
     };
