@@ -17,7 +17,7 @@
       {{p.name}}
     </div>
     <div>
-      <input data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'>
+      <textarea data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'></textarea>
       <span data-ng-if='p.type==="Boolean"'>
         <input type="radio" ng-model="add.elements[p.name]" ng-value="true">True<br/>
         <input type="radio" ng-model="add.elements[p.name]" ng-value="false">False<br/>

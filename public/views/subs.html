@@ -18,7 +18,7 @@
           <td><input class="form-control" data-ng-model='add.match'></input></td>
           <td><input class="form-control" data-ng-model='add.team' placeholder='4118'></td>
           <td data-ng-repeat='p in curGame.game'>
-            <input data-ng-if='p.type==="String"' class="form-control" data-ng-model='add.elements[p.name]' placeholder='wow!'>
+            <textarea data-ng-if='p.type==="String"' class="form-control" data-ng-model='add.elements[p.name]' placeholder='wow!'></textarea>
             <form data-ng-if='p.type==="Boolean"'>
               <input type="radio" ng-model="add.elements[p.name]" ng-value="true">True<br/>
               <input type="radio" ng-model="add.elements[p.name]" ng-value="false">False<br/>
@@ -55,7 +55,7 @@
           <td><input class='form-control' ng-model='x.match'></td>
           <td><a ng-href='#/game/{{curGame.name}}/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
           <td data-ng-repeat='y in curGame.game'>
-            <input data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'>
+            <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
             <form data-ng-if='y.type==="Boolean"'>
               <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
               <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False

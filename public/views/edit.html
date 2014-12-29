@@ -25,7 +25,7 @@
     </tr>
     <tr>
       <td data-ng-repeat='p in curGame.game'>
-        <input data-ng-if='p.type==="String"' class="form-control" data-ng-model='sample.elements[p.name]' placeholder='wow!'>
+        <textarea data-ng-if='p.type==="String"' class="form-control" data-ng-model='sample.elements[p.name]' placeholder='wow!'></textarea>
         <form data-ng-if='p.type==="Boolean"'>
           <input type="radio" ng-model="sample.elements[p.name]" ng-value="true">True<br/>
           <input type="radio" ng-model="sample.elements[p.name]" ng-value="false">False<br/>
