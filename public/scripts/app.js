@@ -7,61 +7,61 @@ angular.module('FRCdozer',['ui.router'])
     $stateProvider
       .state('home', {
         url: "/",
-        templateUrl: '/views/home.html'
+        templateUrl: 'views/home.html'
       })
-	  .state('login', {
-		url: "/login",
-		templateUrl: '/views/login.html'
-	  })
+  	  .state('login', {
+  		url: "/login",
+  		templateUrl: 'views/login.html'
+  	  })
       .state('register', {
         url: '/register',
-        templateUrl: '/views/register.html'
+        templateUrl: 'views/register.html'
       })
       .state('game', {
         url: '/game/:name',
-        templateUrl: '/views/game.html',
+        templateUrl: 'views/game.html',
         controller: 'frcCtrl'
       })
       .state('game.edit', {
         url: '/edit',
-        templateUrl: '/views/edit.html',
+        templateUrl: 'views/edit.html',
       })
       .state('game.submissions', {
         url: '/subs',
-        templateUrl: '/views/subs.html'
+        templateUrl: 'views/subs.html'
       })
       .state('game.add', {
         url: '/add',
-        templateUrl: '/views/add.html'
+        templateUrl: 'views/add.html'
       })
       .state('game.teams', {
         url: '/teams',
-        templateUrl: '/views/teams.html'
+        templateUrl: 'views/teams.html'
       })
       .state('game.team', {
         url: '/team/:num',
-        templateUrl: '/views/team.html',
+        templateUrl: 'views/team.html',
         controller: ['$stateParams','$scope',function ($stateParams,$scope) {
           $scope.teamNum = $stateParams.num;
         }]
       })
       .state('game.match', {
         url: '/match/:id',
-        templateUrl: '/views/match.html',
+        templateUrl: 'views/match.html',
         controller: ['$stateParams','$scope',function ($stateParams,$scope) {
           $scope.matchId= $stateParams.id;
         }]
       })
       .state('game.sub', {
         url: '/sub/:id',
-        templateUrl: '/views/sub.html',
+        templateUrl: 'views/sub.html',
         controller: ['$scope','$stateParams',function ($scope,$stateParams) {
           $scope.subId = $stateParams.id;
         }]
       })
       .state('game.matches', {
         url: '/matches',
-        templateUrl: '/views/matches.html'
+        templateUrl: 'views/matches.html'
       });
   }])
   .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
@@ -69,13 +69,13 @@ angular.module('FRCdozer',['ui.router'])
     $scope.user = undefined;
     $scope.error = {};
     $scope.userInit = function () {
-      $http.get('/api/hello')
+      $http.get('api/hello')
       .success(function (data) {
         $scope.user=data;
       });
     };
     $scope.login = function (user,pass) {
-      $http.post('/api/login',{username:user,password:pass})
+      $http.post('api/login',{username:user,password:pass})
       .success(function (data) {
         $scope.user = data;
         $scope.error.login = false;
@@ -90,13 +90,13 @@ angular.module('FRCdozer',['ui.router'])
       $scope.password = null;
     };
     $scope.logout = function () {
-      $http.post('/api/logout')
+      $http.post('api/logout')
       .success(function () {
         $scope.user = undefined;
       });
     };
     $scope.register = function (user,pass) {
-      $http.post('/api/register',{username:user,password:pass})
+      $http.post('api/register',{username:user,password:pass})
         .success(function (x) {
           console.log("registered");
           $scope.login(user,pass);
