@@ -240,7 +240,7 @@ angular.module('FRCdozer')
       return avr;
     };
     function socketConf () {
-      $scope.socket = io('/game?name='+$scope.curGame.name,{path:window.location.pathname+'socket.io/'})
+      $scope.socket = io('/game?name='+$scope.curGame.name,{path:window.location.pathname+'socket.io/','force new connection' : true})
         .on('message', function (data) {console.log(data);})
         .on('connect', con)
         .on('reconnect',con)
