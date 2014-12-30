@@ -4,12 +4,11 @@
       <a class="navbar-brand" ui-sref='game'>{{curGame.name}}</a>
     </div>
     <ul class="nav navbar-nav">
-      <li><a ui-sref="game.add">Add</a></li>
-      <li><a ui-sref="game.edit">Edit Game</a></li>
-      <li><a ui-sref="game.submissions">Submissions</a></li>
-      <li><a ui-sref="game.teams">Teams</a></li>
-      <li><a ui-sref="game.matches">Matches</a></li>
-      <li></li>
+      <li ui-sref-active='active'><a ui-sref="game.add">Add</a></li>
+      <li ui-sref-active='active'><a ui-sref="game.edit">Edit Game</a></li>
+      <li ui-sref-active='active'><a ui-sref="game.submissions">Submissions</a></li>
+      <li ui-sref-active='active'><a ui-sref="game.teams">Teams</a></li>
+      <li ui-sref-active='active'><a ui-sref="game.matches">Matches</a></li>
       <li>
         <span data-ng-show='!connected'><span class='label label-warning bg-warning'>Live update off <span class='glyphicon glyphicon-remove' aria-hidden="true"></span></span> <button data-ng-click='init()' class='btn btn-success'><span class='glyphicon glyphicon-refresh' aria-hidden="true"></span></button></span>
         <span data-ng-show='connected'><span  class='label label-success bg-primary'>Live update on <span class='glyphicon glyphicon-ok' aria-hidden="true"></span></span></span>
