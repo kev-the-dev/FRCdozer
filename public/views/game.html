@@ -1,14 +1,14 @@
 <div>
   <nav class="navbar navbar-default" role="navigation">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#/game/{{curGame.name}}">{{curGame.name}}</a>
+      <a class="navbar-brand" ui-sref='game'>{{curGame.name}}</a>
     </div>
     <ul class="nav navbar-nav">
-      <li><a href="#/game/{{curGame.name}}/add">Add</a></li>
-      <li><a href='#/game/{{curGame.name}}/edit'>Edit Game</a></li>
-      <li><a href='#/game/{{curGame.name}}/subs'>Submissions</a></li>
-      <li><a href='#/game/{{curGame.name}}/teams'>Teams</a></li>
-      <li><a href='#/game/{{curGame.name}}/matches'>Matches</a></li>
+      <li><a ui-sref="game.add">Add</a></li>
+      <li><a ui-sref="game.edit">Edit Game</a></li>
+      <li><a ui-sref="game.submissions">Submissions</a></li>
+      <li><a ui-sref="game.teams">Teams</a></li>
+      <li><a ui-sref="game.matches">Matches</a></li>
       <li></li>
       <li>
         <span data-ng-show='!connected'><span class='label label-warning bg-warning'>Live update off <span class='glyphicon glyphicon-remove' aria-hidden="true"></span></span> <button data-ng-click='init()' class='btn btn-success'><span class='glyphicon glyphicon-refresh' aria-hidden="true"></span></button></span>
@@ -21,10 +21,10 @@
       <div class="container">
         <h1>{{curGame.name}}</h1>
         <p>{{curGame.description}}</p>
-        <p><a class="btn btn-primary btn-lg" href='#/game/{{curGame.name}}/add' role='button'>Add data</a></p>
-        <p><a class="btn btn-primary btn-lg" href='#/game/{{curGame.name}}/teams' role='button'>View teams</a></p>
-        <p><a class="btn btn-primary btn-lg" href='#/game/{{curGame.name}}/edit' role='button'>Edit game</a></p>
-        <p><a class="btn btn-primary btn-lg" href='#/game/{{curGame.name}}/subs' role='button'>View submissions</a></p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="game.add" role='button'>Add data</a></p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="game.teams" role='button'>View teams</a></p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="game.edit" role='button'>Edit game</a></p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="game.submissions" role='button'>View submissions</a></p>
       </div>
     </div>
   </div>
