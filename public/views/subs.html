@@ -34,7 +34,8 @@
       </tbody>
     </table>
     <hr>
-    <h5>{{filt || "no filter"}}{{if (rev)}}</h5>
+    <h4>Submissions: {{subs.length}}</h4>
+    <button ng-show='filt' type="button" class="btn btn-info"><span class='glyphicon glyphicon-filter' aria-hidden="true"></span> {{("Filtering by "+filt.split('.')[1]) || "no filter"}}<span ng-show='!revr'>, Decending</span></button>
     <table class='table table-bordered table-striped table-hover'>
       <thead>
         <tr>
