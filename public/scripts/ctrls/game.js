@@ -1,5 +1,5 @@
 angular.module('FRCdozer')
-.controller('frcCtrl',['$scope','$http','$stateParams',function($scope,$http,$stateParams) {
+.controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
     $scope.subs = []; //stores matches for current game
     $scope.sub = {};
     $scope.matches = [];
@@ -262,6 +262,9 @@ angular.module('FRCdozer')
           $scope.getTeams(true);
           $scope.sortMatches();
           socketConf();
+        }
+        else {
+          $state.go('404');
         }
       });
     };

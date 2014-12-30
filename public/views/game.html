@@ -9,10 +9,10 @@
       <li><a href='#/game/{{curGame.name}}/subs'>Submissions</a></li>
       <li><a href='#/game/{{curGame.name}}/teams'>Teams</a></li>
       <li><a href='#/game/{{curGame.name}}/matches'>Matches</a></li>
-      <li><button data-ng-show='!connected' class='bg-primary' data-ng-click='init()' class='bg-success btn btn-success'>Update</button></li>
+      <li></li>
       <li>
-        <span data-ng-show='!connected'class='label label-danger bg-primary'>Disconnected!</span>
-        <span data-ng-show='connected' class='label label-success bg-primary'>Connected!</span>
+        <span data-ng-show='!connected'><span class='label label-warning bg-warning'>Live update off <span class='glyphicon glyphicon-remove' aria-hidden="true"></span></span> <button data-ng-click='init()' class='btn btn-success'><span class='glyphicon glyphicon-refresh' aria-hidden="true"></span></button></span>
+        <span data-ng-show='connected'><span  class='label label-success bg-primary'>Live update on <span class='glyphicon glyphicon-ok' aria-hidden="true"></span></span></span>
       </li>
     </ul>
   </nav>

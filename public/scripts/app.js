@@ -2,7 +2,7 @@ angular.module('FRCdozer',['ui.router'])
   .config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider
       .when('/g/:name', '/game/:name')
-      .otherwise('/');
+      .otherwise('/404');
 
     $stateProvider
       .state('home', {
@@ -16,6 +16,10 @@ angular.module('FRCdozer',['ui.router'])
       .state('register', {
         url: '/register',
         templateUrl: 'views/register.html'
+      })
+      .state('404', {
+        url: '/404',
+        templateUrl: 'views/404.html'
       })
       .state('game', {
         url: '/game/:name',

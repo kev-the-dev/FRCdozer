@@ -20,7 +20,7 @@
         </div>
         <div id="navbar">
           <ul class="nav navbar-nav nav-pills">
-            <li role="presentation"><a class='bg-primary' ng-href="#/home">Home</a></li>
+            <li role="presentation"><a class='bg-primary' ng-href="#/">Home</a></li>
             <li data-ng-if='!user'>
               <form class="navbar-form navbar-right" role="form">
                 <div class="form-group">
@@ -33,12 +33,12 @@
         				  <button data-ng-click='login(userName,password)' type="submit" class="btn btn-success">Sign in</button>
         				</div>
         				<div ng-if="error.login" class="btn btn-sm btn-danger form-group">
-        				  <p>Your username/password is incorrect. Please try again.</p>
+        				  <p><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Your username/password is incorrect. Please try again.</p>
         				</div>
               </form>
             </li>
             <li data-ng-if='user'>
-              <h4>Hello, {{user.username}}! <button class="btn btn-default" ng-click='logout()'>Logout</button></h4>
+              <h4><span class='glyphicon glyphicon-user' aria-hidden="true"></span>  {{user.username}}  <button class="btn btn-default" ng-click='logout()'>Logout</button></h4>
             </li>
           </ul>
         </div>
