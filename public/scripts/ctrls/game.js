@@ -97,7 +97,7 @@ angular.module('FRCdozer')
       $scope.sortMatches();
     };
     $scope.getMatch = function (match) {
-      for (x in $scope.matches) if ($scope.matches[x].match = match) return $scope.matches[x];
+      for (x in $scope.matches) if ($scope.matches[x].match === match) return $scope.matches[x];
     };
     /*
     $scope.getCurSubs = function (def) {
