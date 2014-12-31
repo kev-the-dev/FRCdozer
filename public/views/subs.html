@@ -56,13 +56,13 @@
           <td><a ng-href='#/game/{{curGame.name}}/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
           <td data-ng-repeat='y in curGame.game'>
             <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
-            <form data-ng-if='y.type==="Boolean"'>
+            <form data-ng-if='y.type==="Boolean"' ng-init="x.elements[y.name] = x.elements[y.name] || false">
               <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
               <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
             </form>
             <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
               <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success"><span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span></button>
-              <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name] || 0 }}</button>
+              <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]  = x.elements[y.name] || 0 }}</button>
               <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger"><span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span></button>
             </div>
           </td>
