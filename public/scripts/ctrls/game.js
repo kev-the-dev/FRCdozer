@@ -11,8 +11,8 @@ angular.module('FRCdozer')
     $scope.sample = {};
     $scope.teams = [];
     $scope.team={};
-    $scope.filt="";
-    $scope.revr=false;
+    $scope.filt = $state.params.filter || "";
+    $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
     $scope.newTeam;
     $scope.getDate = function (id) {
@@ -31,20 +31,6 @@ angular.module('FRCdozer')
         $scope.connected=true;
       });
     }
-    /*
-    $scope.socket
-      .on('connect', con)
-      .on('reconnect',con)
-      .on('connect_timeout', discon)
-      .on('reconnecting', discon)
-      .on('reconnect_error',discon)
-      .on('reconnect_failed',discon)
-      .on('newMatch', function(x){$scope.appendMatch(x);})
-      .on('delMatch', function(x){$scope.removeMatch(x);})
-      .on('editMatch',function(x){$scope.changeMatch(x);})
-      .on('editGame',function(x){$scope.changeGame(x);})
-      .on('error',function(x){console.log(x);});
-    */
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
@@ -83,6 +69,7 @@ angular.module('FRCdozer')
       //$scope.$apply(function() {
         $scope.subs.splice(a,1);
         $scope.teams[b].subs.splice(c,1);
+        if ($scope.teams[b].subs.length===0) $scope.teams.splice(b,1);
         $scope.sortMatches();
       //});
     };

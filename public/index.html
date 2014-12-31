@@ -32,8 +32,8 @@
                 <div class="form-group">
         				  <button data-ng-click='login(userName,password)' type="submit" class="btn btn-success">Sign in</button>
         				</div>
-        				<div ng-if="error.login" class="btn btn-sm btn-danger form-group">
-        				  <p><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>Your username/password is incorrect. Please try again.</p>
+        				<div ng-if="error.login" class="alert alert-danger form-group">
+        				  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Your username/password is incorrect. Please try again.
         				</div>
               </form>
             </li>

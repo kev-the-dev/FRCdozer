@@ -22,7 +22,7 @@ angular.module('FRCdozer',['ui.router'])
         templateUrl: 'views/404.html'
       })
       .state('game', {
-        url: '/game/:name',
+        url: '/game/:name?filter&reverse',
         templateUrl: 'views/game.html',
         controller: 'frcCtrl'
       })
@@ -69,7 +69,6 @@ angular.module('FRCdozer',['ui.router'])
       });
   }])
   .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
-    $scope.test = "world.";
     $scope.user = undefined;
     $scope.error = {};
     $scope.userInit = function () {

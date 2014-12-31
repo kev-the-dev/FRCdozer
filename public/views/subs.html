@@ -34,7 +34,6 @@
       </tbody>
     </table>
     <hr>
-    <h4>Submissions: {{subs.length}}</h4>
     <button ng-show='filt' type="button" class="btn btn-info"><span class='glyphicon glyphicon-filter' aria-hidden="true"></span> {{("Filtering by "+filt.split('.')[1]) || "no filter"}}<span ng-show='!revr'>, Decending</span></button>
     <table class='table table-bordered table-striped table-hover'>
       <thead>
@@ -49,7 +48,7 @@
       <tbody>
         <tr data-ng-repeat='x in subs | orderBy:filt:revr'>
           <td>
-            <a class="btn btn-xs btn-info" ng-href='#/game/{{curGame.name}}/sub/{{x._id}}'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+            <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
             <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
             <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
           </td>
