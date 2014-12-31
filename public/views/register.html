@@ -20,6 +20,6 @@
   </div>
   <div class="col-sm-offset-2 col-sm-10">
     <button ng-disabled="NewUser.ConfirmPassword != NewUser.Password" ng-click="register(NewUser.Username, NewUser.Password)" type="submit" class="btn btn-primary btn-default">Register</button>
-	  <a class="btn btn-primary btn-default" href="#/login" role="button">Already Have An Account</a>
+	  <a class="btn btn-primary btn-default" ui-sref="login" role="button">Already Have An Account</a>
   </div>
 </form>

@@ -1,6 +1,6 @@
 <div>
-  <h2>Submission: {{sub=getSub(subId);sub._id}}</h2>
-  <h3>Time: {{getDate(sub._id) | date:'short'}}</h3>
+  <h2>Submission: {{x=getSub(subId);x._id}}</h2>
+  <h3>Time: {{getDate(x._id) | date:'short'}}</h3>
   <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
@@ -14,24 +14,26 @@
     <tbody>
       <tr>
         <td>
-          <button data-ng-click='delSub(sub._id)' class='btn btn-xs btn-danger'>-</button>
-          <button data-ng-click='editSub(sub._id)' class='btn btn-xs btn-success'>Save</button>
+          <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+          <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
+          <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
         </td>
-        <td><input class='form-control' ng-model='sub.match'></td>
-        <td><a ng-href='#/game/{{curGame.name}}/team/{{sub.team}}'><h4>{{sub.team}}</h4></a></td>
+        <td><input class='form-control' ng-model='x.match'></td>
+        <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
         <td data-ng-repeat='y in curGame.game'>
-          <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='sub.elements[y.name]' placeholder='wow!'></textarea>
-          <form data-ng-if='y.type==="Boolean"'>
-            <input type="radio" ng-model="sub.elements[y.name]" ng-value="sTrue">True
-            <input type="radio" ng-model="sub.elements[y.name]" ng-value="sFalse">False
+          <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
+          <form data-ng-if='y.type==="Boolean"' ng-init="x.elements[y.name] = x.elements[y.name] || false">
+            <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
+            <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
           </form>
           <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
-            <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success">+</button>
-            <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name] || 0 }}</button>
-            <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger">-</button>
+            <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success"><span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span></button>
+            <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]  = x.elements[y.name] || 0 }}</button>
+            <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger"><span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span></button>
           </div>
         </td>
-        <td data-ng-repeat='r in curGame.calc'><h4>{{sub.calc[r.name] = getValue(sub.elements,r.elements)}}</h4></td>
+        <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>
       </tr>
     </tbody>
+  </table>
 </div>

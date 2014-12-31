@@ -1,4 +1,3 @@
-
 <div>
   <h1>Team: {{team=getTeam(teamNum);team.team}}</h1>
   <table class='table table-bordered table-striped table-hover'>
@@ -16,33 +15,41 @@
     </tbody>
   </table>
   <hr>
+  <div ng-show='filt' class="btn alert alert-info alert-dismissible" role="alert">
+    <button class="close" data-dismiss="alert" aria-label="Close" ng-click='unfilt()'>
+      <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
+    </button>
+    <strong>{{("Filtering by "+filt.split('.')[1]) || "no filter"}}<span ng-show='!revr'>, Decending</span></strong>
+  </div>
   <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
         <th>Links</th>
         <th>Match</th>
-        <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements."+x.name)'>Sort</button></th>
-        <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
+        <th>Team</th>
+        <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements."+x.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
       </tr>
     </thead>
     <tbody>
       <tr data-ng-repeat='x in team.subs | orderBy:filt:revr'>
         <td>
-          <a class="btn btn-xs btn-info" ng-href='#/game/{{curGame.name}}/sub/{{x._id}}'>&#60;a&#62;</a>
-          <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'>-</button>
-          <button data-ng-click='editSub(x._id)' class='btn btn-xs btn-success'>Save</button>
+          <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+          <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
+          <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
         </td>
         <td><input class='form-control' ng-model='x.match'></td>
+        <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
         <td data-ng-repeat='y in curGame.game'>
           <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
-          <form data-ng-if='y.type==="Boolean"'>
+          <form data-ng-if='y.type==="Boolean"' ng-init="x.elements[y.name] = x.elements[y.name] || false">
             <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
             <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
           </form>
           <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
-            <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success">+</button>
-            <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name] || 0 }}</button>
-            <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger">-</button>
+            <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success"><span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span></button>
+            <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]  = x.elements[y.name] || 0 }}</button>
+            <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger"><span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span></button>
           </div>
         </td>
         <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>

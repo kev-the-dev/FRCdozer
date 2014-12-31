@@ -31,6 +31,10 @@ angular.module('FRCdozer')
         $scope.connected=true;
       });
     }
+    $scope.unfilt = function () {
+      $scope.filt='';
+      $scope.revr=false;
+    };
     $scope.sort = function (prop) {
       if ($scope.filt === prop) $scope.revr=!$scope.revr;
       else {
