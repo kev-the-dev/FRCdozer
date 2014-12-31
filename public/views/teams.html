@@ -1,7 +1,12 @@
 
 <div>
   <h2>Teams</h2>
-  <h4 ng-show='filt'>Filtering by: {{filt}}<span ng-show='!revr'>, descending</span></h4>
+  <div ng-show='filt' class="btn alert alert-info alert-dismissible" role="alert">
+    <button class="close" data-dismiss="alert" aria-label="Close" ng-click='unfilt()'>
+      <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
+    </button>
+    <strong>{{("Filtering by "+filt)|| "no filter"}}<span ng-show='!revr'>, Decending</span></strong>
+  </div>
   <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
