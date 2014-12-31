@@ -16,36 +16,35 @@
     <nav class="navbar bg-primary" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand bg-primary" ng-href="#/">FRC Dozer</a>
+          <a class="navbar-brand bg-primary" ui-sref='home'>FRC Dozer</a>
         </div>
         <div id="navbar">
           <ul class="nav navbar-nav nav-pills">
-            <li role="presentation"><a class='bg-primary' ng-href="#/">Home</a></li>
-            <li data-ng-if='!user'>
-              <form class="navbar-form navbar-right" role="form">
-                <div class="form-group">
-                  <input data-ng-model='userName' placeholder="Username" class="form-control" type="text">
-                </div>
-                <div class="form-group">
-                  <input data-ng-model='password' placeholder="Password" class="form-control" type="password">
-                </div>
-                <div class="form-group">
-        				  <button data-ng-click='login(userName,password)' type="submit" class="btn btn-success">Sign in</button>
-        				</div>
-        				<div ng-if="error.login" class="alert alert-danger form-group">
-        				  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Your username/password is incorrect. Please try again.
-        				</div>
-              </form>
-            </li>
-            <li data-ng-if='user'>
-              <h4><span class='glyphicon glyphicon-user' aria-hidden="true"></span>  {{user.username}}  <button class="btn btn-default" ng-click='logout()'>Logout</button></h4>
-            </li>
+            <li role="presentation"><a class='bg-primary' ui-sref='home'><span class='glyphicon glyphicon-home' aria-hidden="true"></span> Home</a></li>
           </ul>
+          <div class='navbar-right'>
+            <form ng-show='!user' class="navbar-form navbar-right" role="form">
+              <div class="form-group">
+                <input data-ng-model='userName' placeholder="Username" class="form-control" type="text">
+              </div>
+              <div class="form-group">
+                <input data-ng-model='password' placeholder="Password" class="form-control" type="password">
+              </div>
+              <div class="form-group">
+                <button data-ng-click='login(userName,password)' type="submit" class="btn btn-success">Sign in</button>
+              </div>
+            </form>
+            <span ng-show='user'>
+              <span class='glyphicon glyphicon-user' aria-hidden="true"></span>
+              <p class='navbar-text'> {{user.username}}</p>
+              <button class="btn btn-warning navbar-btn" ng-click='logout()'>Logout</button>
+            </span>
+          </div>
         </div>
       </div>
     </nav>
     <div class="container">
-    <div data-ui-view></div>
+      <div data-ui-view></div>
     </div>
     <footer class="footer">
       <div class="container">
