@@ -6,12 +6,12 @@
           <tr>
             <td>Team</td>
             <td>
-              <select class="form-control" data-ng-model='add.team'>
-                <option ng-value="new">new</option>
-                <option data-ng-repeat='x in teams | orderBy:"team"' ng-value='x.team'>{{x.team}}-{{x.name}}</option>
+              <select class="form-control" ng-model='add.team'
+                      ng-options="x.team as (x.team+' ('+x.name+')') for x in teams | orderBy: 'team' ">
+                <option value="">new</option>
               </select>
             </td>
-            <td ng-show='add.team==="new"'>
+            <td ng-show='add.team===undefined || add.team===null'>
               <div class="input-group">
                 <input ng-model='newTeam' type="text" class="form-control" placeholder="team number ex: 4118">
                 <span class="input-group-btn">
@@ -101,13 +101,13 @@
             <td>
               <div class="radio">
                 <label>
-                  <input ng-model='add.elements[p.name]' type="radio" value="true">
+                  <input ng-model='add.elements[p.name]' type="radio" ng-value="true">
                   True
                 </label>
               </div>
               <div class="radio">
                 <label>
-                  <input ng-model='add.elements[p.name]' type="radio" value="false">
+                  <input ng-model='add.elements[p.name]' type="radio" ng-value="false">
                   False
                 </label>
               </div>

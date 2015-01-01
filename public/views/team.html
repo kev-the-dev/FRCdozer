@@ -1,5 +1,5 @@
 <div>
-  <h3>Team {{team=getTeam(teamNum);team.team}}</h3>
+  <h3>Team {{team=getTeam(teamNum);console.log(team);team.team}}</h3>
   <div class='row'>
     <div class='col-md-6'>
       <form class="form">
@@ -12,12 +12,12 @@
         <div class="form-group">
           <label class="control-label">Notes</label>
           <div>
-            <textarea class="form-control"></textarea>
+            <textarea ng-model='team.notes' class="form-control"></textarea>
           </div>
         </div>
         <div class="form-group">
           <div>
-            <button type="submit" class="btn btn-success">Save</button>
+            <button ng-click='editTeam(team)' type="submit" class="btn btn-success">Save</button>
           </div>
         </div>
       </form>
@@ -50,7 +50,7 @@
     </button>
     <strong>{{("Filtering by "+filt.split('.')[1]) || "no filter"}}<span ng-show='!revr'>, Decending</span></strong>
   </div>
-  <table class='table table-bordered table-striped table-hover'>
+  <table class='table table-bordered table-striped table-hover table-responsive'>
     <thead>
       <tr>
         <th>Links</th>

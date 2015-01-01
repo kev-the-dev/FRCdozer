@@ -96,10 +96,10 @@ angular.module('FRCdozer')
       $scope.sortMatches();
     };
     $scope.changeTeam = function (team) {
-      for (x in $scope.teams) if ($scope.teams[x].team === team.team) {
+      for (x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
         $scope.teams[x].name = team.name;
         $scope.teams[x].notes = team.notes;
-        $scope.teams[x]._id = team._id;
+        $scope.teams[x]._id = team._id  || undefined;
         return;
       }
       $scope.appendTeam(team);
@@ -173,10 +173,7 @@ angular.module('FRCdozer')
     };
     $scope.getTeam = function (team) {
       team = Number(team);
-      for (x in $scope.teams) if (Number($scope.teams[x].team) === team){
-          return $scope.teams[x];
-          break;
-      }
+      for (x in $scope.teams) if (Number($scope.teams[x].team) === team) return $scope.teams[x];
     }
     $scope.editSub = function (x) {
       var req = $http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x);
@@ -185,19 +182,23 @@ angular.module('FRCdozer')
       });
     };
     $scope.editTeam = function (x) {
-      delete x.subs;
-      delete x.averages;
-      delete x.calc;
-      if (x._id) {
-        var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,x);
-        if (!$scope.connected) req.success(function (data) {
-          $scope.changeTeam(data);
+      if (x._id) { //if team has data in mongo, edit that team
+        var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,{
+          _id:x._id,
+          name:x.name,
+          notes:x.notes,
+          team:x.team
         });
-      } else {
-        var req = $http.post ('api/game/'+$scope.curGame._id+'/team',x);
-        if (!$scope.connected) req.success(function (data) {
-          $scope.changeTeam(data);
+        if (!$scope.connected) req
+          .success(function (data) {$scope.changeTeam(data);});
+      } else { //otherwise create that team in mongo
+        var req = $http.post ('api/game/'+$scope.curGame._id+'/team',{
+          name:x.name,
+          notes:x.notes,
+          team:x.team
         });
+        if (!$scope.connected) req
+          .success(function (data) {$scope.changeTeam(data);});
       }
     };
     $scope.addSub = function (elements) {

@@ -40,7 +40,7 @@
       </button>
       <strong>{{("Filtering by "+filt.split('.')[1]) || "no filter"}}<span ng-show='!revr'>, Decending</span></strong>
     </div>
-    <table class='table table-bordered table-striped table-hover'>
+    <table class='table table-bordered table-striped table-hover table-condensed'>
       <thead>
         <tr>
           <th>Links</th>
@@ -57,11 +57,15 @@
             <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
             <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
           </td>
-          <td><input class='form-control' ng-model='x.match'></td>
+          <td><form class='form-inline'>
+            <div class="form-group">
+              <input class='form-control' ng-model='x.match'>
+            </div>
+          </form></td>
           <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
           <td data-ng-repeat='y in curGame.game'>
-            <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
-            <form data-ng-if='y.type==="Boolean"' ng-init="x.elements[y.name] = x.elements[y.name] || false">
+            <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
+            <form data-ng-if='y.type==="Boolean"' ng-init='x.elements[y.name] = x.elements[y.name] || false'>
               <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
               <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
             </form>
