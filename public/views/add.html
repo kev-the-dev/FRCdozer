@@ -1,38 +1,139 @@
 <div>
   <div class='row'>
-    <div>Team</div>
-    <div>
-      <select data-ng-model='add.team'>
-        <option ng-value="newTeam">new</option>
-        <option data-ng-repeat='x in teams' ng-value='x.team'>{{x.team}}</option>
-      </select>
-      <input data-ng-model='newTeam' type="number">
+    <div class="col-md-4 col-sm-12">
+      <table class="table table-striped table-condensed table-bordered">
+        <tbody>
+          <tr>
+            <td>Team</td>
+            <td>
+              <select class="form-control" data-ng-model='add.team'>
+                <option ng-value="new">new</option>
+                <option data-ng-repeat='x in teams' ng-value='x.team'>{{x.team}}</option>
+              </select>
+            </td>
+            <td ng-show='add.team==="new"'>
+              <div class="input-group">
+                <input ng-model='newTeam' type="text" class="form-control" placeholder="team number ex: 4118">
+                <span class="input-group-btn">
+                  <button ng-click='teams.push({team:newTeam});add.team=newTeam;newTeam=null' class="btn btn-default" type="button">Add</button>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-	<div>Match Number</div>
-    <input ng-model='add.match'>
-    <hr>
+    <div class="col-md-4 col-sm-12">
+      <table class="table table-striped table-condensed table-bordered">
+        <tbody>
+          <tr>
+            <td>Side</td>
+            <td>
+              <div class="radio">
+                <label>
+                  <input ng-model='add.side' type="radio" value="Red">
+                  Red
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input ng-model='add.side' type="radio" value="Blue">
+                  Blue
+                </label>
+              </div>
+            </td>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <table class="table table-striped table-condensed table-bordered">
+        <tbody>
+          <tr>
+            <td>Match</td>
+            <td>
+              <input class="form-control" type='text' placeholder='match ex: quaters1match2, qual7, finals2'ng-model='add.match'>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class='row' data-ng-repeat='p in curGame.game'>
-    <div>
-      {{p.name}}
+  <div class='row'>
+    <div class="col-md-4 col-sm-12">
+      <table class="table table-striped table-condensed table-bordered">
+        <tbody>
+          <tr ng-repeat='p in curGame.game | filter:{"type":"Number"}'>
+            <td>{{p.name}}</td>
+            <td>
+              <div class="btn-group" role="group">
+                <button ng-disabled='add.elements[p.name]===0' ng-click="add.elements[p.name] = add.elements[p.name] - 1" type="button" class="btn btn-warning">
+                  <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-default">
+                  {{add.elements[p.name] = add.elements[p.name] || 0}}
+                </button>
+                <button ng-click="add.elements[p.name] = add.elements[p.name] + 1" type="button" class="btn btn-success">
+                  <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div>
-      <textarea data-ng-if='p.type==="String"' data-ng-model='add.elements[p.name]'></textarea>
-      <span data-ng-if='p.type==="Boolean"'>
-        <input type="radio" ng-model="add.elements[p.name]" ng-value="true">True<br/>
-        <input type="radio" ng-model="add.elements[p.name]" ng-value="false">False<br/>
-      </span>
-      <span data-ng-if='p.type==="Number"'>
-        <p>{{add.elements[p.name] || 0 }}</p>
-        <button ng-click="add.elements[p.name] = add.elements[p.name] + 1">+</button>
-        <button ng-if='add.elements[p.name]>0' ng-click="add.elements[p.name] = add.elements[p.name] - 1">-</button>
-      </span>
+    <div class="col-md-4 col-sm-12">
+      <table class="table table-striped table-condensed table-bordered">
+        <tbody>
+          <tr ng-repeat='p in curGame.game | filter:{"type":"String"}'>
+            <td>{{p.name}}</td>
+            <td>
+              <input ng-model='add.elements[p.name]' class='form-control' type='text'>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <hr>
+    <div class="col-md-4 col-sm-12">
+      <table class="table table-striped table-condensed table-bordered">
+        <tbody>
+          <tr ng-repeat='p in curGame.game | filter:{"type":"Boolean"}'>
+            <td>{{p.name}}</td>
+            <td>
+              <div class="radio">
+                <label>
+                  <input ng-model='add.elements[p.name]' type="radio" value="true">
+                  True
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input ng-model='add.elements[p.name]' type="radio" value="false">
+                  False
+                </label>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-8 col-sm-12">
+      <table class="table table-striped table-condensed table-bordered">
+        <tbody>
+          <tr ng-repeat='p in curGame.calc'>
+            <td>{{p.name}}</td>
+            <td>
+              {{getValue(add.elements,p.elements)}}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div width='100%'>
+                <button width='100%' class="btn btn-success" ng-click='addSub(add)'>Send</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <button class="btn btn-success" ng-click='addSub(add)'>Send</button>
-  <hr>
-  <ul>
-    <li data-ng-repeat='y in curGame.calc'>{{y.name}}:{{getValue(add.elements,y.elements)}}</li>
-  </ul>
 </div>

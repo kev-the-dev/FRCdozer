@@ -206,7 +206,7 @@ angular.module('FRCdozer')
       calc = calc || [];
       var val = 0;
       for (x in calc) val=val+(Number(sub[calc[x].name])*calc[x].worth || 0);
-      return Math.round(val*100)/100;
+      return Math.round(val*100)/100 || 0;
     };
     $scope.getTeams = function (def,mats,noReset) {
       var teams = noReset ?  $scope.teams : [];
@@ -224,10 +224,11 @@ angular.module('FRCdozer')
       else $scope.teams = teams;
     };
     $scope.getAverage = function (prop,subs) {
+      subs = subs || [];
       var avr = 0;
       for (x in subs) avr = avr+(Number(subs[x].elements[prop])||0);
       avr = avr / (subs.length);
-      avr = Math.round(avr*100)/100;
+      avr = Math.round(avr*100)/100 || 0;
       return avr;
     };
     function socketConf () {
