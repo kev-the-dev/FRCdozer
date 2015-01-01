@@ -101,16 +101,16 @@ angular.module('FRCdozer',['ui.router'])
     };
     $scope.login = function (user,pass) {
       $http.post('api/login',{username:user,password:pass})
-      .success(function (data) {
-        $scope.user = data;
-        $scope.error.login = false;
-      })
-      .error(function (data) {
-        $scope.error.login = true;
-        $timeout(function () {
-          $scope.error.login=false;
-        },5000);
-      });
+        .success(function (data,sta) {
+          $scope.user = data;
+          $scope.error.login = false;
+        })
+        .error(function (data,sta) {
+          $scope.error.login = true;
+          $timeout(function () {
+            $scope.error.login=false;
+          },5000);
+        });
       $scope.userName = null;
       $scope.password = null;
     };

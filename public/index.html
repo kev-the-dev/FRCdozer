@@ -35,6 +35,10 @@
               </div>
               <div class="form-group">
                 <button data-ng-click='login(userName,password)' type="submit" class="btn btn-success">Sign in</button>
+                <span ng-show='error.login' class="alert alert-danger" role="alert">
+                  <span class='glyphicon glyphicon-warning-sign' aria-hidden='true'></span>
+                   Wrong username/password
+                </span>
               </div>
             </form>
             <span ng-show='user'>

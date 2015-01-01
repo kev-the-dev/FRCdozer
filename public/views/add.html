@@ -8,7 +8,7 @@
             <td>
               <select class="form-control" data-ng-model='add.team'>
                 <option ng-value="new">new</option>
-                <option data-ng-repeat='x in teams' ng-value='x.team'>{{x.team}}</option>
+                <option data-ng-repeat='x in teams | orderBy:"team"' ng-value='x.team'>{{x.team}}-{{x.name}}</option>
               </select>
             </td>
             <td ng-show='add.team==="new"'>

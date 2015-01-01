@@ -36,7 +36,7 @@
     <tbody>
       <tr data-ng-repeat='x in teams | orderBy:filt:revr'>
         <td><h4>{{$index+1}}</h4></td>
-        <td>{{x.subs.length}}</td>
+        <td><span class='badge'>{{x.subs.length}}</span></td>
         <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
         <td><a ui-sref='game.team({num:x.team})'>{{x.name}}</a></td>
         <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name] = getAverage(z.name,x.subs || [])}}</h4></td>
