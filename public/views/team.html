@@ -29,7 +29,6 @@
       <tr>
         <th>Links</th>
         <th>Match</th>
-        <th>Team</th>
         <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements."+x.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
         <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
       </tr>
@@ -42,7 +41,6 @@
           <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
         </td>
         <td><input class='form-control' ng-model='x.match'></td>
-        <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
         <td data-ng-repeat='y in curGame.game'>
           <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
           <form data-ng-if='y.type==="Boolean"' ng-init="x.elements[y.name] = x.elements[y.name] || false">

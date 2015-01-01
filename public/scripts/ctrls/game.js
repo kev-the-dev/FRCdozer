@@ -280,6 +280,7 @@ angular.module('FRCdozer')
         .on('error',function(x){console.log(x);});
     }
     $scope.init = function () {
+      if (!$stateParams.name) $state.go('404');
       $scope.getGame($stateParams.name, function (err,data) { //'5495eb1b46fea7c15102dc7f'
         if (data) {
           $scope.curGame = data;

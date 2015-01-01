@@ -10,10 +10,11 @@ var games = con.model ('FRCgames', new sch({
   calc: [{name:String,elements:[{name:String,worth:Number}]}],
   submissions: [new sch({
     match: String,
+    side: String,
     team: Number,
     elements: Object
   })],
-  teams: [new sch({team:Number,notes:String,name:String})]
+  teams: [new sch({team:{type:Number,unique:true},notes:String,name:String})]
 }));
 var users = con.model('users', new sch({
   username: { type: String, required: true, unique: true},
