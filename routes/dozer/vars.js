@@ -12,7 +12,8 @@ var games = con.model ('FRCgames', new sch({
     match: String,
     team: Number,
     elements: Object
-  })]
+  })],
+  teams: [new sch({team:Number,notes:String,name:String})]
 }));
 var users = con.model('users', new sch({
   username: { type: String, required: true, unique: true},

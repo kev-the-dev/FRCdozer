@@ -79,6 +79,79 @@ router.route('/game/:id/sub')
     });
   });
 
+router.route('/game/:id/team/:s')
+  .get(function (req,res) { //gets match with given id
+    games.findById(req.params.id,function(err,x) {
+      if (err) res.status(500).send(err);
+      else {
+        var m = x.team.id(req.params.s);
+        if (m) res.send (m);
+        else res.status(500).send("Error: no matched team");
+      }
+    });
+  })
+  .put(function (req,res) { //edit one match
+    games.findById(req.params.id, function (err,x) {
+      if (err) res.status(500).send(err);
+      else {
+        var y = x.teams.id(req.params.s);
+        if (y) {
+          y.set(req.body);
+          x.save(function (err) {
+            if (err) res.status(500).send(err);
+            else {
+              res.send(y)
+              io.to(x.name).emit('editTeam',y);
+            };
+          });
+        }
+        else res.status(500).send('Error: team not found');
+      }
+    });
+  })
+  .delete(function (req,res) {
+    games.findById(req.params.id,function(err,z) {
+      if (err) res.status(500).send(err);
+      else if (z) {
+        var y = z.teams.id(req.params.s);
+        if (y) {
+          y.remove();
+          z.save (function (err) {
+            if (err) res.status(500).send (err);
+            else {
+              io.to(z.name).emit('delTeam',y);
+              res.send("Removed: "+y._id)
+            };
+          });
+        }
+        else res.status(500).send('Error: team not found');
+      }
+    });
+  });
+
+router.route('/game/:id/team')
+  .get(function (req,res) {
+    games.findById(req.params.id, function (err,x) {
+      if (err) res.status(500).send(err);
+      else res.send(x.teams);
+    });
+  })
+  .post(function (req,res) { //add match
+    games.findById(req.params.id, function (err,x) {
+      if (err) res.status(500).send(err);
+      else {
+        y = x.teams.push(req.body);
+        x.save(function (err) {
+          if (err) res.status(500).send(err);
+          else {
+            io.to(x.name).emit('newTeam',x.teams[y-1]);
+            res.send(x.teams[y-1])
+          };
+        });
+      }
+    });
+  });
+
 router.route('/game/:id')
   .get(function (req,res) { //get game with givin id,
     games.findById(req.params.id, function (err,x) {

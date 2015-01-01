@@ -54,6 +54,10 @@ angular.module('FRCdozer')
         $scope.sortMatches();
       //});
     };
+    $scope.appendTeam = function (team) {
+      $scope.teams.push(team);
+      $scope.sortMatches();
+    };
     $scope.removeSub = function (id) {
       var a,b,c;
       for (x in $scope.subs) if (id === $scope.subs[x]._id) {
@@ -77,15 +81,28 @@ angular.module('FRCdozer')
         $scope.sortMatches();
       //});
     };
+    $scope.removeTeam = function (team) {
+      for (x in $scope.teams) if ($scope.teams[x].team === team.team) {
+        $scope.teams.splice(x,1);
+        break;
+      }
+    };
     $scope.changeSub = function (sub) {
       for (x in $scope.subs) if (sub._id === $scope.subs[x]._id) {
-        //$scope.$apply(function() {
-          $scope.subs[x]=sub;
-          $scope.getTeams(true);
-        //});
+        $scope.subs[x]=sub;
+        $scope.getTeams(true);
         break;
       }
       $scope.sortMatches();
+    };
+    $scope.changeTeam = function (team) {
+      for (x in $scope.teams) if ($scope.teams[x].team === team.team) {
+        $scope.teams[x].name = team.name;
+        $scope.teams[x].notes = team.notes;
+        $scope.teams[x]._id = team._id;
+        return;
+      }
+      $scope.appendTeam(team);
     };
     $scope.getMatch = function (match) {
       for (x in $scope.matches) if ($scope.matches[x].match === match) return $scope.matches[x];
@@ -101,16 +118,6 @@ angular.module('FRCdozer')
       }
     };
     */
-    /*
-    $scope.getCurGame = function (def) {
-      if (!def) return $http.get('/api/game');
-      else {
-        $http.get('/api/game')
-        .success(function (data) {
-          $scope.curGame=data;
-        });
-      }
-    }; */
     $scope.sortMatches = function (subs) { //sorts array of submissions, or the scope submissions, into matches
       var subs = subs || $scope.subs;
       var matches = [];
@@ -172,34 +179,57 @@ angular.module('FRCdozer')
       }
     }
     $scope.editSub = function (x) {
-      //if ($scope.connected) $scope.socket.emit('editMatch',{_id:x._id,team:x.team,elements:x.elements});
-      //else $http.put('/api/match/'+x._id,x);
       var req = $http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x);
       if (!$scope.connected) req.success(function (data) {
           $scope.changeSub(data);
       });
     };
+    $scope.editTeam = function (x) {
+      delete x.subs;
+      delete x.averages;
+      delete x.calc;
+      if (x._id) {
+        var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,x);
+        if (!$scope.connected) req.success(function (data) {
+          $scope.changeTeam(data);
+        });
+      } else {
+        var req = $http.post ('api/game/'+$scope.curGame._id+'/team',x);
+        if (!$scope.connected) req.success(function (data) {
+          $scope.changeTeam(data);
+        });
+      }
+    };
     $scope.addSub = function (elements) {
-      //if ($scope.connected) $scope.socket.emit('newMatch',elements);
-      //else
       var req = $http.post ('api/game/'+$scope.curGame._id+'/sub',elements);
       if (!$scope.connected) req.success(function (data) {
           $scope.appendSub(data);
           $scope.add={};
       });
     };
+    $scope.addTeam = function (team) {
+      var req = $http.post ('api/game/'+$scope.curGame._id+'/team',team);
+      if (!$scope.connected) req.success(function (data) {
+        $scope.appendTeam(data);
+      });
+    };
     $scope.delSub = function (id) {
-      //if ($scope.connected) $scope.socket.emit('delMatch',id);
-      //else
       var req = $http.delete ('api/game/'+$scope.curGame._id+'/sub/'+id);
       if (!$scope.connected) req.success(function() {
       		$scope.removeSub(id);
       });
     };
+    $scope.delTeam = function (id) {
+      var req = $http.delete ('api/game/'+$scope.curGame._id+'/team/'+id);
+      if (!$scope.connected) req.success(function(data) {
+        $scope.removeTeam(data);
+      });
+    };
     $scope.editGame = function (x) {
-      //if ($scope.connected) $scope.socket.emit('editGame',angular.toJson(x));
-      //else
-      $http.put('api/game/'+x._id,x);
+      var req = $http.put('api/game/'+x._id,x);
+      if (!$scope.connected) req.success(function (data) {
+        $scope.changeGame(data);
+      });
     };
     $scope.getValue = function (sub,calc) {
       sub = sub || {};
@@ -208,13 +238,13 @@ angular.module('FRCdozer')
       for (x in calc) val=val+(Number(sub[calc[x].name])*calc[x].worth || 0);
       return Math.round(val*100)/100 || 0;
     };
-    $scope.getTeams = function (def,mats,noReset) {
+    $scope.getTeams = function (def,subs,noReset) {
       var teams = noReset ?  $scope.teams : [];
-      var subs = subs || $scope.subs;
+      subs = subs || $scope.subs;
       mSearch: for (x in subs) { //sorts matches into teams
         for (y in teams) {
-          if (teams[y].team === subs[x].team) {
-            teams[y].subs.push(subs[x]);
+          if (Number(teams[y].team) === Number(subs[x].team)) {
+            (teams[y].subs || (teams[y].subs=[])).push(subs[x]);
             continue mSearch;
           }
         }
@@ -241,8 +271,11 @@ angular.module('FRCdozer')
         .on('reconnect_error',discon)
         .on('reconnect_failed',discon)
         .on('newSub', function(x){$scope.$apply(function () {$scope.appendSub(x);});})
+        .on('newTeam',function(x){$scope.$apply(function () {$scope.changeTeam(x);});})
         .on('delSub', function(x){$scope.$apply(function () {$scope.removeSub(x._id);});})
+        .on('delTeam', function(x){$scope.$apply(function () {$scope.removeTeam(x);});})
         .on('editSub',function(x){$scope.$apply(function () {$scope.changeSub(x);});})
+        .on('editTeam',function(x){$scope.$apply(function () {$scope.changeTeam(x);});})
         .on('editGame',function(x){$scope.$apply(function () {$scope.changeGame(x);});})
         .on('error',function(x){console.log(x);});
     }
@@ -251,7 +284,8 @@ angular.module('FRCdozer')
         if (data) {
           $scope.curGame = data;
           $scope.subs = data.submissions;
-          $scope.getTeams(true);
+          $scope.teams = data.teams;
+          $scope.getTeams(true,null,true);
           $scope.sortMatches();
           socketConf();
         }

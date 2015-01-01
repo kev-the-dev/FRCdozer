@@ -1,5 +1,8 @@
 <div>
   <h1>Team: {{team=getTeam(teamNum);team.team}}</h1>
+  Name:<input ng-model='team.name'>
+  Notes:<textarea ng-model='team.notes'></textarea>
+  <button ng-click='editTeam(team)' class='btn btn-success'>Save</button>
   <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
