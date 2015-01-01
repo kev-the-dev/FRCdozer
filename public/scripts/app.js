@@ -9,6 +9,10 @@ angular.module('FRCdozer',['ui.router'])
         url: "/",
         templateUrl: 'views/home.html'
       })
+      .state('me', {
+        url: '/me',
+        templateUrl: 'views/me.html'
+      })
   	  .state('login', {
   		url: "/login",
   		templateUrl: 'views/login.html'
@@ -71,11 +75,29 @@ angular.module('FRCdozer',['ui.router'])
   .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
     $scope.user = undefined;
     $scope.error = {};
+    $scope.success = {};
+    $scope.handle = function (req,type) { //given http req and type string, handle with timout
+      req.success(function() {
+        $scope.success[type] = true;
+        $timeout(function () {
+          $scope.success[type] = false;
+        },5000);
+      });
+      req.error(function() {
+        $scope.error[type] = true;
+        $timeout(function () {
+          $scope.error[type] = false;
+        },5000);
+      });
+    };
     $scope.userInit = function () {
       $http.get('api/hello')
       .success(function (data) {
         $scope.user=data;
       });
+    };
+    $scope.changePassword = function (password) {
+      $scope.handle($http.put('api/password',{password:password}),'changePassword');
     };
     $scope.login = function (user,pass) {
       $http.post('api/login',{username:user,password:pass})

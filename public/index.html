@@ -36,7 +36,7 @@
             </form>
             <span ng-show='user'>
               <span class='glyphicon glyphicon-user' aria-hidden="true"></span>
-              <p class='navbar-text'> {{user.username}}</p>
+              <p class="navbar-text">Signed in as <a class="bg-primary" ui-sref='me'>{{user.username}}</a></p>
               <button class="btn btn-warning navbar-btn" ng-click='logout()'>Logout</button>
             </span>
           </div>
