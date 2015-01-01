@@ -84,7 +84,7 @@ router.post('/register', function (req,res) {
 });
 router.get('/hello', function (req,res) {
   if (req.user) res.send (safe(req.user));
-  else res.status(500).send("Not logged in");
+  else res.status(401).send("Not logged in");
 });
 router.put('/password', function (req,res) {
   if (req.user && req.body.password && req.user.salt) users.findById(req.user._id, function (err,x) {
