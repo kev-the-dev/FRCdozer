@@ -84,7 +84,7 @@ router.route('/game/:id/team/:s')
     games.findById(req.params.id,function(err,x) {
       if (err) res.status(500).send(err);
       else {
-        var m = x.team.id(req.params.s);
+        var m = x.teams.id(req.params.s);
         if (m) res.send (m);
         else res.status(500).send("Error: no matched team");
       }
@@ -184,12 +184,6 @@ router.route('/game')
   .post(function (req,res) {
     req.body.submissions=[];
     games.create(req.body,function(err,x) {
-      if (err) res.status(500).send(err);
-      else res.send(x);
-    });
-  })
-  .get(function (req,res) {
-    games.find({}, function (err,x) {
       if (err) res.status(500).send(err);
       else res.send(x);
     });
