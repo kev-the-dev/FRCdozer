@@ -129,6 +129,12 @@
             <td colspan="2">
               <div width='100%'>
                 <button width='100%' class="btn btn-success" ng-click='addSub(add)'>Send</button>
+                <span ng-show='success.newSub' class="text-success">
+                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Submited!
+                </span>
+                <span ng-show='error.newSub' class="text-danger" style="cursor:pointer;" title="{{error.newSub}}">
+                  <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error!</span>
+                </span>
               </div>
             </td>
           </tr>

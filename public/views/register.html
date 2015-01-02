@@ -21,5 +21,11 @@
   <div class="col-sm-offset-2 col-sm-10">
     <button ng-disabled="NewUser.ConfirmPassword != NewUser.Password" ng-click="register(NewUser.Username, NewUser.Password)" type="submit" class="btn btn-primary btn-default">Register</button>
 	  <a class="btn btn-primary btn-default" ui-sref="login" role="button">Already Have An Account</a>
+    <span ng-show='success.register' class="text-success">
+      <span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span>Registered!</span>
+    </span>
+    <span ng-show='error.register' class="text-danger" style="cursor:pointer;" title="{{error.register}}">
+      <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error!</span>
+    </span>
   </div>
 </form>

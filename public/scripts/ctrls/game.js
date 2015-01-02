@@ -139,15 +139,6 @@ angular.module('FRCdozer')
           call(data,null);
         });
     };
-    $scope.editGame = function (id,params,call) {
-      $http.put('api/game/'+id,params)
-        .success(function (data) {
-          call(null,data); //call(error,content)
-        })
-        .error(function (data) {
-          call(data,null);
-        });
-    };
     $scope.createGame = function (param,call) {
       $http.post('api/game',params)
         .success(function (data) {
@@ -176,49 +167,47 @@ angular.module('FRCdozer')
       for (x in $scope.teams) if (Number($scope.teams[x].team) === team) return $scope.teams[x];
     }
     $scope.editSub = function (x) {
-      var req = $http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x);
-      if (!$scope.connected) req.success(function (data) {
-          $scope.changeSub(data);
-      });
+      $http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
+        .success(function(x) {
+          $scope.handle('editSub');
+          if (!$scope.connected) $scope.changeSub(data);
+        })
+        .error(function (x) {$scope.handle('editSub',x)});
     };
     $scope.editTeam = function (x) {
-      if (x._id) { //if team has data in mongo, edit that team
-        var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,{
-          _id:x._id,
-          name:x.name,
-          notes:x.notes,
-          team:x.team
-        });
-        if (!$scope.connected) req
-          .success(function (data) {$scope.changeTeam(data);});
-      } else { //otherwise create that team in mongo
-        var req = $http.post ('api/game/'+$scope.curGame._id+'/team',{
-          name:x.name,
-          notes:x.notes,
-          team:x.team
-        });
-        if (!$scope.connected) req
-          .success(function (data) {$scope.changeTeam(data);});
-      }
+      if (x._id) var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,{
+        _id:x._id,
+        name:x.name || "",
+        notes:x.notes || "",
+        team:x.team
+      });
+      else var req = $http.post ('api/game/'+$scope.curGame._id+'/team',{
+        name:x.name || "",
+        notes:x.notes || "",
+        team:x.team
+      });
+      req
+        .success(function(x){
+          $scope.handle('editTeam');
+          if (!$scope.connected) $scope.changeTeam(x);
+        })
+        .error(function(x){$scope.handle('editTeam',x);});
     };
     $scope.addSub = function (elements) {
-      var req = $http.post ('api/game/'+$scope.curGame._id+'/sub',elements);
-      if (!$scope.connected) req.success(function (data) {
-          $scope.appendSub(data);
-          $scope.add={};
-      });
-    };
-    $scope.addTeam = function (team) {
-      var req = $http.post ('api/game/'+$scope.curGame._id+'/team',team);
-      if (!$scope.connected) req.success(function (data) {
-        $scope.appendTeam(data);
-      });
+      $http.post ('api/game/'+$scope.curGame._id+'/sub',elements)
+        .success(function (x) {
+          $scope.handle('newSub');
+          if (!$scope.connected) $scope.appendSub(data);
+        })
+        .error(function (x) {$scope.handle('newSub',x)});
     };
     $scope.delSub = function (id) {
-      var req = $http.delete ('api/game/'+$scope.curGame._id+'/sub/'+id);
-      if (!$scope.connected) req.success(function() {
-      		$scope.removeSub(id);
-      });
+      $http.delete ('api/game/'+$scope.curGame._id+'/sub/'+id)
+        .success(function (x) {
+          $scope.handle('delSub');
+          if (!$scope.connected) $scope.removeSub(id);
+        })
+        .error(function (x){$scope.handle('delSub',x)});
     };
     $scope.delTeam = function (id) {
       var req = $http.delete ('api/game/'+$scope.curGame._id+'/team/'+id);
@@ -227,10 +216,12 @@ angular.module('FRCdozer')
       });
     };
     $scope.editGame = function (x) {
-      var req = $http.put('api/game/'+x._id,x);
-      if (!$scope.connected) req.success(function (data) {
-        $scope.changeGame(data);
-      });
+      $http.put('api/game/'+x._id,x)
+        .success(function (data) {
+          $scope.handle('editGame');
+          if (!$scope.connected) $scope.chanVgeGame(data);
+        })
+        .error(function(x){$scope.handle('editGame',x)});
     };
     $scope.getValue = function (sub,calc) {
       sub = sub || {};

@@ -19,8 +19,8 @@
         <span ng-show='success.changePassword' class="text-success">
           <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Password changed!
         </span>
-        <span ng-show='error.changePassword' class="text-danger">
-          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Error!
+        <span ng-show='error.changePassword' class="text-danger" style="cursor:pointer;" title="{{error.changePassword}}">
+          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error!</span>
         </span>
       </form>
     </div>

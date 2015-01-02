@@ -41,12 +41,14 @@
   </table>
 </div>
 <div class='row'>
-  <div class='col-sm-4'>
+  <div class='col-md-5'>
     <table class='table table-bordered table-striped table-hover'>
-      <tr><th colspan='2'>Game Elements</th></tr>
+      <tr>
+        <th colspan='3'>Game Elements <p class="text-warning">WARNING! Changing these can mess up current submissions</p></th>
+      </tr>
       <tr>
         <th>Name</th>
-        <th>Data Type</th>
+        <th colspan='2'>Data Type</th>
       </tr>
       <tr data-ng-repeat='x in curGame.game'>
         <td><input class="form-control" data-ng-model='x.name'></td>
@@ -57,17 +59,27 @@
             <option>Boolean</option>
           </select>
         </td>
-        <td><button class='btn btn-sm btn-danger' data-ng-click="curGame.game.splice($index,1)">-</button></td>
+        <td>
+          <button class='btn btn-sm btn-danger' data-ng-click="curGame.game.splice($index,1)">
+            <span class='glyphicon glyphicon-minus-sign' aria-hidden="true"></span>
+          </button>
+        </td>
       </tr>
-      <tr><td colspan='2'><button class="btn btn-sm btn-success" data-ng-click='curGame.game.push({name:"",type:"String"})'>+</button></td></tr>
+      <tr>
+        <td colspan='2'>
+          <button class="btn btn-sm btn-success" data-ng-click='curGame.game.push({name:"",type:"String"})'>
+            <span class='glyphicon glyphicon-plus-sign' aria-hidden="true"></span>
+          </button>
+        </td>
+      </tr>
     </table>
   </div>
-  <div class='col-sm-8'>
+  <div class='col-md-7'>
     <table class='table table-bordered table-striped table-hover'>
-      <tr><th colspan='2'>Calculated Elements</th></tr>
+      <tr><th colspan='3'>Calculated Elements</th></tr>
       <tr>
         <th>Name</th>
-        <th>Elements</th>
+        <th colspan='2'>Elements</th>
       </tr>
       <tr data-ng-repeat='g in curGame.calc'>
         <td><input class="form-control" data-ng-model='g.name'></td>
@@ -84,16 +96,42 @@
                 </select>
               </td>
               <td><input class="form-control" type='number' data-ng-model='p.worth'></td>
-              <td><button class='btn btn-sm btn-danger' data-ng-click='g.elements.splice($index,1)'>-</button></td>
+              <td>
+                <button class='btn btn-sm btn-danger' data-ng-click='g.elements.splice($index,1)'>
+                  <span class='glyphicon glyphicon-minus-sign' aria-hidden="true"></span>
+                </button>
+              </td>
             </tr>
-            <tr><td><button class="btn btn-sm btn-success" data-ng-click='g.elements.push({name:"",worth:""})'>+</button></td></tr>
+            <tr>
+              <td>
+                <button class="btn btn-sm btn-success" data-ng-click='g.elements.push({name:"",worth:""})'>
+                  <span class='glyphicon glyphicon-plus-sign' aria-hidden="true"></span>
+              </button>
+              </td>
+            </tr>
           </table>
         </td>
-        <td><button class='btn btn-sm btn-danger' data-ng-click="curGame.calc.splice($index,1)">-</button></td>
+        <td>
+          <button class='btn btn-sm btn-danger' data-ng-click="curGame.calc.splice($index,1)">
+            <span class='glyphicon glyphicon-minus-sign' aria-hidden="true"></span>
+          </button>
+        </td>
       </tr>
-      <tr><td colspan='2'><button class="btn btn-sm btn-success" data-ng-click='curGame.calc.push({name:"",elements:[{name:"",worth:""}]})'>+</button></td></tr>
+      <tr>
+        <td colspan='3'>
+          <button class="btn btn-sm btn-success" data-ng-click='curGame.calc.push({name:"",elements:[{name:"",worth:""}]})'>
+            <span class='glyphicon glyphicon-plus-sign' aria-hidden="true"></span>
+          </button>
+        </td>
+      </tr>
     </table>
   </div>
 </div>
 <hr>
 <button class='btn btn-primary' data-ng-click='editGame(curGame)'>Save Changes</button>
+<span ng-show='success.editGame' class="text-success">
+  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Game changed!
+</span>
+<span ng-show='error.editGame' class="text-danger" style="cursor:pointer;" title="{{error.editGame}}">
+  <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error!</span>
+</span>

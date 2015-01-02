@@ -75,57 +75,58 @@ angular.module('FRCdozer',['ui.router'])
   .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
     $scope.user = undefined;
     $scope.error = {};
+    $scope.errors = [];
     $scope.success = {};
-    $scope.handle = function (req,type) { //given http req and type string, handle with timout
-      req.success(function() {
+    $scope.handle = function (type,error) { //given http req and type string, handle with timout
+      if (error) {
+        $scope.errors.push({type:type,error:error});
+        $scope.error[type] = JSON.stringify(error);
+        $timeout(function () {
+          $scope.error[type] = false;
+        },8000);
+      } else {
         $scope.success[type] = true;
         $timeout(function () {
           $scope.success[type] = false;
-        },5000);
-      });
-      req.error(function() {
-        $scope.error[type] = true;
-        $timeout(function () {
-          $scope.error[type] = false;
-        },5000);
-      });
+        },1000);
+      }
     };
     $scope.userInit = function () {
       $http.get('api/hello')
-      .success(function (data) {
-        $scope.user=data;
-      });
+        .success(function (data) {
+          $scope.user=data;
+          $scope.handle('init');
+        })
+        .error(function(x){$scope.handle('init',x)});
     };
     $scope.changePassword = function (password) {
-      $scope.handle($http.put('api/password',{password:password}),'changePassword');
+      $http.put('api/password',{password:password})
+        .success(function(){$scope.handle('changePassword')})
+        .error(function(x){$scope.handle('changePassword',x)});
     };
     $scope.login = function (user,pass) {
       $http.post('api/login',{username:user,password:pass})
-        .success(function (data,sta) {
+        .success(function (data) {
           $scope.user = data;
-          $scope.error.login = false;
+          $scope.handle('login');
         })
-        .error(function (data,sta) {
-          $scope.error.login = true;
-          $timeout(function () {
-            $scope.error.login=false;
-          },5000);
-        });
-      $scope.userName = null;
-      $scope.password = null;
+        .error(function (x) {$scope.handle('login',x)});
     };
     $scope.logout = function () {
       $http.post('api/logout')
       .success(function () {
+        $scope.handle('logout');
         $scope.user = undefined;
-      });
+      })
+      .error(function(x){$scope.handle('logout',x)});
     };
     $scope.register = function (user,pass) {
       $http.post('api/register',{username:user,password:pass})
         .success(function (x) {
-          console.log("registered");
+          $scope.handle('register');
           $scope.login(user,pass);
-        });
+        })
+        .error(function(x){$scope.handle('register',x)});
     };
     $scope.userInit();
   }]);

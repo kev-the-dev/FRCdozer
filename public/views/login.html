@@ -15,6 +15,12 @@
     <div class="col-sm-offset-2 col-sm-10">
       <button  ng-click="login(userName,password)" type="submit" class="btn btn-primary btn-default">Login</button>
       <a class="btn btn-primary btn-default" ui-sref="register" role="button">Register</a>
+      <span ng-show='success.login' class="text-success">
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span>Logged in!</span>
+      </span>
+      <span ng-show='error.login' class="text-danger" style="cursor:pointer;" title="{{error.login}}">
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error!</span>
+      </span>
     </div>
   </div>
 </form>

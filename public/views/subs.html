@@ -34,6 +34,20 @@
       </tbody>
     </table>
     <hr>
+    <div id='errors'>
+      <span ng-show='success.editSub' class="text-success">
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Submission changed!
+      </span>
+      <span ng-show='error.editSub' class="text-danger" style="cursor:pointer;" title="{{error.editSub}}">
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error changing submission!</span>
+      </span>
+      <span ng-show='success.delSub' class="text-success">
+        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Submission removed!
+      </span>
+      <span ng-show='error.delSub' class="text-danger" style="cursor:pointer;" title="{{error.delSub}}">
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error removing submission!</span>
+      </span>
+    </div>
     <div ng-show='filt' class="btn alert alert-info alert-dismissible" role="alert">
       <button class="close" data-dismiss="alert" aria-label="Close" ng-click='unfilt()'>
         <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
