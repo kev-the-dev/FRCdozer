@@ -43,16 +43,12 @@ angular.module('FRCdozer')
       }
     };
     $scope.changeGame = function (game) {
-      //$scope.$apply(function() {
         $scope.curGame = game;
-      //});
     };
     $scope.appendSub = function (sub) {
-      //$scope.$apply(function() {
         $scope.subs.push(sub);
-        $scope.getTeams(true,[sub],true);
+        $scope.sortTeams([sub],true);
         $scope.sortMatches();
-      //});
     };
     $scope.appendTeam = function (team) {
       $scope.teams.push(team);
@@ -74,15 +70,13 @@ angular.module('FRCdozer')
         }
         break;
       };
-      //$scope.$apply(function() {
-        $scope.subs.splice(a,1);
-        $scope.teams[b].subs.splice(c,1);
-        if ($scope.teams[b].subs.length===0) $scope.teams.splice(b,1);
-        $scope.sortMatches();
-      //});
+      $scope.subs.splice(a,1);
+      $scope.teams[b].subs.splice(c,1);
+      if ($scope.teams[b].subs.length===0 && !$scope.teams[b]._id) $scope.teams.splice(b,1);
+      $scope.sortMatches();
     };
     $scope.removeTeam = function (team) {
-      for (x in $scope.teams) if ($scope.teams[x].team === team.team) {
+      for (x in $scope.teams) if ($scope.teams[x]._id === team._id) {
         $scope.teams.splice(x,1);
         break;
       }
@@ -90,7 +84,7 @@ angular.module('FRCdozer')
     $scope.changeSub = function (sub) {
       for (x in $scope.subs) if (sub._id === $scope.subs[x]._id) {
         $scope.subs[x]=sub;
-        $scope.getTeams(true);
+        $scope.sortTeams();
         break;
       }
       $scope.sortMatches();
@@ -107,17 +101,6 @@ angular.module('FRCdozer')
     $scope.getMatch = function (match) {
       for (x in $scope.matches) if ($scope.matches[x].match === match) return $scope.matches[x];
     };
-    /*
-    $scope.getCurSubs = function (def) {
-      if (!def) return $http.get ('/api/match');
-      else {
-        $http.get ('/api/match')
-          .success(function (data) {
-            $scope.subs=data;
-          });
-      }
-    };
-    */
     $scope.sortMatches = function (subs) { //sorts array of submissions, or the scope submissions, into matches
       var subs = subs || $scope.subs;
       var matches = [];
@@ -147,6 +130,25 @@ angular.module('FRCdozer')
         .error(function (data) {
           call(data,null);
         });
+    };
+    $scope.getSubs = function (id,call) {
+      $http.get('api/game/'+(id || $scope.curGame._id)+'/sub')
+        .success(function (x) {
+          $scope.handle('getSubs');
+          $scope.subs=x;
+          $scope.sortMatches();
+          $scope.sortTeams();
+          call();
+        })
+        .error(function(x){$scope.handle('getSubs',x)});
+    };
+    $scope.getTeams = function (id,call) {
+      $http.get('api/game/'+(id || $scope.curGame._id)+'/team')
+        .success(function (teams) {
+          $scope.handle('getSubs');
+          for (y in teams) $scope.changeTeam(teams[y]);
+        })
+        .error(function(x){$scope.handle('getSubs',x)});
     };
     $scope.deleteGame = function (id,call) {
       $http.delete('api/game/'+id)
@@ -210,10 +212,12 @@ angular.module('FRCdozer')
         .error(function (x){$scope.handle('delSub',x)});
     };
     $scope.delTeam = function (id) {
-      var req = $http.delete ('api/game/'+$scope.curGame._id+'/team/'+id);
-      if (!$scope.connected) req.success(function(data) {
-        $scope.removeTeam(data);
-      });
+      $http.delete ('api/game/'+$scope.curGame._id+'/team/'+id)
+        .success(function (x) {
+          $scope.handle('delTeam');
+          if (!$scope.connected) $scope.removeTeam(data);
+        })
+        .error(function (x) {$scope.handle('delTeam',x)});
     };
     $scope.editGame = function (x) {
       $http.put('api/game/'+x._id,x)
@@ -230,7 +234,7 @@ angular.module('FRCdozer')
       for (x in calc) val=val+(Number(sub[calc[x].name])*calc[x].worth || 0);
       return Math.round(val*100)/100 || 0;
     };
-    $scope.getTeams = function (def,subs,noReset) {
+    $scope.sortTeams = function (subs,noReset) { //sorts aray of submissions or $scope.subs into teams
       var teams = noReset ?  $scope.teams : [];
       subs = subs || $scope.subs;
       mSearch: for (x in subs) { //sorts matches into teams
@@ -242,8 +246,7 @@ angular.module('FRCdozer')
         }
         teams.push({team:subs[x].team,subs:[subs[x]],averages:{}});
       }
-      if (!def) return teams;
-      else $scope.teams = teams;
+      $scope.teams = teams;
     };
     $scope.getAverage = function (prop,subs) {
       subs = subs || [];
@@ -273,12 +276,15 @@ angular.module('FRCdozer')
     }
     $scope.init = function () {
       if (!$stateParams.name) $state.go('404');
-      $scope.getGame($stateParams.name, function (err,data) { //'5495eb1b46fea7c15102dc7f'
-        if (data) {
-          $scope.curGame = data;
-          $scope.subs = data.submissions;
-          $scope.teams = data.teams;
-          $scope.getTeams(true,null,true);
+      $scope.getGame($stateParams.name, function (err,x) {
+        if (x) {
+          //$scope.curGame = x;
+          //$scope.getSubs(x._id,function(){$scope.getTeams(x._id);});
+          //socketConf();
+          $scope.curGame = x;
+          $scope.subs = x.submissions;
+          $scope.teams = x.teams;
+          $scope.sortTeams(null,true);
           $scope.sortMatches();
           socketConf();
         }

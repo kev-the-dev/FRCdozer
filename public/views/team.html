@@ -17,13 +17,20 @@
         </div>
         <div class="form-group">
           <div>
-            <button ng-click='editTeam(team)' type="submit" class="btn btn-success">Save</button>
-            <span ng-show='success.editTeam' class="text-success">
-              <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Changed!
-            </span>
-            <span ng-show='error.editTeam' class="text-danger" style="cursor:pointer;" title="{{error.editTeam}}">
-              <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error!</span>
-            </span>
+            <button ng-click='editTeam(team)' type="submit" class="btn btn-success">Save/Create</button>
+              <span ng-show='success.editTeam' class="text-success">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Changed team!
+              </span>
+              <span ng-show='error.editTeam' class="text-danger" style="cursor:pointer;" title="{{error.editTeam}}">
+                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error changing team!</span>
+              </span>
+            <button ng-show='team._id' ng-click='delTeam(team._id)' class="btn btn-danger">Remove/Reset Team Info</button>
+              <span ng-show='success.delTeam' class="text-success">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Reset team!
+              </span>
+              <span ng-show='error.delTeam' class="text-danger" style="cursor:pointer;" title="{{error.delTeam}}">
+                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error resetting team!</span>
+              </span>
           </div>
         </div>
       </form>
