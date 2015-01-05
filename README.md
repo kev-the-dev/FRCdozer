@@ -5,7 +5,7 @@ A complete scouting app (frontend and backend) for FIRST Robotics Compeition eve
 
 ![alt tag](http://i.imgur.com/NKJoBUr.png)
 
-A demo of this app, the same one I use for testing (unstable), can be found at http://23.94.13.240:3000/#/
+A demo of this app, the same one I use for testing (unstable), can be found at https://riptiderobotics.com:3000/#/game/Demo
 To install: 
 
 1. Install requirements: NodeJS, NPM, and MongoDB
