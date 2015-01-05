@@ -1,21 +1,45 @@
-
 <div>
   <h2>Teams</h2>
-  <h4 ng-show='filt'>Filtering by: {{filt}}<span ng-show='!revr'>, descending</span></h4>
+  <div ng-show='filt' class="btn alert alert-info alert-dismissible" role="alert">
+    <button class="close" data-dismiss="alert" aria-label="Close" ng-click='unfilt()'>
+      <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
+    </button>
+    <strong>{{("Filtering by "+filt)|| "no filter"}}<span ng-show='!revr'>, Decending</span></strong>
+  </div>
   <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
         <th>Place</th>
-        <th>Team <button class="btn btn-xs btn-primary" ng-click='sort("team")'>Sort</button></th>
-        <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}} <button class="btn btn-xs btn-primary" ng-click='sort("averages."+x.name)'>Sort</button></th>
+        <th>Matches
+          <button class="btn btn-xs btn-primary" ng-click='sort("subs.length")'>
+            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+          </button>
+        </th>
+        <th>#
+          <button class="btn btn-xs btn-primary" ng-click='sort("team")'>
+            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+          </button>
+        </th>
+        <th>Name
+          <button class="btn btn-xs btn-primary" ng-click='sort("name")'>
+            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+          </button>
+        </th>
+        <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}}
+          <button class="btn btn-xs btn-primary" ng-click='sort("averages."+x.name)'>
+            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+          </button>
+        </th>
         <th data-ng-repeat='y in curGame.calc'>{{y.name}} <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
       </tr>
     </thead>
     <tbody>
-      <tr data-ng-repeat='x in teams| orderBy:filt:revr'>
-        <td>{{$index+1}}</td>
-        <td><a ng-href='#/team/{{x.team}}'><h4>{{x.team}}</h4></a></td>
-        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name] = getAverage(z.name,x.matches)}}</h4></td>
+      <tr data-ng-repeat='x in teams | orderBy:filt:revr'>
+        <td><h4>{{$index+1}}</h4></td>
+        <td><span class='badge'>{{x.subs.length}}</span></td>
+        <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
+        <td><a ui-sref='game.team({num:x.team})'>{{x.name}}</a></td>
+        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name] = getAverage(z.name,x.subs || [])}}</h4></td>
         <td data-ng-repeat='y in curGame.calc'><h4>{{x.calc[y.name] = getValue(x.averages,y.elements)}}</h4></td>
       </tr>
     </tbody>

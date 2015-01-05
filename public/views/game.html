@@ -1,87 +1,30 @@
-<h2>{{game.name}}</h2>
-<p>ID:{{game._id}}</p>
 <div>
-  <table class='table table-bordered table-striped table-hover'>
-    <tr>
-      <th colspan='500'>Sample Match</th>
-    </tr>
-    <tr>
-      <td data-ng-repeat='q in game.game'>{{q.name}}</td>
-      <td data-ng-repeat='k in game.calc'>{{k.name}}</td>
-    </tr>
-    <tr>
-      <td data-ng-repeat='p in game.game'>
-        <input data-ng-if='p.type==="String"' class="form-control" data-ng-model='sample.elements[p.name]' placeholder='wow!'>
-        <form data-ng-if='p.type==="Boolean"'>
-          <input type="radio" ng-model="sample.elements[p.name]" ng-value="sTrue">True<br/>
-          <input type="radio" ng-model="sample.elements[p.name]" ng-value="sFalse">False<br/>
-        </form>
-        <span data-ng-if='p.type==="Number"'>
-          <h4>{{sample.elements[p.name] || 0 }}
-            <button ng-click="sample.elements[p.name] = sample.elements[p.name] + 1" class="btn btn-xs btn-info">+</button>
-            <button ng-click="sample.elements[p.name] = sample.elements[p.name] - 1" class="btn btn-xs btn-warning">-</button>
-          </h4>
-        </span>
-      </td>
-      <td data-ng-repeat='h in game.calc'>{{getValue(sample.elements || [],h.elements || [])}}</td>
-    </tr>
-  </table>
-</div>
-<div class='row'>
-  <div class='col-sm-4'>
-    <table class='table table-bordered table-striped table-hover'>
-      <tr><th colspan='2'>Game Elements</th></tr>
-      <tr>
-        <th>Name</th>
-        <th>Data Type</th>
-      </tr>
-      <tr data-ng-repeat='x in game.game'>
-        <td><input class="form-control" data-ng-model='x.name'></td>
-        <td>
-          <select class="form-control" data-ng-model='x.type'>
-            <option>Number</option>
-            <option>String</option>
-            <option>Boolean</option>
-          </select>
-        </td>
-        <td><button class='btn btn-sm btn-danger' data-ng-click="game.game.splice($index,1)">-</button></td>
-      </tr>
-      <tr><td colspan='2'><button class="btn btn-sm btn-success" data-ng-click='game.game.push({name:"",type:"String"})'>+</button></td></tr>
-    </table>
-  </div>
-  <div class='col-sm-8'>
-    <table class='table table-bordered table-striped table-hover'>
-      <tr><th colspan='2'>Calculated Elements</th></tr>
-      <tr>
-        <th>Name</th>
-        <th>Elements</th>
-      </tr>
-      <tr data-ng-repeat='g in game.calc'>
-        <td><input class="form-control" data-ng-model='g.name'></td>
-        <td>
-          <table>
-            <tr>
-              <td>Element</td>
-              <td>Worth</td>
-            </tr>
-            <tr data-ng-repeat='p in g.elements'>
-              <td>
-                <select class="form-control" data-ng-model='p.name'>
-                  <option data-ng-repeat='L in game.game | filter: {type:"!String"} '>{{L.name}}</option>
-                </select>
-              </td>
-              <td><input class="form-control" type='number' data-ng-model='p.worth'></td>
-              <td><button class='btn btn-sm btn-danger' data-ng-click='g.elements.splice($index,1)'>-</button></td>
-            </tr>
-            <tr><td><button class="btn btn-sm btn-success" data-ng-click='g.elements.push({name:"",worth:""})'>+</button></td></tr>
-          </table>
-        </td>
-        <td><button class='btn btn-sm btn-danger' data-ng-click="game.calc.splice($index,1)">-</button></td>
-      </tr>
-      <tr><td colspan='2'><button class="btn btn-sm btn-success" data-ng-click='game.calc.push({name:"",elements:[{name:"",worth:""}]})'>+</button></td></tr>
-    </table>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+      <a class="navbar-brand" ui-sref='game'>{{curGame.name}}</a>
+    </div>
+    <ul class="nav nav-pills">
+      <li ui-sref-active='active'><a ui-sref="game.add">Add</a></li>
+      <li ui-sref-active='active'><a ui-sref="game.edit">Edit Game</a></li>
+      <li ui-sref-active='active'><a ui-sref="game.submissions">Submissions <span class="badge">{{subs.length}}</span></a></li>
+      <li ui-sref-active='active'><a ui-sref="game.teams">Teams <span class="badge">{{teams.length}}</span></a></li>
+      <li ui-sref-active='active'><a ui-sref="game.matches">Matches <span class="badge">{{matches.length}}</span></a></li>
+      <li>
+        <span data-ng-show='!connected'><span class='label label-warning bg-warning'>Live update off <span class='glyphicon glyphicon-remove' aria-hidden="true"></span></span> <button data-ng-click='init()' class='btn btn-success'><span class='glyphicon glyphicon-refresh' aria-hidden="true"></span></button></span>
+        <span data-ng-show='connected'><span  class='label label-success bg-primary'>Live update on <span class='glyphicon glyphicon-ok' aria-hidden="true"></span></span></span>
+      </li>
+    </ul>
+  </nav>
+  <div data-ui-view>
+    <div class="jumbotron">
+      <div class="container">
+        <h1>{{curGame.name}}</h1>
+        <p>{{curGame.description}}</p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="game.add" role='button'>Add data</a></p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="game.teams" role='button'>View teams</a></p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="game.edit" role='button'>Edit game</a></p>
+        <p><a class="btn btn-primary btn-lg" ui-sref="game.submissions" role='button'>View submissions</a></p>
+      </div>
+    </div>
   </div>
 </div>
-<hr>
-<button class='btn btn-primary' data-ng-click='editGame(game)'>Save Changes</button>
-<button class="btn btn-warning" data-ng-click='game=curGame'>Reset</button>

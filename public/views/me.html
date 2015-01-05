@@ -1,0 +1,28 @@
+<div>
+  <h2>Hello, {{user.username}}</h2>
+  <div class="panel panel-default">
+    <div class="panel-heading">Change password:</div>
+    <div class="panel-body">
+      <form>
+        <div class="form-group">
+          <label for="password">New Password</label>
+          <input ng-model='newPassword' type="password" class="form-control" placeholder="Enter password">
+        </div>
+        <div class="form-group">
+          <label for="password">Confirm new Password</label>
+          <input ng-model='newPasswordConfirm'type="password" class="form-control" placeholder="Confirm password">
+          <span ng-show='newPassword != newPasswordConfirm' class="text-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Passwords must match</span>
+        </div>
+        <button ng-disabled='newPassword != newPasswordConfirm || !newPassword'
+          ng-click='changePassword(newPassword)' type="submit" class="btn btn-success">Submit
+        </button>
+        <span ng-show='success.changePassword' class="text-success">
+          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Password changed!
+        </span>
+        <span ng-show='error.changePassword' class="text-danger" style="cursor:pointer;" title="{{error.changePassword}}">
+          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error!</span>
+        </span>
+      </form>
+    </div>
+  </div>
+</div>

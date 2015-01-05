@@ -1,12 +1,22 @@
+var express = require('express');
+var router = express.Router();
 var mon = require('mongoose');
 var con = mon.createConnection("mongodb://localhost/FRC");
 var sch = mon.Schema;
-var out = {};
-out.games = con.model ('games', new sch({
-  name: String,
-  game: Array,
-  calc: Array
+var games = con.model ('FRCgames', new sch({
+  name: {type:String,unique:true},
+  description: String,
+  game: [new sch({name:String,type:String})],
+  calc: [{name:String,elements:[{name:String,worth:Number}]}],
+  submissions: [new sch({
+    match: String,
+    side: String,
+    team: Number,
+    elements: Object
+  })],
+  teams: [new sch({team:{type:Number,unique:true},notes:String,name:String})]
 }));
+<<<<<<< HEAD
 out.matchesSchema = new sch({
   team: Number,
   elements: Object
@@ -28,3 +38,16 @@ out.games.findById(out.game, function (err,x) { //finds default game and sets to
   }
 });
 module.exports = out;
+=======
+var users = con.model('users', new sch({
+  username: { type: String, required: true, unique: true},
+  password: { type: String, required: true },
+  salt:String,
+  info:Object
+}));
+module.exports = {
+  users: users,
+  games: games,
+  io: undefined
+};
+>>>>>>> 0df780bd5812027d8f7df1daa863c1f0a1be1e34

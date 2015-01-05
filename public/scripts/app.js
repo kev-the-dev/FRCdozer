@@ -1,45 +1,132 @@
-angular.module('FRCdozer',['ngRoute'])
-  .config(['$routeProvider',function ($routeProvider) {
-    $routeProvider
-    .when('/', {
-      controller: 'tableCtrl',
-      templateUrl: '/views/table.html'
-    })
-    .when('/match/:id', {
-      controller: 'matchCtrl',
-      templateUrl: '/views/matchid.html'
-    })
-    .when('/add', {
-      controller: 'addCtrl',
-      templateUrl: '/views/add.html'
-    })
-    .when('/team/:team', {
-      controller: 'teamCtrl',
-      templateUrl: '/views/team.html'
-    })
-    .when('/team', {
-      controller: 'teamsCtrl',
-      templateUrl: '/views/teams.html'
-    })
-    .when('/game/', {
-      controller: 'gameCtrl',
-      templateUrl: '/views/game.html'
-    })
-    .otherwise ({redirectTo: '/'});
+angular.module('FRCdozer',['ui.router'])
+  .config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
+    $stateProvider
+      .state('home', {
+        url: "/",
+        templateUrl: 'views/home.html'
+      })
+      .state('me', {
+        url: '/me',
+        templateUrl: 'views/me.html'
+      })
+  	  .state('login', {
+  		url: "/login",
+  		templateUrl: 'views/login.html'
+  	  })
+      .state('register', {
+        url: '/register',
+        templateUrl: 'views/register.html'
+      })
+      .state('404', {
+        url: '/404',
+        templateUrl: 'views/404.html'
+      })
+      .state('game', {
+        url: '/game/:name?filter&reverse',
+        templateUrl: 'views/game.html',
+        controller: 'frcCtrl'
+      })
+      .state('game.edit', {
+        url: '/edit',
+        templateUrl: 'views/edit.html',
+      })
+      .state('game.submissions', {
+        url: '/subs',
+        templateUrl: 'views/subs.html'
+      })
+      .state('game.add', {
+        url: '/add',
+        templateUrl: 'views/add.html'
+      })
+      .state('game.teams', {
+        url: '/teams',
+        templateUrl: 'views/teams.html'
+      })
+      .state('game.team', {
+        url: '/team/:num',
+        templateUrl: 'views/team.html',
+        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+          $scope.teamNum = $stateParams.num;
+        }]
+      })
+      .state('game.match', {
+        url: '/match/:id',
+        templateUrl: 'views/match.html',
+        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+          $scope.matchId= $stateParams.id;
+        }]
+      })
+      .state('game.sub', {
+        url: '/sub/:id',
+        templateUrl: 'views/sub.html',
+        controller: ['$scope','$stateParams',function ($scope,$stateParams) {
+          $scope.subId = $stateParams.id;
+        }]
+      })
+      .state('game.matches', {
+        url: '/matches',
+        templateUrl: 'views/matches.html'
+      });
+      $urlRouterProvider
+      .when('/g/:name', '/game/:name')
+      .otherwise('/404');
+      
   }])
-  .controller('tableCtrl',['$scope',function ($scope){
-  }])
-  .controller('matchCtrl',['$scope','$routeParams','$http',function ($scope,$routeParams,$http){
-    $scope.matchId = $routeParams.id;
-  }])
-  .controller('addCtrl',['$scope',function ($scope){
-    $scope.addteam="def";
-  }])
-  .controller('teamCtrl',['$scope','$routeParams',function ($scope,$routeParams){
-    $scope.teamNum = $routeParams.team;
-  }])
-  .controller('teamsCtrl', ['$scope', function ($scope) {
-  }])
-  .controller('gameCtrl',['$scope','$routeParams',function($scope,$routeParams){
-    $scope.game=$scope.curGame;
+  .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
+    $scope.user = undefined;
+    $scope.error = {};
+    $scope.errors = [];
+    $scope.success = {};
+    $scope.handle = function (type,error) { //given http req and type string, handle with timout
+      if (error) {
+        $scope.errors.push({type:type,error:error});
+        $scope.error[type] = JSON.stringify(error);
+        $timeout(function () {
+          $scope.error[type] = false;
+        },8000);
+      } else {
+        $scope.success[type] = true;
+        $timeout(function () {
+          $scope.success[type] = false;
+        },1000);
+      }
+    };
+    $scope.userInit = function () {
+      $http.get('api/hello')
+        .success(function (data) {
+          $scope.user=data;
+          $scope.handle('init');
+        })
+        .error(function(x){$scope.handle('init',x)});
+    };
+    $scope.changePassword = function (password) {
+      $http.put('api/password',{password:password})
+        .success(function(){$scope.handle('changePassword')})
+        .error(function(x){$scope.handle('changePassword',x)});
+    };
+    $scope.login = function (user,pass) {
+      $http.post('api/login',{username:user,password:pass})
+        .success(function (data) {
+          $scope.user = data;
+          $scope.handle('login');
+        })
+        .error(function (x) {$scope.handle('login',x)});
+    };
+    $scope.logout = function () {
+      $http.post('api/logout')
+      .success(function () {
+        $scope.handle('logout');
+        $scope.user = undefined;
+      })
+      .error(function(x){$scope.handle('logout',x)});
+    };
+    $scope.register = function (user,pass) {
+      $http.post('api/register',{username:user,password:pass})
+        .success(function (x) {
+          $scope.handle('register');
+          $scope.login(user,pass);
+        })
+        .error(function(x){$scope.handle('register',x)});
+    };
+    $scope.userInit();
   }]);

@@ -1,0 +1,18 @@
+<table class='table table-bordered table-striped table-hover'>
+  <thead>
+    <tr>
+      <th>Links</th>
+      <th>Teams</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr data-ng-repeat='x in matches | orderBy:filt:revr'>
+      <td>
+        <a href='#/game/{{curGame.name}}/match/{{x.match}}'>{{x.match}}</a>
+      </td>
+      <td>
+        <a ng-repeat='y in x.subs'href='#/game/{{curGame.name}}/team/{{y.team}}'>{{y.team}}   </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
