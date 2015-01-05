@@ -1,9 +1,5 @@
 angular.module('FRCdozer',['ui.router'])
   .config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider
-      .when('/g/:name', '/game/:name')
-      .otherwise('/404');
-
     $stateProvider
       .state('home', {
         url: "/",
@@ -71,6 +67,10 @@ angular.module('FRCdozer',['ui.router'])
         url: '/matches',
         templateUrl: 'views/matches.html'
       });
+      $urlRouterProvider
+      .when('/g/:name', '/game/:name')
+      .otherwise('/404');
+      
   }])
   .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
     $scope.user = undefined;
