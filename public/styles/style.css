@@ -14,3 +14,7 @@
 .navbar.bg-primary {
   border-radius: 0  !important;
 }
+
+.nav-pills li:nth-child(n+1) a {
+  padding:15px;
+}
