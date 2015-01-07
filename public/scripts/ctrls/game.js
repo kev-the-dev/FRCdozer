@@ -220,6 +220,8 @@ angular.module('FRCdozer')
         .error(function (x) {$scope.handle('delTeam',x)});
     };
     $scope.editGame = function (x) {
+      x.teams = undefined;
+      x.submissions = undefined;
       $http.put('api/game/'+x._id,x)
         .success(function (data) {
           $scope.handle('editGame');
