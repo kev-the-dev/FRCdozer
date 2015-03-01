@@ -1,4 +1,4 @@
-angular.module('FRCdozer')
+﻿angular.module('FRCdozer')
 .controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
     $scope.subs = []; //stores matches for current game
     $scope.sub = {};
@@ -198,6 +198,7 @@ angular.module('FRCdozer')
     $scope.addSub = function (elements) {
       $http.post ('api/game/'+$scope.curGame._id+'/sub',elements)
         .success(function (x) {
+	    $scope.add = {};
           $scope.handle('newSub');
           if (!$scope.connected) $scope.appendSub(data);
         })

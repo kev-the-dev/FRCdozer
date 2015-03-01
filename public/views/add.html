@@ -27,21 +27,16 @@
       <table class="table table-striped table-condensed table-bordered">
         <tbody>
           <tr>
-            <td>Side</td>
-            <td>
-              <div class="radio">
-                <label>
-                  <input ng-model='add.side' type="radio" value="Red">
-                  Red
-                </label>
-              </div>
-              <div class="radio">
-                <label>
-                  <input ng-model='add.side' type="radio" value="Blue">
-                  Blue
-                </label>
-              </div>
+            <td colspan='2'>Alliance: {{add.side || "not set"}} </td>
+	  </tr>
+	  <tr>
+ 	    <td class='bg-primary' ng-click='add.side="Blue" '>
+		Blue
+	    </td>
+            <td class='btn-danger' ng-click='add.side="Red" '>
+		Red
             </td>
+          </tr>
         </tbody>
       </table>
     </div>

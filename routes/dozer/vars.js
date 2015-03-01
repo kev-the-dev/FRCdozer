@@ -1,4 +1,4 @@
-var express = require('express');
+﻿var express = require('express'); //test
 var router = express.Router();
 var mon = require('mongoose');
 var con = mon.createConnection("mongodb://localhost/FRC");
@@ -14,7 +14,7 @@ var games = con.model ('FRCgames', new sch({
     team: Number,
     elements: Object
   })],
-  teams: [new sch({team:{type:Number,unique:true},notes:String,name:String})]
+  teams: [new sch({team:{type:Number},notes:String,name:String})]
 }));
 var users = con.model('users', new sch({
   username: { type: String, required: true, unique: true},
