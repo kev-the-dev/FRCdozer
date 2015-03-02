@@ -27,8 +27,10 @@
       <td data-ng-repeat='y in curGame.game'>
         <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
         <form data-ng-if='y.type==="Boolean"' ng-init="x.elements[y.name] = x.elements[y.name] || false">
-          <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
-          <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
+          <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
+            <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true' type="button" class="btn">True</button>
+            <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false' type="button" class="btn">False</button>
+          </div>
         </form>
         <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
           <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success"><span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span></button>

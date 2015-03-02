@@ -11,6 +11,7 @@
     $scope.sample = {};
     $scope.teams = [];
     $scope.team={};
+    $scope.newTeam={};
     $scope.filt = $state.params.filter || "";
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
@@ -181,15 +182,16 @@
         _id:x._id,
         name:x.name || "",
         notes:x.notes || "",
-        team:x.team
+        team:Number(x.team)
       });
       else var req = $http.post ('api/game/'+$scope.curGame._id+'/team',{
         name:x.name || "",
         notes:x.notes || "",
-        team:x.team
+        team:Number(x.team)
       });
       req
         .success(function(x){
+          $scope.newTeam = {};
           $scope.handle('editTeam');
           if (!$scope.connected) $scope.changeTeam(x);
         })

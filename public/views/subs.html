@@ -20,8 +20,10 @@
           <td data-ng-repeat='p in curGame.game'>
             <textarea data-ng-if='p.type==="String"' class="form-control" data-ng-model='add.elements[p.name]' placeholder='wow!'></textarea>
             <form data-ng-if='p.type==="Boolean"'>
-              <input type="radio" ng-model="add.elements[p.name]" ng-value="true">True<br/>
-              <input type="radio" ng-model="add.elements[p.name]" ng-value="false">False<br/>
+              <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
+                <button ng-class="add.elements[p.name] ? 'btn-success': 'btn-default'" ng-click='add.elements[p.name]=true' type="button" class="btn">True</button>
+                <button ng-class="!add.elements[p.name] ? 'btn-danger': 'btn-default'" ng-click='add.elements[p.name]=false' type="button" class="btn">False</button>
+              </div>
             </form>
             <div data-ng-if='p.type==="Number"' class="btn-group-vertical" role="group">
               <button ng-click="add.elements[p.name] = add.elements[p.name] + 1" type="button" class="btn btn-xs btn-success">+</button>
@@ -89,8 +91,10 @@
             <td data-ng-repeat='y in curGame.game'>
               <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
               <form data-ng-if='y.type==="Boolean"' ng-init='x.elements[y.name] = x.elements[y.name] || false'>
-                <input type="radio" ng-model="x.elements[y.name]" ng-value="true">True
-                <input type="radio" ng-model="x.elements[y.name]" ng-value="false">False
+                <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
+                  <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true' type="button" class="btn">True</button>
+                  <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false' type="button" class="btn">False</button>
+                </div>
               </form>
               <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
                 <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success"><span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span></button>
