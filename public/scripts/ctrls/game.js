@@ -1,4 +1,7 @@
 ﻿angular.module('FRCdozer')
+.config(function ( $httpProvider) {
+  delete $httpProvider.defaults.headers.common['X-Requested-With'];
+})
 .controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
     $scope.subs = []; //stores matches for current game
     $scope.sub = {};
@@ -298,5 +301,8 @@
         }
       });
     };
+    $scope.tbaGrabTeams = function () {
+
+    }
     $scope.init();
 }]);

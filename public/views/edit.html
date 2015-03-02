@@ -1,20 +1,28 @@
 <div>
   <p>Game ID: {{curGame._id}}</p>
   <h4>Created on: {{getDate(curGame._id) | date:'short'}}</h4>
-  <form class="form-horizontal">
-    <div class="form-group">
-      <label class="control-label">Name: </label>
-      <div>
-        <input data-ng-model='curGame.name' class="form-control" placeholder="name">
+  <div class="col-md-10">
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="control-label">Name: </label>
+        <div>
+          <input data-ng-model='curGame.name' class="form-control" placeholder="name">
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label">Description: </label>
-      <div>
-        <textarea data-ng-model='curGame.description' class="form-control" placeholder="description"></textarea>
+      <div class="form-group">
+        <label class="control-label">Description: </label>
+        <div>
+          <textarea data-ng-model='curGame.description' class="form-control" placeholder="description"></textarea>
+        </div>
       </div>
-    </div>
-  </form>
+      <div class="form-group">
+        <label class="control-label">The Blue Aliance Event Key:</label>
+        <div>
+          <input data-ng-model='curGame.tbakey' class="form-control" placeholder="2015flor">
+        </div>
+      </div>
+    </form>
+  </div>
   <table class='table table-bordered table-striped table-hover'>
     <tr>
       <th colspan='500'>Sample Match</th>
