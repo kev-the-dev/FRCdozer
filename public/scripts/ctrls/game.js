@@ -1,7 +1,8 @@
 ﻿angular.module('FRCdozer')
-.config(function ( $httpProvider) {
-  delete $httpProvider.defaults.headers.common['X-Requested-With'];
-})
+.config(['$httpProvider', function($httpProvider) {
+	$httpProvider.defaults.useXDomain = true;
+	delete $httpProvider.defaults.headers.common['X-Requested-With'];
+}])
 .controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
     $scope.subs = []; //stores matches for current game
     $scope.sub = {};
@@ -16,6 +17,11 @@
     $scope.team={};
     $scope.newTeam={};
     $scope.filt = $state.params.filter || "";
+		$scope.filters = { //Init filters
+			matches:{key:undefined,reverse:false},
+			teams:{key:undefined,reverse:false},
+			subs:{key:undefined,reverse:false}
+		};
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
     $scope.newTeam;
@@ -39,11 +45,11 @@
       $scope.filt='';
       $scope.revr=false;
     };
-    $scope.sort = function (prop) {
-      if ($scope.filt === prop) $scope.revr=!$scope.revr;
+    $scope.sort = function (prop,type) {
+      if ($scope.filters[type].key === prop) $scope.filters[type].reverse=!$scope.filters[type].reverse; //If already at this property, reverse
       else {
-        $scope.filt=prop;
-        $scope.revr=true;
+				$scope.filters[type].key=prop;
+				$scope.filters[type].reverse=false;
       }
     };
     $scope.changeGame = function (game) {
@@ -172,6 +178,20 @@
       team = Number(team);
       for (x in $scope.teams) if (Number($scope.teams[x].team) === team) return $scope.teams[x];
     }
+    $scope.blueCalc = function (x,calc) { //given a match, calculate blue total worth of element
+        var total = 0;
+	for (i in x.subs) {
+           if (x.subs[i].side==="Blue") total = total + $scope.getValue(x.subs[i].elements,calc.elements);
+        }
+	return total;
+    }
+    $scope.redCalc = function (x,calc) { //given a match, calculate blue total worth of element
+        var total = 0;
+	for (i in x.subs) {
+           if (x.subs[i].side==="Red") total = total + $scope.getValue(x.subs[i].elements,calc.elements);
+        }
+	return total;
+    }
     $scope.editSub = function (x) {
       $http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
         .success(function(x) {
@@ -295,14 +315,50 @@
           $scope.sortTeams(null,true);
           $scope.sortMatches();
           socketConf();
+    	  $scope.tbaGrabInfo();
         }
         else {
           $state.go('404');
         }
       });
     };
+    $scope.tbaGrabInfo = function () {
+			$http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"?X-TBA-App-Id=frc4118:scouting:1")
+				.success(function (x) {
+					$scope.tbaResponse = x;
+				})
+				.error(function (x) {
+	        console.log(x);
+	      });
+    };
     $scope.tbaGrabTeams = function () {
-
-    }
+    	$http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"/teams?X-TBA-App-Id=frc4118:scouting:1")
+				.success(function (x) {
+          console.log(x);
+          $scope.tbaTeams = x;
+          for (i in x) {
+            $scope.editTeam({team:x[i].team_number,name:x[i].nickname});
+          }
+        })
+        .error(function (x) {
+          console.log(x);
+        });
+    };
+    $scope.tbaGrabMatches = function () {
+      $http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"/matches?X-TBA-App-Id=frc4118:scouting:1")
+			.success(function (x) {
+      	for (i in x) {
+		   		$scope.matches.push({match:x[i].key.split("_")[1],time:Number(x[i].time*1000),subs:[
+			      {team:Number(x[i].alliances.blue.teams[0].slice(3)),side:"Blue"},
+			      {team:Number(x[i].alliances.blue.teams[1].slice(3)),side:"Blue"},
+			      {team:Number(x[i].alliances.blue.teams[2].slice(3)),side:"Blue"}
+		   		]});
+        }
+          $scope.tbaMatches = x;
+        })
+        .error(function (x) {
+          console.log(x);
+        });
+    };
     $scope.init();
 }]);

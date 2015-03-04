@@ -1,10 +1,10 @@
 <div>
   <h2>Teams</h2>
-  <div ng-show='filt' class="btn alert alert-info alert-dismissible" role="alert">
+  <div ng-show='filters.teams.key' class="btn alert alert-info alert-dismissible" role="alert">
     <button class="close" data-dismiss="alert" aria-label="Close" ng-click='unfilt()'>
       <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
     </button>
-    <strong>{{("Filtering by "+filt)|| "no filter"}}<span ng-show='!revr'>, Decending</span></strong>
+    <strong>{{"Filtering by "+filters.teams.key}}<span ng-show='filters.teams.reverse'>, Decending</span></strong>
   </div>
   <form class="form-inline">
     <div class="form-group">
@@ -14,7 +14,7 @@
       <input ng-model="newTeam.name" class="form-control" placeholder="Name">
     </div>
     <button ng-click="editTeam(newTeam)" type="submit" class="btn btn-success">Add Team</button>
-    <!-- <button ng-show="curGame.tbakey" ng-click="tbaGrabTeams()">Grab Teams from The Blue Aliance</button> -->
+    <button ng-click="tbaGrabTeams()" class="btn btn-primary">Grab Teams from TBA</button>
   </form>
   <br>
   <table class='table table-bordered table-striped table-hover'>
@@ -22,30 +22,30 @@
       <tr>
         <th>Place</th>
         <th>Matches
-          <button class="btn btn-xs btn-primary" ng-click='sort("subs.length")'>
+          <button class="btn btn-xs btn-primary" ng-click='sort("subs.length","teams")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
         <th>#
-          <button class="btn btn-xs btn-primary" ng-click='sort("team")'>
+          <button class="btn btn-xs btn-primary" ng-click='sort("team","teams")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
         <th>Name
-          <button class="btn btn-xs btn-primary" ng-click='sort("name")'>
+          <button class="btn btn-xs btn-primary" ng-click='sort("name","teams")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
         <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}}
-          <button class="btn btn-xs btn-primary" ng-click='sort("averages."+x.name)'>
+          <button class="btn btn-xs btn-primary" ng-click='sort("averages[\""+x.name+"\"]","teams")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
-        <th data-ng-repeat='y in curGame.calc'>{{y.name}} <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'>Sort</button></th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}} <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","teams")'>Sort</button></th>
       </tr>
     </thead>
     <tbody>
-      <tr data-ng-repeat='x in teams | orderBy:filt:revr'>
+      <tr data-ng-repeat='x in teams | orderBy:filters.teams.key:!filters.teams.reverse'>
         <td><h4>{{$index+1}}</h4></td>
         <td><span class='badge'>{{x.subs.length}}</span></td>
         <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
