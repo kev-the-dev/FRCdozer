@@ -1,5 +1,5 @@
 <div>
-  <h3>Team {{team=getTeam(teamNum);console.log(team);team.team}}</h3>
+  <h3>Team {{team=getTeam(teamNum); team.team}}</h3>
   <div class='row'>
     <div class='col-md-6'>
       <form class="form">
@@ -57,23 +57,23 @@
     </div>
   </div>
   <hr>
-  <div ng-show='filt' class="btn alert alert-info alert-dismissible" role="alert">
+  <div ng-show='filters.team.key' class="btn alert alert-info alert-dismissible" role="alert">
     <button class="close" data-dismiss="alert" aria-label="Close" ng-click='unfilt()'>
       <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
     </button>
-    <strong>{{("Filtering by "+filt.split('.')[1]) || "no filter"}}<span ng-show='!revr'>, Decending</span></strong>
+    <strong>Filtering by {{filters.team.key}}<span ng-show='filters.team.reverse'>, Decending</span></strong>
   </div>
   <table class='table table-bordered table-striped table-hover table-responsive'>
     <thead>
       <tr>
         <th>Links</th>
         <th>Match</th>
-        <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements."+x.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
-        <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
+        <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","team")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","team")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
       </tr>
     </thead>
     <tbody>
-      <tr data-ng-repeat='x in team.subs | orderBy:filt:revr'>
+      <tr data-ng-repeat='x in team.subs | orderBy:filters.team.key:!filters.team.reverse'>
         <td>
           <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
           <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>

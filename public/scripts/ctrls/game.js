@@ -20,7 +20,8 @@
 		$scope.filters = { //Init filters
 			matches:{key:undefined,reverse:false},
 			teams:{key:undefined,reverse:false},
-			subs:{key:undefined,reverse:false}
+			subs:{key:undefined,reverse:false},
+			team:{key:undefined,reverse:false}
 		};
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
