@@ -41,7 +41,12 @@
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
-        <th data-ng-repeat='y in curGame.calc'>{{y.name}} <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","teams")'>Sort</button></th>
+        <th data-ng-repeat='y in curGame.calc'>
+          {{y.name}}
+          <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","teams")'>
+            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+          </button>
+        </th>
       </tr>
     </thead>
     <tbody>
