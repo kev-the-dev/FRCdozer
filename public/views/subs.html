@@ -24,10 +24,32 @@
         <thead>
           <tr>
             <th>Links</th>
-            <th>Match</th>
-            <th>Team</th>
-            <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","subs")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
-            <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","subs")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
+            <th>Match
+              <button class="btn btn-xs btn-primary" ng-click='sort("match","subs")'>
+                <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+              </button>
+            </th>
+            <th>Team
+              <button class="btn btn-xs btn-primary" ng-click='sort("team","subs")'>
+                <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+              </button>
+            </th>
+            <th>
+              Aliance
+              <button class="btn btn-xs btn-primary" ng-click='sort("side","subs")'>
+                <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+              </button>
+            </th>
+            <th data-ng-repeat='x in curGame.game'>{{x.name}}
+              <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","subs")'>
+                <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+              </button>
+            </th>
+            <th data-ng-repeat='y in curGame.calc'>{{y.name}}
+              <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","subs")'>
+                <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -47,6 +69,10 @@
               </div>
             </td>
             <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
+            <td>
+              <button ng-class='x.side!="Red" ? "btn-primary" : "btn-default"' ng-click='x.side="Blue" ' class="btn">Blue</button>
+              <button ng-class='x.side!="Blue" ? "btn-danger" : "btn-default"' ng-click='x.side="Red" ' class="btn">Red</button>
+            </td>
             <td data-ng-repeat='y in curGame.game'>
               <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
               <form data-ng-if='y.type==="Boolean"' ng-init='x.elements[y.name] = x.elements[y.name] || false'>

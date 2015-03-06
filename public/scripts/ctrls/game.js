@@ -21,7 +21,9 @@
 			matches:{key:undefined,reverse:false},
 			teams:{key:undefined,reverse:false},
 			subs:{key:undefined,reverse:false},
-			team:{key:undefined,reverse:false}
+			team:{key:undefined,reverse:false},
+			matchRed:{key:undefined,reverse:false},
+			matchBlue:{key:undefined,reverse:false}
 		};
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
@@ -58,7 +60,7 @@
     };
     $scope.appendSub = function (sub) {
         $scope.subs.push(sub);
-        $scope.sortTeams([sub],true);
+        $scope.sortTeams();
         $scope.sortMatches();
     };
     $scope.appendTeam = function (team) {
@@ -263,19 +265,13 @@
       for (x in calc) val=val+(Number(sub[calc[x].name])*calc[x].worth || 0);
       return Math.round(val*100)/100 || 0;
     };
-    $scope.sortTeams = function (subs,noReset) { //sorts aray of submissions or $scope.subs into teams
-      var teams = noReset ?  $scope.teams : [];
-      subs = subs || $scope.subs;
-      mSearch: for (x in subs) { //sorts matches into teams
-        for (y in teams) {
-          if (Number(teams[y].team) === Number(subs[x].team)) {
-            (teams[y].subs || (teams[y].subs=[])).push(subs[x]);
-            continue mSearch;
-          }
-        }
-        teams.push({team:subs[x].team,subs:[subs[x]],averages:{}});
-      }
-      $scope.teams = teams;
+    $scope.sortTeams = function () { //sorts aray of submissions or $scope.subs into teams
+			for (i in $scope.teams) { //For each team
+				$scope.teams[i].subs = []; //Reset the submissions of that team
+				for (h in $scope.subs) if (Number($scope.subs[h].team) === Number($scope.teams[i].team)) { //For each submission, if the submission and team are same, add to team
+					$scope.teams[i].subs.push($scope.subs[h])
+				}
+			}
     };
     $scope.getAverage = function (prop,subs) {
       subs = subs || [];
@@ -313,7 +309,7 @@
           $scope.curGame = x;
           $scope.subs = x.submissions;
           $scope.teams = x.teams;
-          $scope.sortTeams(null,true);
+          $scope.sortTeams();
           $scope.sortMatches();
           socketConf();
     	  $scope.tbaGrabInfo();
@@ -335,7 +331,6 @@
     $scope.tbaGrabTeams = function () {
     	$http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"/teams?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
-          console.log(x);
           $scope.tbaTeams = x;
           for (i in x) {
             $scope.editTeam({team:x[i].team_number,name:x[i].nickname});

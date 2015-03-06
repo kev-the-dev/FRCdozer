@@ -1,32 +1,98 @@
 <h2>Match: {{match = getMatch(matchId);matchId}}</h2>
-<div ng-show='filt' class="btn alert alert-info alert-dismissible" role="alert">
-  <button class="close" data-dismiss="alert" aria-label="Close" ng-click='unfilt()'>
+<h2>Blue</h2>
+<div ng-show='filters.matchBlue.key' class="btn alert alert-info alert-dismissible" role="alert">
+  <button class="close" data-dismiss="alert" aria-label="Close" ng-click='sort(undefined,"matchBlue")'>
     <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
   </button>
-  <strong>{{("Filtering by "+filt.split('.')[1]) || "no filter"}}<span ng-show='!revr'>, Decending</span></strong>
+  <strong>{{"Filtering by "+ filters.matchBlue.key}}<span ng-show='filters.matchBlue.reverse'>, Decending</span></strong>
 </div>
-<table class='table table-bordered table-striped table-hover'>
+<table class='table table-bordered table-striped table-hover table-condensed'>
   <thead>
     <tr>
       <th>Links</th>
-      <th>Match</th>
-      <th>Team</th>
-      <th data-ng-repeat='x in curGame.game'>{{x.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("elements."+x.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
-      <th data-ng-repeat='y in curGame.calc'>{{y.name}}  <button class="btn btn-xs btn-primary" ng-click='sort("calc."+y.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button></th>
+      <th>Team
+        <button class="btn btn-xs btn-primary" ng-click='sort("team","matchBlue")'>
+          <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+        </button>
+      </th>
+      <th data-ng-repeat='x in curGame.game'>{{x.name}}
+        <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","matchBlue")'>
+          <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+        </button>
+      </th>
+      <th data-ng-repeat='y in curGame.calc'>{{y.name}}
+        <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","matchBlue")'>
+          <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+        </button>
+      </th>
     </tr>
   </thead>
   <tbody>
-    <tr data-ng-repeat='x in match.subs | orderBy:filt:revr'>
+    <tr data-ng-repeat='x in match.subs | filter:{side:"Blue"} | orderBy:filters.matchRed.key:!filters.matchBlue.reverse'>
       <td>
         <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
         <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
         <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
       </td>
-      <td><input class='form-control' ng-model='x.match'></td>
       <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
       <td data-ng-repeat='y in curGame.game'>
-        <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
-        <form data-ng-if='y.type==="Boolean"' ng-init="x.elements[y.name] = x.elements[y.name] || false">
+        <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
+        <form data-ng-if='y.type==="Boolean"' ng-init='x.elements[y.name] = x.elements[y.name] || false'>
+          <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
+            <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true' type="button" class="btn">True</button>
+            <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false' type="button" class="btn">False</button>
+          </div>
+        </form>
+        <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
+          <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success"><span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span></button>
+          <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]  = x.elements[y.name] || 0 }}</button>
+          <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger"><span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span></button>
+        </div>
+      </td>
+      <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Red</h2>
+<div ng-show='filters.matchRed.key' class="btn alert alert-info alert-dismissible" role="alert">
+  <button class="close" data-dismiss="alert" aria-label="Close" ng-click='sort(undefined,"matchRed")'>
+    <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
+  </button>
+  <strong>{{"Filtering by "+ filters.matchRed.key}}<span ng-show='filters.matchRed.reverse'>, Decending</span></strong>
+</div>
+<table class='table table-bordered table-striped table-hover table-condensed'>
+  <thead>
+    <tr>
+      <th>Links</th>
+      <th>Team
+        <button class="btn btn-xs btn-primary" ng-click='sort("team","matchRed")'>
+          <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+        </button>
+      </th>
+      <th data-ng-repeat='x in curGame.game'>{{x.name}}
+        <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","matchRed")'>
+          <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+        </button>
+      </th>
+      <th data-ng-repeat='y in curGame.calc'>{{y.name}}
+        <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","matchRed")'>
+          <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+        </button>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr data-ng-repeat='x in match.subs | filter:{side:"Red"} | orderBy:filters.matchRed.key:!filters.matchRed.reverse'>
+      <td>
+        <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+        <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
+        <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
+      </td>
+      <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
+      <td data-ng-repeat='y in curGame.game'>
+        <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
+        <form data-ng-if='y.type==="Boolean"' ng-init='x.elements[y.name] = x.elements[y.name] || false'>
           <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
             <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true' type="button" class="btn">True</button>
             <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false' type="button" class="btn">False</button>

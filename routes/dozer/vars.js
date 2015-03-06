@@ -15,11 +15,11 @@ var games = con.model ('FRCgames', new sch({
     team: Number,
     elements: Object
   })],
-  teams: [{
-    team:Number,
+  teams: [new sch({
+    team:{type:Number,index: { unique: true, sparse: true}},
     notes:String,
-    name:String,
-  }]
+    name:String
+  })]
 }));
 var users = con.model('users', new sch({
   username: { type: String, required: true, unique: true},

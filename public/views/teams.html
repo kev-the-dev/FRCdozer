@@ -1,7 +1,7 @@
 <div>
   <h2>Teams</h2>
   <div ng-show='filters.teams.key' class="btn alert alert-info alert-dismissible" role="alert">
-    <button class="close" data-dismiss="alert" aria-label="Close" ng-click='unfilt()'>
+    <button class="close" data-dismiss="alert" aria-label="Close" ng-click='sort(undefined,"teams")'>
       <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
     </button>
     <strong>{{"Filtering by "+filters.teams.key}}<span ng-show='filters.teams.reverse'>, Decending</span></strong>
