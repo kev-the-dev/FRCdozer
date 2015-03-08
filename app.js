@@ -24,7 +24,7 @@ var configApp = function () {
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(cookieParser());
   app.use(compression());
-  
+
   app.use('/',require('./routes/dozer/index.js'));
 
   // catch 404 and forward to error handler

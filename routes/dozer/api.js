@@ -136,6 +136,18 @@ router.route('/game/:id/team')
       else res.send(x.teams);
     });
   })
+  .delete(function (req,res) {
+    games.findById(req.params.id, function (err,x) {
+      if (err) res.status(500).send(err);
+      else {
+        x.teams = {};
+        x.save(function (err) {
+          if (err) res.status(500).send(err);
+          else res.end();
+        })
+      }
+    });
+  })
   .post(function (req,res) { //add match
     games.findById(req.params.id, function (err,x) {
       if (err) res.status(500).send(err);
@@ -179,6 +191,36 @@ router.route('/game/:id')
       else res.send(x);
     });
   });
+
+router.post('/game/:id/TBAhook', function (req,res) { //Respond to webhook requests from TBA
+  games.findById(req.params.id,function(err,x) {
+    if (err || !x) res.status(500).send(err);
+    else {
+      req.body = JSON.parse(Object.keys(req.body)[0]);
+      switch (req.body.message_type) {
+        case "match_score":
+          io.to(x.name).emit("editMatch",req.body);
+          res.end();
+          break;
+        case "verification" :
+          x.verification = (req.body.message_data || {}).verification_key || undefined;
+          x.save(function (err) {
+            if (!err) {
+              res.end();
+              io.to(x.name).emit('TBAverification',x.verification);
+            } else res.end();
+          });
+          break;
+        case "ping" :
+          io.to(x.name).emit("TBAping","Ping!");
+          res.end();
+          break;
+        default:
+          res.end();
+      }
+    }
+  });
+});
 
 router.route('/game')
   .post(function (req,res) {

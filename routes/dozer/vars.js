@@ -9,6 +9,7 @@ var games = con.model ('FRCgames', new sch({
   game: [new sch({name:String,type:String})],
   calc: [{name:String,elements:[{name:String,worth:Number}]}],
   tbakey: String,
+  tbaverification:String,
   submissions: [new sch({
     match: String,
     side: String,

@@ -17,14 +17,7 @@
     $scope.team={};
     $scope.newTeam={};
     $scope.filt = $state.params.filter || "";
-		$scope.filters = { //Init filters
-			matches:{key:undefined,reverse:false},
-			teams:{key:undefined,reverse:false},
-			subs:{key:undefined,reverse:false},
-			team:{key:undefined,reverse:false},
-			matchRed:{key:undefined,reverse:false},
-			matchBlue:{key:undefined,reverse:false}
-		};
+		$scope.filters = {};
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
     $scope.newTeam;
@@ -48,11 +41,25 @@
       $scope.filt='';
       $scope.revr=false;
     };
-    $scope.sort = function (prop,type) {
-      if ($scope.filters[type].key === prop) $scope.filters[type].reverse=!$scope.filters[type].reverse; //If already at this property, reverse
+    $scope.sort = function (prop,type,name) {
+			var name = name ? name : prop;
+			if (!$scope.filters[type]) {
+				$scope.filters[type] = {
+					key:prop,
+					reverse:false,
+					name: name
+				};
+				return;
+			}
+
+      if ($scope.filters[type].key === prop) { //If already at this property, reverse
+				$scope.filters[type].reverse=!$scope.filters[type].reverse;
+				$scope.filters[type].name = name;
+			}
       else {
 				$scope.filters[type].key=prop;
 				$scope.filters[type].reverse=false;
+				$scope.filters[type].name = name;
       }
     };
     $scope.changeGame = function (game) {
@@ -97,35 +104,206 @@
     $scope.changeSub = function (sub) {
       for (x in $scope.subs) if (sub._id === $scope.subs[x]._id) {
         $scope.subs[x]=sub;
-        $scope.sortTeams();
         break;
       }
+			$scope.sortTeams();
       $scope.sortMatches();
     };
+		$scope.changeMatch = function (match) {
+			if (!match.match) return;
+			match.matchObj = match.matchObj || $scope.deserializeMatch(match.match);
+
+			for (var x in $scope.matches) if (match.match === $scope.matches[x].match) {
+				match.time = match.time ? match.time : $scope.matches[x].time; //if change doesn't have team, but original does, keep original
+				for (var y in match.blue.teams) if (match.blue.teams.hasOwnProperty(y)) {
+					match.blue.teams[y] = (typeof $scope.matches[x].blue.teams[y] === "object") ? $scope.matches[x].blue.teams[y] : match.blue.teams[y]
+				}
+				for (var z in match.red.teams) if (match.red.teams.hasOwnProperty(z)) {
+					match.red.teams[z] = (typeof $scope.matches[x].red.teams[z] === "object") ? $scope.matches[x].red.teams[z] : match.red.teams[z]
+				}
+				$scope.matches[x] = match;
+				return;
+			}
+			$scope.matches.push(match);
+		};
     $scope.changeTeam = function (team) {
       for (x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
         $scope.teams[x].name = team.name;
         $scope.teams[x].notes = team.notes;
+
         $scope.teams[x]._id = team._id  || undefined;
         return;
       }
       $scope.appendTeam(team);
     };
     $scope.getMatch = function (match) {
-      for (x in $scope.matches) if ($scope.matches[x].match === match) return $scope.matches[x];
+      for (x in $scope.matches) if ($scope.matches[x].match === match.toLowerCase()) return $scope.matches[x];
     };
-    $scope.sortMatches = function (subs) { //sorts array of submissions, or the scope submissions, into matches
-      var subs = subs || $scope.subs;
-      var matches = [];
-      z: for (x in subs) {
-        for (y in matches) if (matches[y].match === subs[x].match) {
-              matches[y].subs.push(subs[x]);
-              continue z;
-        }
-        matches.push({match:subs[x].match || "n/a",subs:[subs[x]]});
+    $scope.sortMatches = function () { //sorts array of submissions, or the scope submissions, into matches
+      var subs = $scope.subs;
+      var matches = $scope.matches;
+			for (var z in matches) {
+				if (!matches[z].blue) matches[z].blue = {teams:{},score:0};
+				if (!matches[z].red) matches[z].red = {teams:{},score:0};
+
+				for (var bluekey in matches[z].blue.teams) if (matches[z].blue.teams.hasOwnProperty(bluekey)) { //delete blue matches that aren't from TBA
+					if (matches[z].blue.teams[bluekey] !== true) delete matches[z].blue.teams[bluekey];
+				}
+				for (var redkey in matches[z].red.teams) if (matches[z].red.teams.hasOwnProperty(redkey)) { //delete red matches that aren't from TBA
+					if (matches[z].red.teams[redkey] !== true) delete matches[z].red.teams[redkey];
+				}
+			}
+      s: for (var x in subs) { //For each submision
+				if (subs[x].match) {
+					for (var y in matches) if (matches[y].match === subs[x].match.toLowerCase()) { //If the match with that sub's match exsists, add it to that match
+						if (subs[x].side === "Blue") matches[y].blue.teams[subs[x].team] = subs[x];
+						else if (subs[x].side === "Red") matches[y].red.teams[subs[x].team] = subs[x];
+						continue s;
+					}
+					if (subs[x].side === "Blue") {
+						var o = {}
+						o[subs[x].team] = subs[x];
+						matches[matches.length] = {
+							match:subs[x].match.toLowerCase(),
+							matchObj:$scope.deserializeMatch(subs[x].match),
+							blue:{
+								teams:o
+							},
+							red : {
+								teams:{}
+							}
+						};
+					}
+					else if (subs[x].side === "Red")  {
+						var o = {}
+						o[subs[x].team] = subs[x];
+						matches[matches.length] = {
+							match:subs[x].match.toLowerCase(),
+							matchObj:$scope.deserializeMatch(subs[x].match),
+							red:{
+								teams:o
+							},
+							blue : {
+								teams:{}
+							}
+						};
+					}
+				}
       }
       $scope.matches = matches;
     };
+		$scope.matchTeams = function (teams) { //given object of teams, return array of team keys
+			var z = [];
+			for (x in teams) if (teams.hasOwnProperty(x) && teams[x] !== true) z[z.length] = teams[x];
+			return z;
+		};
+		$scope.matchSort = [ //Array of functions for sorting matches
+			function (pre,rev) { //sorts first by match level (quaterfinals)
+				var l = pre.matchObj.level;
+				if (l === "qm" || l === "q" ) return 1;
+				else if (l === "qf" ) return 2;
+				else if (l === "sf" ) return 3;
+				else if (l === "f" ) return 4;
+				else return 0;
+			},
+			function (pre,rev) { //sorts next by set
+				return pre.matchObj.set;
+			},
+			function (pre,rev) { //sorts finnaly by match number
+				return pre.matchObj.number;
+			}
+		]
+		$scope.serializeMatch = function (match) { //given object, turn in into string containers: level, set, number
+			var ret = "";
+			if (typeof match === "object") {
+				if (match.level === "qm" || !match.set) ret =  match.level + match.number;
+				else {
+					ret = match.level+match.set+"m"+match.number;
+				}
+			}
+			return ret;
+		};
+		$scope.deserializeMatch = function  (match) { //given string, turn in into an object
+			var level = undefined;
+			var set = undefined;
+			var number = undefined;
+			var x;
+			for (x=0;x<match.length;x++) {
+				if (Boolean(Number(match[x]))) { //if you hit a number, you have level
+					level = match.slice(0,x).toLowerCase();
+					break;
+				}
+			}
+			for (var y = x; y<match.length; y++) {
+				if (!Boolean(Number(match[y]))) { // If you hit a character, has a set
+					set = Number(match.slice(x,y));
+					break;
+				}
+			}
+			if (set) { //if there is a set and next character is m
+				number = Number(match.slice(y+1));
+			}
+			else {
+				set = 1;
+				number = Number(match.slice(x));
+			}
+			return {
+				'level':level,
+				'set':set,
+				'number':number
+			};
+		};
+		function parseTBAmatch (match) {
+			console.log(match);
+			var o = {};
+			var m = {};
+			o[match.alliances.blue.teams[0].slice(3)] = true;
+			o[match.alliances.blue.teams[1].slice(3)] = true;
+			o[match.alliances.blue.teams[2].slice(3)] = true;
+
+			m[match.alliances.red.teams[0].slice(3)] = true;
+			m[match.alliances.red.teams[1].slice(3)] = true;
+			m[match.alliances.red.teams[2].slice(3)] = true;
+
+			var z = {
+				level: match.comp_level,
+				number: match.match_number,
+				set: match.set_number
+			};
+			return {
+				matchObj : z,
+				match:($scope.serializeMatch(z)),
+				time:Number(match.time*1000),
+				blue : {
+					score : (match.alliances.blue.score > 0 ? match.alliances.blue.score :  0),
+					teams : o
+				},
+				red : {
+					score : (match.alliances.red.score > 0 ? match.alliances.red.score :  0),
+					teams : m
+				}
+			};
+		}
+		$scope.tbaGrabMatches = function () {
+			$http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"/matches?X-TBA-App-Id=frc4118:scouting:1")
+			.success(function (x) {
+				for (i in x) $scope.changeMatch(parseTBAmatch(x[i]));
+				$scope.sortMatches();
+			})
+			.error(function (x) {
+				console.log(x);
+			});
+		};
+		$scope.matchCalc = function (teams,elements) { //given an object of a match team, calculate blue total worth of element
+			var total = 0;
+			for (var key in teams) {
+				if (teams.hasOwnProperty(key)) {
+					if (teams[key]) {
+						total = total + $scope.getValue(teams[key],elements)
+					}
+				}
+			}
+		};
     $scope.getGame = function (id,call) {
       $http.get('api/game/'+id)
         .success(function (data) {
@@ -180,20 +358,6 @@
     $scope.getTeam = function (team) {
       team = Number(team);
       for (x in $scope.teams) if (Number($scope.teams[x].team) === team) return $scope.teams[x];
-    }
-    $scope.blueCalc = function (x,calc) { //given a match, calculate blue total worth of element
-        var total = 0;
-	for (i in x.subs) {
-           if (x.subs[i].side==="Blue") total = total + $scope.getValue(x.subs[i].elements,calc.elements);
-        }
-	return total;
-    }
-    $scope.redCalc = function (x,calc) { //given a match, calculate blue total worth of element
-        var total = 0;
-	for (i in x.subs) {
-           if (x.subs[i].side==="Red") total = total + $scope.getValue(x.subs[i].elements,calc.elements);
-        }
-	return total;
     }
     $scope.editSub = function (x) {
       $http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
@@ -297,6 +461,18 @@
         .on('editSub',function(x){$scope.$apply(function () {$scope.changeSub(x);});})
         .on('editTeam',function(x){$scope.$apply(function () {$scope.changeTeam(x);});})
         .on('editGame',function(x){$scope.$apply(function () {$scope.changeGame(x);});})
+				.on('TBAverification',function(x){$scope.$apply(function () {
+					console.log(x);
+				});})
+				.on('TBAping',function(x){$scope.$apply(function () {
+					console.log(x);
+				});})
+				.on('editMatch',function(x){$scope.$apply(function () {
+					console.log(x);
+					if (x.message_data.match.event_key === $scope.curGame.TBAkey) {
+						$scope.changeMatch(parseTBAmatch(x.message_data.match));
+					}
+				});})
         .on('error',function(x){console.log(x);});
     }
     $scope.init = function () {
@@ -335,22 +511,6 @@
           for (i in x) {
             $scope.editTeam({team:x[i].team_number,name:x[i].nickname});
           }
-        })
-        .error(function (x) {
-          console.log(x);
-        });
-    };
-    $scope.tbaGrabMatches = function () {
-      $http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"/matches?X-TBA-App-Id=frc4118:scouting:1")
-			.success(function (x) {
-      	for (i in x) {
-		   		$scope.matches.push({match:x[i].key.split("_")[1],time:Number(x[i].time*1000),subs:[
-			      {team:Number(x[i].alliances.blue.teams[0].slice(3)),side:"Blue"},
-			      {team:Number(x[i].alliances.blue.teams[1].slice(3)),side:"Blue"},
-			      {team:Number(x[i].alliances.blue.teams[2].slice(3)),side:"Blue"}
-		   		]});
-        }
-          $scope.tbaMatches = x;
         })
         .error(function (x) {
           console.log(x);
