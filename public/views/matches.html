@@ -33,6 +33,10 @@
         TBA Score
         <button class="btn btn-xs btn-primary" ng-click='sort("red.score","matches","Red TBA Score")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
       </th>
+      <th class="bg-info">
+        Winner
+        <button class="btn btn-xs btn-primary" ng-click='sort("winner","matches","TBA match Winner")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -43,29 +47,34 @@
       <td>{{(x.time | date:'EEEE, h:mm') || "n/a"}}</td>
       <td>
         <ul class="list-inline">
-          <li ng-repeat="(y,null) in x.blue.teams">
-            <a href='#/game/{{curGame.name}}/team/{{y}}'>{{y}}</a>
+          <li ng-repeat="(y,x) in x.blue.teams">
+            <a ng-show="x !== true" href="#/game/{{curGame.name}}/sub/{{x._id}}" class="text-success"><b>{{y}}</b></a>
+            <a ng-show="x === true" href="#/game/{{curGame.name}}/team/{{y}}" class="text-warning">{{y}}</a>
           </li>
         </ul>
       </td>
       <td>
         <ul class="list-inline">
-          <li ng-repeat="(y,null) in x.red.teams">
-            <a href='#/game/{{curGame.name}}/team/{{y}}'>{{y}}</a>
+          <li ng-repeat="(y,x) in x.red.teams">
+            <a ng-show="x !== true" href="#/game/{{curGame.name}}/sub/{{x._id}}" class="text-success"><b>{{y}}</b></a>
+            <a ng-show="x === true" href="#/game/{{curGame.name}}/team/{{y}}" class="text-warning">{{y}}</a>
           </li>
         </ul>
       </td>
       <td ng-repeat="g in curGame.calc">
-        <b>{{x.blue.calc[g.name] = matchCalc(x.blue.teams,g.elements)}}</b>
+        <b>{{x.blue.calc[g.name] = matchCalc(x.blue.teams,g.elements); x.blue.calc[g.name]}}</b>
       </td>
       <td>
-        {{x.blue.score || 0}}
+        <b>{{x.blue.score}}</b>
       </td>
       <td ng-repeat="g in curGame.calc">
         <b>{{x.red.calc[g.name] = matchCalc(x.red.teams,g.elements)}}</b>
       </td>
       <td>
-        {{x.red.score || 0}}
+        <b>{{x.red.score}}</b>
+      </td>
+      <td>
+        <b>{{x.winner = winnerString(x.blue.score,x.red.score)}}</b>
       </td>
     </tr>
   </tbody>

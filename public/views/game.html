@@ -18,7 +18,7 @@
   <div data-ui-view>
     <div class="jumbotron">
       <div class="container">
-        <h1>{{curGame.name}} {{tbaResponse.name}}</h1>
+        <h1>{{curGame.name}} <span ng-show="tbaResponse"> ({{tbaResponse.year+" "+tbaResponse.name}})</span></h1>
         <p>{{curGame.description}}</p>
         <p><a class="btn btn-primary btn-lg" ui-sref="game.add" role='button'>Add data</a></p>
         <p><a class="btn btn-primary btn-lg" ui-sref="game.teams" role='button'>View teams</a></p>

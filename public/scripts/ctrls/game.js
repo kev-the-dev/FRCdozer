@@ -1,4 +1,9 @@
 ﻿angular.module('FRCdozer')
+/*
+.config(['$compileProvider',function($compileProvider){
+	$compileProvider.aHrefSanitizationWhitelist(/^\s*(|blob|):/);
+}])
+*/
 .config(['$httpProvider', function($httpProvider) {
 	$httpProvider.defaults.useXDomain = true;
 	delete $httpProvider.defaults.headers.common['X-Requested-With'];
@@ -27,12 +32,14 @@
         return date;
       }
     };
-    function discon () {
+    function discon (x) {
+			console.log("Disconnected for ",x);
       $scope.$apply(function() {
         $scope.connected=false;
       });
     }
-    function con() {
+    function con(x) {
+			console.log("Connecting for ",x);
       $scope.$apply(function() {
         $scope.connected=true;
       });
@@ -254,7 +261,6 @@
 			};
 		};
 		function parseTBAmatch (match) {
-			console.log(match);
 			var o = {};
 			var m = {};
 			o[match.alliances.blue.teams[0].slice(3)] = true;
@@ -285,7 +291,7 @@
 			};
 		}
 		$scope.tbaGrabMatches = function () {
-			$http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"/matches?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/TBAproxy/event/"+ ($scope.curGame.tbakey || "") +"/matches?X-TBA-App-Id=frc4118:scouting:1")
 			.success(function (x) {
 				for (i in x) $scope.changeMatch(parseTBAmatch(x[i]));
 				$scope.sortMatches();
@@ -298,19 +304,20 @@
 			var total = 0;
 			for (var key in teams) {
 				if (teams.hasOwnProperty(key)) {
-					if (teams[key]) {
-						total = total + $scope.getValue(teams[key],elements)
+					if (teams[key] !== true) {
+						total = total + $scope.getValue(teams[key].elements,elements)
 					}
 				}
 			}
+			return total;
 		};
     $scope.getGame = function (id,call) {
       $http.get('api/game/'+id)
         .success(function (data) {
           call (null,data);
         })
-        .error(function (data) {
-          call(data,null);
+        .error(function (data,status) {
+          call({message:data,status:status},null);
         });
     };
     $scope.createGame = function (param,call) {
@@ -422,6 +429,31 @@
         })
         .error(function(x){$scope.handle('editGame',x)});
     };
+		$scope.downloads = {};
+		$scope.subsToCSV = function (subs) {
+			var str = "Match,Team,Alliance";
+			for (y in $scope.curGame.game) str +=","+$scope.curGame.game[y].name;
+			for (y in $scope.curGame.calc) str +=","+$scope.curGame.calc[y].name;
+			str += "\n";
+			for (x in subs) {
+				str += subs[x].match.toLowerCase()+",";
+				str += subs[x].team+",";
+				str += subs[x].side;
+				for (z in $scope.curGame.game) str+=","+(subs[x].elements[$scope.curGame.game[z].name] || "");
+				for (z in $scope.curGame.calc) str+=","+($scope.getValue(subs[x].elements,$scope.curGame.calc[z].elements) || 0);
+				str += "\n"
+			}
+			return str;
+		};
+		$scope.stringify = JSON.stringify;
+		$scope.confirm = function (x) {
+			confirm(x);
+		};
+		$scope.download = function (prop,stuff,type) {
+			var blob = new Blob([ stuff ], { type : (type || 'text/plain')+';charset=utf-8;' });
+			var url = (window.URL || window.webkitURL).createObjectURL( blob );
+			$scope.downloads[prop] = url;
+		}
     $scope.getValue = function (sub,calc) {
       sub = sub || {};
       calc = calc || [];
@@ -449,7 +481,9 @@
       $scope.socket = io('/game?name='+$scope.curGame.name,{path:window.location.pathname+'socket.io/','force new connection' : true})
         .on('message', function (data) {console.log(data);})
         .on('connect', con)
+				.on('connect_error',discon)
         .on('reconnect',con)
+				.on('disconnect',discon)
         .on('connect_timeout', discon)
         .on('reconnecting', discon)
         .on('reconnect_error',discon)
@@ -468,8 +502,7 @@
 					console.log(x);
 				});})
 				.on('editMatch',function(x){$scope.$apply(function () {
-					console.log(x);
-					if (x.message_data.match.event_key === $scope.curGame.TBAkey) {
+					if (x.message_data.match.event_key === $scope.curGame.tbakey) {
 						$scope.changeMatch(parseTBAmatch(x.message_data.match));
 					}
 				});})
@@ -479,24 +512,35 @@
       if (!$stateParams.name) $state.go('404');
       $scope.getGame($stateParams.name, function (err,x) {
         if (x) {
-          //$scope.curGame = x;
-          //$scope.getSubs(x._id,function(){$scope.getTeams(x._id);});
-          //socketConf();
+					$scope.subs = x.submissions;
+					$scope.teams = x.teams;
+
+					delete x.submissions;
+					delete x.teams;
+
           $scope.curGame = x;
-          $scope.subs = x.submissions;
-          $scope.teams = x.teams;
           $scope.sortTeams();
           $scope.sortMatches();
           socketConf();
-    	  $scope.tbaGrabInfo();
+    	  	$scope.tbaGrabInfo();
         }
-        else {
-          $state.go('404');
+        else if (err) {
+					if (err.status === 401) $state.go('401');
+          else $state.go('404');
         }
       });
     };
+		$scope.winnerString = function (blue,red) {
+			if (!blue || !red) return "";
+			if (blue > red) return "Blue";
+			else if (red > blue) return "Red";
+			else if (red === blue) return "Tie";
+		};
+		$scope.delPermission = function (user) {
+			delete $scope.curGame.permissions.users[user];
+		};
     $scope.tbaGrabInfo = function () {
-			$http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/TBAproxy/event/"+ ($scope.curGame.tbakey || "") +"?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
 					$scope.tbaResponse = x;
 				})
@@ -505,7 +549,7 @@
 	      });
     };
     $scope.tbaGrabTeams = function () {
-    	$http.get("http://www.thebluealliance.com/api/v2/event/"+ ($scope.curGame.tbakey || "") +"/teams?X-TBA-App-Id=frc4118:scouting:1")
+    	$http.get("api/TBAproxy/event/"+ ($scope.curGame.tbakey || "") +"/teams?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
           $scope.tbaTeams = x;
           for (i in x) {

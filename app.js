@@ -35,9 +35,11 @@ var configApp = function () {
   });
 
   // error handler
+
   app.use(function(err, req, res, next) {
+    console.log(err);
     res.status(err.status || 500);
-    res.send("Error: "+err);
+    res.send(err);
   });
 
   var debug = require('debug')('expressTest');

@@ -5,11 +5,12 @@ var passport = require('passport');
 var passportLocal = require('passport-local');
 var session = require('express-session'),
     sessionStore = new session.MemoryStore();
-var cookie = require('cookie');
+var cookiejs = require('cookie');
 var cookieParser = require('cookie-parser');
 var vars= require('./vars.js'),
     users=vars.users,
-    io=vars.io
+    io=vars.io,
+    games=vars.games
 
 var COOKIE_SECRET = 'badkey';
 var COOKIE_NAME = 'connect.sid';
@@ -26,6 +27,7 @@ function safe (x) {
   x.salt = undefined;
   return x;
 }
+
 router.use(passport.initialize());
 router.use(passport.session());
 passport.use(new passportLocal.Strategy(function(name,pass,done) {
@@ -86,7 +88,7 @@ router.get('/hello', function (req,res) {
   if (req.user) res.send (safe(req.user));
   else res.status(401).send("Not logged in");
 });
-router.put('/password', function (req,res) {
+router.put('/password', function (req,res) { //Change password
   if (req.user && req.body.password && req.user.salt) users.findById(req.user._id, function (err,x) {
     if (err) res.status(500).send(err);
     else if (x) crypto.pbkdf2(req.body.password, req.user.salt, 10000, 64, function(err, derivedKey) {
@@ -106,46 +108,49 @@ router.put('/password', function (req,res) {
     else res.status(500).send("You are not logged in");
 });
 
+function parseUser(cookies,call) { //given object of cookies, return a user if exsits
+
+  var cookies = cookiejs.parse(cookies);
+  if(!cookies) return ("Could not parse cookies", undefined);
+
+  var cookie = cookies[COOKIE_NAME];
+  if (!cookie) return call("Cookie not found",undefined);
+
+  var sid = cookieParser.signedCookie(cookie, COOKIE_SECRET);
+  if (!sid) return call("Cannot parse signed cookie",undefined);
+
+  sessionStore.get(sid, function(err, store) {
+    if (err || !store) return call(err || "Error getting session store",undefined);
+    else users.findById(store.passport.user, function (err,x) {
+      if (err || !x) return call(err || "Error finding user",undefined);
+      else return call(undefined,x);
+    });
+  });
+}
 
 var game = io.of('/game')
   .on('connection', function (socket) {
     var name = socket.handshake.query.name;
-    if (name) {
-      //auth code here
-      socket.join(name);
-    }
+    if (name) games.findOne({name:name}, function (err,x) {
+        if (err || !x) { //if error finding game, close socket
+          socket.disconnect();
+        }
+        else if (x.permissions.others >= 1) { //if permissions allows anons to view, join socket
+          socket.join(x.name);
+        }
+        else {
+          parseUser(socket.handshake.headers.cookie, function (err,usr) { //othewise, attempt to find user\
+            if (err || !usr)  {
+              socket.disconnect();
+            }
+            else {
+              socket.user = usr;
+              socket.join(x.name);
+            }
+          });
+        }
+    });
     else socket.disconnect();
   });
-/*
-io.use(function(socket, next) {
-  try {
-    var data = socket.handshake || socket.request;
-    if (! data.headers.cookie) {
-      return next(new Error('Missing cookie headers'));
-    }
-    var cookies = cookie.parse(data.headers.cookie);
-    if (! cookies[COOKIE_NAME]) {
-      return next(new Error('Missing cookie ' + COOKIE_NAME));
-    }
-    var sid = cookieParser.signedCookie(cookies[COOKIE_NAME], COOKIE_SECRET);
-    if (! sid) {
-      return next(new Error('Cookie signature is not valid'));
-    }
-    data.sid = sid;
-    sessionStore.get(sid, function(err, session) {
-      console.log(err,session);
 
-      //if (err) return next(err);
-      //if (! session) return next(new Error('session not found'));
-      socket.session = session || null;
-      //console.log(session);
-      return next();
-      //
-    });
-  } catch (err) {
-    next();
-    console.error(err);
-  }
-});
-*/
 module.exports = router;

@@ -10,8 +10,8 @@ angular.module('FRCdozer',['ui.router'])
         templateUrl: 'views/me.html'
       })
   	  .state('login', {
-  		url: "/login",
-  		templateUrl: 'views/login.html'
+  		    url: "/login",
+  		    templateUrl: 'views/login.html'
   	  })
       .state('register', {
         url: '/register',
@@ -20,6 +20,10 @@ angular.module('FRCdozer',['ui.router'])
       .state('404', {
         url: '/404',
         templateUrl: 'views/404.html'
+      })
+      .state('401', {
+        url:'/401',
+        templateUrl: 'views/401.html'
       })
       .state('game', {
         url: '/game/:name?filter&reverse',
@@ -70,7 +74,7 @@ angular.module('FRCdozer',['ui.router'])
       $urlRouterProvider
       .when('/g/:name', '/game/:name')
       .otherwise('/404');
-      
+
   }])
   .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
     $scope.user = undefined;
@@ -128,5 +132,8 @@ angular.module('FRCdozer',['ui.router'])
         })
         .error(function(x){$scope.handle('register',x)});
     };
+    $scope.back = function () {
+      window.history.back()
+    }
     $scope.userInit();
   }]);

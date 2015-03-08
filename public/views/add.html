@@ -27,7 +27,7 @@
       <table class="table table-striped table-condensed table-bordered">
         <tbody>
           <tr>
-            <td>Match {{add.match}}</td>
+            <td>Match</td>
             <td>
               <select class="form-control" ng-model='add.match'
                       ng-options="x.match as x.match for x in matches | orderBy:matchSort">
@@ -36,7 +36,7 @@
             </td>
             <td ng-show='!add.match'>
               <div class="input-group">
-                <input ng-model='newTeam.match' type="text" class="form-control" placeholder="qm6">
+                <input ng-model='newTeam.match' type="text" class="form-control" placeholder="qm6, q1m3, sm1m2,f2">
                 <span class="input-group-btn">
                   <button ng-click='changeMatch({match:(newTeam.match)});add.match=newTeam.match;newTeam.match="" ' class="btn btn-default" type="button">Add</button>
                 </span>

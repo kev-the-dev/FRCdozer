@@ -1,10 +1,36 @@
 var express = require('express');
 var router = express.Router();
+var http = require('http');
 var vars = require('./vars.js'),
     games = vars.games,
     io = vars.io.of('/game');
-
 router.use(require('./auth.js'));
+
+router.param('game', function (req,res,next,id) {
+  console.log(req.user);
+  games.findById(id, function (err,game) {
+    if (err) {
+      if (err.name === "CastError" && err.type === "ObjectId") games.findOne({name:id}, function (err2,game2) {
+        if (err2) next(err2)
+        else if (!game2) next(new Error("Game not found"))
+        else {
+          req.game = game2;
+          if (req.user) req.authlevel = game2.permissions.users[req.user.username];
+          else req.authlevel = game2.permissions.others;
+          next();
+        }
+      });
+      else next(err);
+    }
+    else if (!game) next(new Error("Game not found"));
+    else {
+      req.game = game;
+      if (req.user) req.authlevel = game.permissions.users[req.user.username];
+      else req.authlevel = game.permissions.others;
+      next();
+    }
+  });
+});
 
 router.route('/game/:id/sub/:s')
   .get(function (req,res) { //gets match with given id
@@ -164,18 +190,15 @@ router.route('/game/:id/team')
     });
   });
 
+router.route('/game/:game')
+  .get(function(req,res) {
+    console.log(req.game.permissions);
+    console.log(req.authlevel);
+    if (req.authlevel >= 1) res.send(req.game);
+    else res.status(401).send("Not authorized");
+  });
+
 router.route('/game/:id')
-  .get(function (req,res) { //get game with givin id,
-    games.findById(req.params.id, function (err,x) {
-      if (err) games.findOne({name:req.params.id}, function (err,x) {
-        if (err) res.status(500).send(err);
-        else if (x) res.send(x);
-        else res.status(500).send("not found");
-      });
-      else if (x) res.send(x);
-      else res.status(500).send("not found");
-    });
-  })
   .put(function (req,res) { //edit game with id
     games.findByIdAndUpdate(req.params.id,{$set:req.body||null},function(err,x) {
       if (err) res.status(500).send(err);
@@ -222,6 +245,16 @@ router.post('/game/:id/TBAhook', function (req,res) { //Respond to webhook reque
   });
 });
 
+router.get('/TBAproxy/:path', function (req,res) { //Proxies request to TBA
+  console.log(req.params.path);
+  http.get("http://www.thebluealliance.com/api/v2/"+req.params.path, function(x) {
+    res.send(x);
+  }).on('error', function(err) {
+    res.status(500).send(err);
+  });
+});
+
+
 router.route('/game')
   .post(function (req,res) {
     req.body.submissions=[];
@@ -230,5 +263,4 @@ router.route('/game')
       else res.send(x);
     });
   });
-
 module.exports = router;
