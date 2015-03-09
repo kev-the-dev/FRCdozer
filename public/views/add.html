@@ -6,16 +6,16 @@
           <tr>
             <td>Team</td>
             <td>
-              <select class="form-control" ng-model='add.team'
+              <select ng-disabled="authlevel<2" class="form-control" ng-model='add.team'
                       ng-options="x.team as (x.team+' ('+x.name+')') for x in teams | orderBy: 'team' ">
                 <option value="">new</option>
               </select>
             </td>
             <td ng-show='add.team===undefined || add.team===null'>
               <div class="input-group">
-                <input ng-model='newTeam.team' type="text" class="form-control" placeholder="team number ex: 4118">
+                <input ng-disabled="authlevel<2" ng-model='newTeam.team' type="text" class="form-control" placeholder="team number ex: 4118">
                 <span class="input-group-btn">
-                  <button ng-click='teams.push({team:newTeam.team});add.team=newTeam.team;newTeam=null' class="btn btn-default" type="button">Add</button>
+                  <button ng-disabled="authlevel<2" ng-click='teams.push({team:newTeam.team});add.team=newTeam.team;newTeam=null' class="btn btn-default" type="button">Add</button>
                 </span>
               </div>
             </td>
@@ -29,16 +29,16 @@
           <tr>
             <td>Match</td>
             <td>
-              <select class="form-control" ng-model='add.match'
+              <select ng-disabled="authlevel<2" class="form-control" ng-model='add.match'
                       ng-options="x.match as x.match for x in matches | orderBy:matchSort">
                       <option value="">new</option>
               </select>
             </td>
             <td ng-show='!add.match'>
               <div class="input-group">
-                <input ng-model='newTeam.match' type="text" class="form-control" placeholder="qm6, q1m3, sm1m2,f2">
+                <input ng-disabled="authlevel<2" ng-model='newTeam.match' type="text" class="form-control" placeholder="qm6, q1m3, sm1m2,f2">
                 <span class="input-group-btn">
-                  <button ng-click='changeMatch({match:(newTeam.match)});add.match=newTeam.match;newTeam.match="" ' class="btn btn-default" type="button">Add</button>
+                  <button ng-disabled="authlevel<2" ng-click='changeMatch({match:(newTeam.match)});add.match=newTeam.match;newTeam.match="" ' class="btn btn-default" type="button">Add</button>
                 </span>
               </div>
             </td>
@@ -46,19 +46,21 @@
         </tbody>
       </table>
     </div>
-    <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="col-md-2 col-sm-12 col-xs-12">
       <table class="table table-striped table-condensed table-bordered">
         <tbody>
           <tr>
-            <td colspan='2'>Alliance</td>
+            <td >Alliance</td>
           </tr>
           <tr>
- 	          <td ng-class='add.side!="Red" ? "bg-primary" : "bg-default"' ng-click='add.side="Blue" '>
-		             Blue
+ 	          <td>
+               <div class="btn-group">
+                 <button ng-disabled="authlevel<2" class="btn btn-xl" ng-class='add.side!="Red" ? "btn-primary" : "btn-default" '  ng-click='add.side="Blue" ' > Blue
+                 </button>
+                 <button ng-disabled="authlevel<2" class="btn btn-xl" ng-class='add.side!="Blue" ? "btn-danger" : "bg-default" ' ng-click='add.side="Red" '>Red
+                 </button>
+               </div>
 	          </td>
-            <td ng-class='add.side!="Blue" ? "btn-danger" : "bg-default"' ng-click='add.side="Red" '>
-		            Red
-            </td>
           </tr>
         </tbody>
       </table>
@@ -72,13 +74,13 @@
             <td>{{p.name}}</td>
             <td>
               <div class="btn-group btn-group-sm" role="group">
-                <button ng-disabled='add.elements[p.name]===0' ng-click="add.elements[p.name] = add.elements[p.name] - 1" type="button" class="btn btn-warning">
+                <button ng-disabled="authlevel<2" ng-disabled='add.elements[p.name]===0' ng-click="add.elements[p.name] = add.elements[p.name] - 1" type="button" class="btn btn-warning">
                   <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-default">
+                <button ng-disabled="authlevel<2" type="button" class="btn btn-default">
                   {{add.elements[p.name] = add.elements[p.name] || 0}}
                 </button>
-                <button ng-click="add.elements[p.name] = add.elements[p.name] + 1" type="button" class="btn btn-success">
+                <button ng-disabled="authlevel<2" ng-click="add.elements[p.name] = add.elements[p.name] + 1" type="button" class="btn btn-success">
                   <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
                 </button>
               </div>
@@ -94,8 +96,8 @@
             <td>{{p.name}}</td>
             <td>
               <div class="btn-group btn-group-xs" role="group" aria-label="...">
-                <button ng-class="add.elements[p.name] ? 'btn-success': 'btn-default'" ng-click='add.elements[p.name]=true' type="button" class="btn">True</button>
-                <button ng-class="!add.elements[p.name] ? 'btn-danger': 'btn-default'" ng-click='add.elements[p.name]=false' type="button" class="btn">False</button>
+                <button ng-disabled="authlevel<2" ng-class="add.elements[p.name] ? 'btn-success': 'btn-default'" ng-click='add.elements[p.name]=true' type="button" class="btn">True</button>
+                <button ng-disabled="authlevel<2" ng-class="!add.elements[p.name] ? 'btn-danger': 'btn-default'" ng-click='add.elements[p.name]=false' type="button" class="btn">False</button>
               </div>
             </td>
           </tr>
@@ -108,7 +110,7 @@
           <tr ng-repeat='p in curGame.game | filter:{"type":"String"}'>
             <td>{{p.name}}</td>
             <td>
-              <input ng-model='add.elements[p.name]' class='form-control' type='text'>
+              <input ng-disabled="authlevel<2" ng-model='add.elements[p.name]' class='form-control' type='text'>
             </td>
           </tr>
         </tbody>
@@ -126,7 +128,7 @@
         </tbody>
       </table>
     </div>
-    <div ng-click="addSub(add)" class="col-md-8 col-sm-12 col-xs-12 btn btn-success">
+    <div ng-click="addSub(add)" ng-disabled="authlevel<2" class="col-md-8 col-sm-12 col-xs-12 btn btn-success">
       Submit
     </div>
   </div>

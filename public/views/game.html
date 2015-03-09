@@ -13,6 +13,14 @@
         <span data-ng-show='!connected'><span class='label label-warning bg-warning'>Live update off <span class='glyphicon glyphicon-remove' aria-hidden="true"></span></span> <button data-ng-click='init()' class='btn btn-success'><span class='glyphicon glyphicon-refresh' aria-hidden="true"></span></button></span>
         <span data-ng-show='connected'><span  class='label label-success bg-primary'>Live update on <span class='glyphicon glyphicon-ok' aria-hidden="true"></span></span></span>
       </li>
+      <li>
+        <span ng-switch="authlevel = curGame.permissions.users[user.username] || curGame.permissions.others; authlevel">
+          <span ng-switch-when="4" class="label label-success">Admin</span>
+          <span ng-switch-when="3" class="label label-primary">Can Edit Game</span>
+          <span ng-switch-when="2" class="label label-info">Can Submit</span>
+          <span ng-switch-when="1" class="label label-warning">Read Only</span>
+        </span>
+      </li>
     </ul>
   </nav>
   <div data-ui-view>

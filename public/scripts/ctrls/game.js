@@ -9,6 +9,7 @@
 	delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }])
 .controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
+		$scope.authlevel = 1;
     $scope.subs = []; //stores matches for current game
     $scope.sub = {};
     $scope.matches = [];
@@ -33,13 +34,11 @@
       }
     };
     function discon (x) {
-			console.log("Disconnected for ",x);
       $scope.$apply(function() {
         $scope.connected=false;
       });
     }
     function con(x) {
-			console.log("Connecting for ",x);
       $scope.$apply(function() {
         $scope.connected=true;
       });
@@ -291,7 +290,7 @@
 			};
 		}
 		$scope.tbaGrabMatches = function () {
-			$http.get("api/TBAproxy/event/"+ ($scope.curGame.tbakey || "") +"/matches?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/matches?X-TBA-App-Id=frc4118:scouting:1")
 			.success(function (x) {
 				for (i in x) $scope.changeMatch(parseTBAmatch(x[i]));
 				$scope.sortMatches();
@@ -387,12 +386,14 @@
         team:Number(x.team)
       });
       req
-        .success(function(x){
+        .success(function(x,sta){
           $scope.newTeam = {};
           $scope.handle('editTeam');
-          if (!$scope.connected) $scope.changeTeam(x);
+          $scope.changeTeam(x);
         })
-        .error(function(x){$scope.handle('editTeam',x);});
+        .error(function(x,sta){
+					$scope.handle('editTeam',x);
+				});
     };
     $scope.addSub = function (elements) {
       $http.post ('api/game/'+$scope.curGame._id+'/sub',elements)
@@ -540,7 +541,7 @@
 			delete $scope.curGame.permissions.users[user];
 		};
     $scope.tbaGrabInfo = function () {
-			$http.get("api/TBAproxy/event/"+ ($scope.curGame.tbakey || "") +"?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
 					$scope.tbaResponse = x;
 				})
@@ -549,7 +550,7 @@
 	      });
     };
     $scope.tbaGrabTeams = function () {
-    	$http.get("api/TBAproxy/event/"+ ($scope.curGame.tbakey || "") +"/teams?X-TBA-App-Id=frc4118:scouting:1")
+    	$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/teams?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
           $scope.tbaTeams = x;
           for (i in x) {

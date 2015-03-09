@@ -7,7 +7,6 @@ var vars = require('./vars.js'),
 router.use(require('./auth.js'));
 
 router.param('game', function (req,res,next,id) {
-  console.log(req.user);
   games.findById(id, function (err,game) {
     if (err) {
       if (err.name === "CastError" && err.type === "ObjectId") games.findOne({name:id}, function (err2,game2) {
@@ -15,7 +14,7 @@ router.param('game', function (req,res,next,id) {
         else if (!game2) next(new Error("Game not found"))
         else {
           req.game = game2;
-          if (req.user) req.authlevel = game2.permissions.users[req.user.username];
+          if (req.user) req.authlevel = (game2.permissions.users || {})[req.user.username] || game2.permissions.others;
           else req.authlevel = game2.permissions.others;
           next();
         }
@@ -25,12 +24,67 @@ router.param('game', function (req,res,next,id) {
     else if (!game) next(new Error("Game not found"));
     else {
       req.game = game;
-      if (req.user) req.authlevel = game.permissions.users[req.user.username];
+      if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username] || game.permissions.others;
       else req.authlevel = game.permissions.others;
       next();
     }
   });
 });
+router.param('team', function (req,res,next,id) {
+  if (!req.game) return next(new Error("No game"));
+
+  var t = req.game.teams.id(id);
+  if (!t) return next(new Error("Team not found"));
+
+  req.team = t;
+  next();
+});
+
+router.route('/game/:game/team/:team')
+  .get(function (req,res) { //gets match with given id
+    if (req.authlevel < 1) return res.status(401).end();
+    res.send(req.team);
+  })
+  .put(function (req,res) { //edit one match
+    if (req.authlevel < 2) return res.status(401).end();
+    req.team.set(req.body)
+    req.game.save(function (err) {
+      if (err) return res.status(500).send(err);
+      res.send(req.team);
+      io.to(req.game.name).emit('editTeam',req.team);
+    });
+  })
+  .delete(function (req,res) {
+    if (req.authlevel < 2) return res.status(401).end();
+    req.team.remove();
+    req.game.save(function (err) {
+      if (err) return res.status(500).send(err);
+      io.to(req.game.name).emit('delTeam',req.team);
+      res.end();
+    });
+  });
+router.route('/game/:game/team')
+  .get(function (req,res) {
+    if (req.authlevel < 1) return res.status(401).end();
+    res.send(req.game.teams);
+  })
+  .delete(function (req,res) {
+    if (req.authlevel < 2) return res.status(401).end();
+    req.game.set({teams:{}});
+    req.game.save(function (err) {
+      if (err) return res.status(500).send(err);
+      res.send({teams:req.game.teams});
+      io.to(req.game.name).emit('resetTeams',true);
+    });
+  })
+  .post(function (req,res) { //add match
+    if (req.authLevel < 2) return res.status(401).end();
+    req.game.teams.push(req.body);
+    req.game.save(function (err) {
+      if (err) return res.status(500).send(err);
+      res.send(req.body);
+    });
+  });
 
 router.route('/game/:id/sub/:s')
   .get(function (req,res) { //gets match with given id
@@ -105,115 +159,44 @@ router.route('/game/:id/sub')
     });
   });
 
-router.route('/game/:id/team/:s')
-  .get(function (req,res) { //gets match with given id
-    games.findById(req.params.id,function(err,x) {
-      if (err) res.status(500).send(err);
-      else {
-        var m = x.teams.id(req.params.s);
-        if (m) res.send (m);
-        else res.status(500).send("Error: no matched team");
-      }
-    });
-  })
-  .put(function (req,res) { //edit one match
-    games.findById(req.params.id, function (err,x) {
-      if (err) res.status(500).send(err);
-      else {
-        var y = x.teams.id(req.params.s);
-        if (y) {
-          y.set(req.body);
-          x.save(function (err) {
-            if (err) res.status(500).send(err);
-            else {
-              res.send(y)
-              io.to(x.name).emit('editTeam',y);
-            };
-          });
-        }
-        else res.status(500).send('Error: team not found');
-      }
-    });
-  })
-  .delete(function (req,res) {
-    games.findById(req.params.id,function(err,z) {
-      if (err) res.status(500).send(err);
-      else if (z) {
-        var y = z.teams.id(req.params.s);
-        if (y) {
-          y.remove();
-          z.save (function (err) {
-            if (err) res.status(500).send (err);
-            else {
-              io.to(z.name).emit('delTeam',y);
-              res.send("Removed: "+y._id)
-            };
-          });
-        }
-        else res.status(500).send('Error: team not found');
-      }
-    });
-  });
-
-router.route('/game/:id/team')
-  .get(function (req,res) {
-    games.findById(req.params.id, function (err,x) {
-      if (err) res.status(500).send(err);
-      else res.send(x.teams);
-    });
-  })
-  .delete(function (req,res) {
-    games.findById(req.params.id, function (err,x) {
-      if (err) res.status(500).send(err);
-      else {
-        x.teams = {};
-        x.save(function (err) {
-          if (err) res.status(500).send(err);
-          else res.end();
-        })
-      }
-    });
-  })
-  .post(function (req,res) { //add match
-    games.findById(req.params.id, function (err,x) {
-      if (err) res.status(500).send(err);
-      else {
-        y = x.teams.push(req.body);
-        x.save(function (err) {
-          if (err) res.status(500).send(err);
-          else {
-            io.to(x.name).emit('newTeam',x.teams[y-1]);
-            res.send(x.teams[y-1])
-          };
-        });
-      }
-    });
-  });
-
 router.route('/game/:game')
   .get(function(req,res) {
-    console.log(req.game.permissions);
-    console.log(req.authlevel);
-    if (req.authlevel >= 1) res.send(req.game);
-    else res.status(401).send("Not authorized");
-  });
-
-router.route('/game/:id')
-  .put(function (req,res) { //edit game with id
-    games.findByIdAndUpdate(req.params.id,{$set:req.body||null},function(err,x) {
+    if (req.authlevel < 1) res.status(401).send("Not authorized");
+    else res.send(req.game);
+  })
+  .put(function (req,res) {
+    if (req.authlevel < 3) return res.status(401).end();
+    if (req.authlevel < 4 && req.body.permissions) delete req.body.permissions;
+    req.game.set(req.body);
+    req.game.save(function (err,x) {
       if (err) res.status(500).send(err);
       else {
         io.to(x.name).emit('editGame',x);
         res.send(x);
-      };
-    });
+      }
+    })
   })
-  .delete(function (req,res) { //delete game with id
-    games.findByIdAndRemove(req.params.id,function(err,x) {
+  .delete(function (req,res) {
+    if (req.authlevel < 4) return res.status(401).end();
+    req.game.remove(function (err) {
       if (err) res.status(500).send(err);
-      else res.send(x);
-    });
+      else res.end();
+    })
   });
+
+router.post('/game',function (req,res) {
+  if (!req.user) return res.status(401).send("Need to be logged in to create game");
+  req.body.permissions = req.body.permissions || {}
+  req.body.permissions.others = req.body.permissions.others || 1;
+  req.body.permissions.users = req.body.permissions.users || {};
+  req.body.permissions.users[req.user.username] = 4;
+  req.body.submissions=[];
+  req.body.teams=[];
+  games.create(req.body,function(err,x) {
+    if (err) res.status(500).send(err);
+    else res.send(x);
+  });
+});
 
 router.post('/game/:id/TBAhook', function (req,res) { //Respond to webhook requests from TBA
   games.findById(req.params.id,function(err,x) {
@@ -245,22 +228,16 @@ router.post('/game/:id/TBAhook', function (req,res) { //Respond to webhook reque
   });
 });
 
-router.get('/TBAproxy/:path', function (req,res) { //Proxies request to TBA
-  console.log(req.params.path);
-  http.get("http://www.thebluealliance.com/api/v2/"+req.params.path, function(x) {
-    res.send(x);
-  }).on('error', function(err) {
-    res.status(500).send(err);
+router.get('/tbaproxy*', function(req,res) {
+  http.get('http://www.thebluealliance.com/api/v2'+req.url.slice(9), function (tba) {
+    var str = "";
+    tba.on('data',function (x) {
+      res.write(x);
+    });
+    tba.on('end', function() {
+      res.end();
+    });
   });
 });
 
-
-router.route('/game')
-  .post(function (req,res) {
-    req.body.submissions=[];
-    games.create(req.body,function(err,x) {
-      if (err) res.status(500).send(err);
-      else res.send(x);
-    });
-  });
 module.exports = router;

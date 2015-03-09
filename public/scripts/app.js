@@ -82,7 +82,7 @@ angular.module('FRCdozer',['ui.router'])
     $scope.errors = [];
     $scope.success = {};
     $scope.handle = function (type,error) { //given http req and type string, handle with timout
-      if (error) {
+      if (error !== undefined) {
         $scope.errors.push({type:type,error:error});
         $scope.error[type] = JSON.stringify(error);
         $timeout(function () {

@@ -17,7 +17,7 @@ var games = con.model ('FRCgames', new sch({
     elements: Object
   })],
   teams: [new sch({
-    team:{type:Number,index: { unique: true, sparse: true}},
+    team:Number,
     notes:String,
     name:String
   })],
@@ -29,7 +29,7 @@ var games = con.model ('FRCgames', new sch({
     4 = change other user's permissions (Admin)
   */
   permissions: { //For permissions, object of permissions.users.Bob = 1, permissions.others = 0
-    users:Object,
+    users:{type:Object,required:true},
     others: {type:Number,default:1}
   }
 }));

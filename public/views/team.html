@@ -6,18 +6,18 @@
         <div class="form-group">
           <label class="control-label">Name</label>
           <div>
-            <input ng-model='team.name' class="form-control">
+            <input ng-disabled="authlevel<2" ng-model='team.name' class="form-control">
           </div>
         </div>
         <div class="form-group">
           <label class="control-label">Notes</label>
           <div>
-            <textarea ng-model='team.notes' class="form-control"></textarea>
+            <textarea ng-disabled="authlevel<2" ng-model='team.notes' class="form-control"></textarea>
           </div>
         </div>
         <div class="form-group">
           <div>
-            <button ng-click='editTeam(team)' type="submit" class="btn btn-success">Save/Create</button>
+            <button ng-disabled="authlevel<2" ng-click='editTeam(team)' type="submit" class="btn btn-success">Save/Create</button>
               <span ng-show='success.editTeam' class="text-success">
                 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Changed team!
               </span>
