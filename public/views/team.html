@@ -18,20 +18,20 @@
             </div>
             <div class="form-group">
               <label for="exampleInputFile">Upload Picture</label>
-              <input name="files" type="file">
+              <input ng-disabled="authlevel<2" name="files" type="file">
 
             </div>
           </div>
           <div class="form-group">
             <div>
-              <button ng-click='editTeam(team,$event)' type="submit" class="btn btn-success">Save/Create</button>
+              <button ng-disabled="authlevel<2" ng-click='editTeam(team,$event)' type="submit" class="btn btn-success">Save/Create</button>
                 <span ng-show='success.editTeam' class="text-success">
                   <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Changed team!
                 </span>
                 <span ng-show='error.editTeam' class="text-danger" style="cursor:pointer;" title="{{error.editTeam}}">
                   <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error changing team!</span>
                 </span>
-              <button ng-show='team._id' ng-click='delTeam(team._id)' class="btn btn-danger">Remove/Reset Team Info</button>
+              <button ng-disabled="authlevel<2" ng-show='team._id' ng-click='delTeam(team._id)' class="btn btn-danger">Remove/Reset Team Info</button>
                 <span ng-show='success.delTeam' class="text-success">
                   <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Reset team!
                 </span>
@@ -43,7 +43,7 @@
         </form>
         <div>
           <img ng-src="{{team.pic}}" alt="No Picture" class="img-responsive img-thumbnail">
-          <button ng-click="team.pic=undefined" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button ng-disabled="authlevel<2" ng-click="team.pic=undefined" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
 
     </div>
