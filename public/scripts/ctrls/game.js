@@ -132,15 +132,28 @@
 			}
 			$scope.matches.push(match);
 		};
-    $scope.changeTeam = function (team) {
+		$scope.tbaGrabTeams = function () {
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/teams?X-TBA-App-Id=frc4118:scouting:1")
+			.success(function (x) {
+				$scope.tbaTeams = x;
+				for (i in x) {
+					if ($scope.changeTeam({team:x[i].team_number,name:x[i].nickname})) $scope.editTeam({team:x[i].team_number,name:x[i].nickname});
+					}
+				})
+				.error(function (x) {
+					console.log(x);
+				});
+			};
+    $scope.changeTeam = function (team) { //if you want a preporty to not be there, set to null
       for (x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
         $scope.teams[x].name = team.name;
         $scope.teams[x].notes = team.notes;
 
         $scope.teams[x]._id = team._id  || undefined;
-        return;
+        return false;
       }
       $scope.appendTeam(team);
+			return true;
     };
     $scope.getMatch = function (match) {
       for (x in $scope.matches) if ($scope.matches[x].match === match.toLowerCase()) return $scope.matches[x];
@@ -373,13 +386,33 @@
         })
         .error(function (x) {$scope.handle('editSub',x)});
     };
-    $scope.editTeam = function (x) {
-      if (x._id) var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,{
-        _id:x._id,
-        name:x.name || "",
-        notes:x.notes || "",
-        team:Number(x.team)
-      });
+    $scope.editTeam = function (x,event) {
+			if (event) var file = event.target.form.elements.files.files[0];
+			if (file) {
+					var uri = 'api/game/'+$scope.curGame._id+'/team/'+x._id+'/pic';
+					var fd = new FormData();
+					fd.append('pic', file);
+					$http.post(uri,fd,{
+						transformRequest: angular.identity,
+						headers: {'Content-Type': undefined}
+					})
+					.success(function (res) {
+						x.pic = res;
+						$scope.changeTeam(x);
+					})
+					.error(function (x) {
+						console.log(x);
+					});
+			}
+
+      if (x._id) {
+				var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,{
+					_id:x._id,
+					name:x.name || "",
+					notes:x.notes || "",
+					team:Number(x.team)
+				});
+			}
       else var req = $http.post ('api/game/'+$scope.curGame._id+'/team',{
         name:x.name || "",
         notes:x.notes || "",
@@ -548,18 +581,6 @@
 				.error(function (x) {
 	        console.log(x);
 	      });
-    };
-    $scope.tbaGrabTeams = function () {
-    	$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/teams?X-TBA-App-Id=frc4118:scouting:1")
-				.success(function (x) {
-          $scope.tbaTeams = x;
-          for (i in x) {
-            $scope.editTeam({team:x[i].team_number,name:x[i].nickname});
-          }
-        })
-        .error(function (x) {
-          console.log(x);
-        });
     };
     $scope.init();
 }]);

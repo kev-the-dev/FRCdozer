@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var http = require('http');
+var multer  = require('multer');
 var vars = require('./vars.js'),
     games = vars.games,
     io = vars.io.of('/game');
@@ -63,6 +64,20 @@ router.route('/game/:game/team/:team')
       res.end();
     });
   });
+
+router.post('/game/:game/team/:team/pic',[function (req,res,next) {
+  if (req.authlevel < 2) return res.status(401).end();
+  next();
+},multer({limits:{files:1},dest: './public/uploads/', rename: function (fieldname, filename, req, res) {
+  return req.team._id;
+}}),function (req,res) {
+  req.team.pic = req.files.pic.path.slice(7);
+  req.game.save(function (err) {
+    if (err) res.status(500).send("Error saving game");
+    else res.send(req.team.pic);
+  });
+}]);
+
 router.route('/game/:game/team')
   .get(function (req,res) {
     if (req.authlevel < 1) return res.status(401).end();

@@ -21,7 +21,7 @@
     <thead>
       <tr>
         <th>Place</th>
-        <th>Matches
+        <th>Info
           <button class="btn btn-xs btn-primary" ng-click='sort("subs.length","teams")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
@@ -52,8 +52,12 @@
     <tbody>
       <tr data-ng-repeat='x in teams | orderBy:filters.teams.key:!filters.teams.reverse'>
         <td><h4>{{$index+1}}</h4></td>
-        <td><span class='badge'>{{x.subs.length}}</span></td>
-        <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
+        <td>
+          <span class='badge'>{{x.subs.length}}</span>
+          <span ng-show="x.pic" class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+        </td>
+        <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a>
+        </td>
         <td><a ui-sref='game.team({num:x.team})'>{{x.name}}</a></td>
         <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name] = getAverage(z.name,x.subs || [])}}</h4></td>
         <td data-ng-repeat='y in curGame.calc'><h4>{{x.calc[y.name] = getValue(x.averages,y.elements)}}</h4></td>

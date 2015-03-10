@@ -1,39 +1,51 @@
 <div>
-  <h3>Team {{team=getTeam(teamNum); team.team}}</h3>
+  <h3>Team {{team=getTeam(teamNum); teamNum}}</h3>
   <div class='row'>
     <div class='col-md-6'>
-      <form class="form">
+      <form>
         <div class="form-group">
           <label class="control-label">Name</label>
           <div>
             <input ng-disabled="authlevel<2" ng-model='team.name' class="form-control">
           </div>
         </div>
-        <div class="form-group">
-          <label class="control-label">Notes</label>
-          <div>
-            <textarea ng-disabled="authlevel<2" ng-model='team.notes' class="form-control"></textarea>
+          <div ng-if="team._id">
+            <div class="form-group">
+              <label class="control-label">Notes</label>
+              <div>
+                <textarea ng-disabled="authlevel<2" ng-model='team.notes' class="form-control"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputFile">Upload Picture</label>
+              <input name="files" type="file">
+
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <div>
-            <button ng-disabled="authlevel<2" ng-click='editTeam(team)' type="submit" class="btn btn-success">Save/Create</button>
-              <span ng-show='success.editTeam' class="text-success">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Changed team!
-              </span>
-              <span ng-show='error.editTeam' class="text-danger" style="cursor:pointer;" title="{{error.editTeam}}">
-                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error changing team!</span>
-              </span>
-            <button ng-show='team._id' ng-click='delTeam(team._id)' class="btn btn-danger">Remove/Reset Team Info</button>
-              <span ng-show='success.delTeam' class="text-success">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Reset team!
-              </span>
-              <span ng-show='error.delTeam' class="text-danger" style="cursor:pointer;" title="{{error.delTeam}}">
-                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error resetting team!</span>
-              </span>
+          <div class="form-group">
+            <div>
+              <button ng-click='editTeam(team,$event)' type="submit" class="btn btn-success">Save/Create</button>
+                <span ng-show='success.editTeam' class="text-success">
+                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Changed team!
+                </span>
+                <span ng-show='error.editTeam' class="text-danger" style="cursor:pointer;" title="{{error.editTeam}}">
+                  <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error changing team!</span>
+                </span>
+              <button ng-show='team._id' ng-click='delTeam(team._id)' class="btn btn-danger">Remove/Reset Team Info</button>
+                <span ng-show='success.delTeam' class="text-success">
+                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Reset team!
+                </span>
+                <span ng-show='error.delTeam' class="text-danger" style="cursor:pointer;" title="{{error.delTeam}}">
+                  <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error resetting team!</span>
+                </span>
+            </div>
           </div>
+        </form>
+        <div>
+          <img ng-src="{{team.pic}}" alt="No Picture" class="img-responsive img-thumbnail">
+          <button ng-click="team.pic=undefined" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
-      </form>
+
     </div>
     <div class='col-md-6'>
       <table class='table table-striped table-striped table-hover table-condensed'>

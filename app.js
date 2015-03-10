@@ -16,9 +16,7 @@ var compression = require('compression');
 var server;
 var configApp = function () {
   require('./routes/dozer/vars.js').io=require("socket.io")(server);
-
   app.use(favicon(__dirname + '/public/favicon.ico'));
-
   app.use(logger('dev'));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));

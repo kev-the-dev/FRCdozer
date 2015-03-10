@@ -19,7 +19,8 @@ var games = con.model ('FRCgames', new sch({
   teams: [new sch({
     team:Number,
     notes:String,
-    name:String
+    name:String,
+    pic:String
   })],
   /*
     0 = nothing/blocked. Used to explicitly state user is not allowed

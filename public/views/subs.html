@@ -40,7 +40,8 @@
                 <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
               </button>
             </th>
-            <th data-ng-repeat='x in curGame.game'>{{x.name}}
+            <th data-ng-repeat='x in curGame.game'>
+              {{x.name}}
               <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","subs")'>
                 <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
               </button>
