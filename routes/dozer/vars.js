@@ -39,7 +39,7 @@ var users = con.model('users', new sch({
   password: { type: String, required: true },
   salt:String,
   info:Object,
-  games:Object //List of games with permission levels
+  games:[new sch({name:String,authlevel:Number}) ] //List of games with permission levels
 }));
 
 var allow = function can(user,level,permissions) {

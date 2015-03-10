@@ -36,7 +36,7 @@
             </td>
             <td ng-show='!add.match'>
               <div class="input-group">
-                <input ng-disabled="authlevel<2" ng-model='newTeam.match' type="text" class="form-control" placeholder="qm6, q1m3, sm1m2,f2">
+                <input ng-disabled="authlevel<2" ng-model='newTeam.match' type="text" class="form-control" placeholder="qm6, q1m3, sf1m2,f2">
                 <span class="input-group-btn">
                   <button ng-disabled="authlevel<2" ng-click='changeMatch({match:(newTeam.match)});add.match=newTeam.match;newTeam.match="" ' class="btn btn-default" type="button">Add</button>
                 </span>
@@ -74,7 +74,7 @@
             <td>{{p.name}}</td>
             <td>
               <div class="btn-group btn-group-sm" role="group">
-                <button ng-disabled="authlevel<2" ng-disabled='add.elements[p.name]===0' ng-click="add.elements[p.name] = add.elements[p.name] - 1" type="button" class="btn btn-warning">
+                <button ng-disabled="authlevel<2 || add.elements[p.name] <= 0" ng-disabled='add.elements[p.name]===0' ng-click="add.elements[p.name] = add.elements[p.name] - 1" type="button" class="btn btn-warning">
                   <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
                 </button>
                 <button ng-disabled="authlevel<2" type="button" class="btn btn-default">

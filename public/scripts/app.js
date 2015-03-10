@@ -103,6 +103,32 @@ angular.module('FRCdozer',['ui.router'])
         })
         .error(function(x){$scope.handle('init',x)});
     };
+    $scope.addGame = function (game) {
+      console.log(game);
+      if (!$scope.user || !game || !game.name) return false;
+      game.teams = game.teams || [];
+      game.submissions = game.submissions || [];
+      $http.post('api/game',game)
+        .success(function (x) {
+          $scope.newGame == {};
+          console.log(x);
+          $scope.user.games.push({name:x.name,authlevel:x.permissions.users[$scope.user.username] || 4});
+        })
+        .error(function (x) {
+          console.log(x);
+        });
+    };
+    $scope.delGame = function (name) {
+      if (!confirm("Are you sure you want to delete "+name+"?")) return;
+      $http.delete('api/game/'+name)
+      .success(function (x) {
+        console.log(x);
+        for (y in $scope.user.games) {
+          if (name === x.name) $scope.user.games.splice(y);
+        }
+      })
+      .error(function (x){console.log(x);});
+    }
     $scope.changePassword = function (password) {
       $http.put('api/password',{password:password})
         .success(function(){$scope.handle('changePassword')})

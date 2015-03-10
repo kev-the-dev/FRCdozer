@@ -4,6 +4,7 @@ var http = require('http');
 var multer  = require('multer');
 var vars = require('./vars.js'),
     games = vars.games,
+    users = vars.users,
     io = vars.io.of('/game');
 router.use(require('./auth.js'));
 
@@ -38,6 +39,15 @@ router.param('team', function (req,res,next,id) {
   if (!t) return next(new Error("Team not found"));
 
   req.team = t;
+  next();
+});
+router.param('sub' ,function (req,res,next,id) {
+  if (!req.game) return next(new Error("Not Game!"));
+
+  var s = req.game.submissions.id(id);
+  if (!t) return next(new Error("Team not found"));
+
+  req.sub = s;
   next();
 });
 
@@ -101,76 +111,41 @@ router.route('/game/:game/team')
     });
   });
 
-router.route('/game/:id/sub/:s')
+router.route('/game/:id/sub/:sub')
   .get(function (req,res) { //gets match with given id
-    games.findById(req.params.id,function(err,x) {
-      if (err) res.status(500).send(err);
-      else {
-        var m = x.submissions.id(req.params.s);
-        if (m) res.send (m);
-        else res.status(500).send("Error: no matched submission");
-      }
-    });
+    if (req.authlevel < 1) return res.status(401).send("Not authorized");
+    res.send(req.sub);
   })
   .put(function (req,res) { //edit one match
-    games.findById(req.params.id, function (err,x) {
-      if (err) res.status(500).send(err);
-      else {
-        var y = x.submissions.id(req.params.s);
-        if (y) {
-          y.set(req.body);
-          x.save(function (err) {
-            if (err) res.status(500).send(err);
-            else {
-              res.send(y)
-              io.to(x.name).emit('editSub',y);
-            };
-          });
-        }
-        else res.status(500).send('Error: submission not found');
-      }
+    if (req.authlevel < 2) return res.status(401).send("Not authorized");
+    var y = req.sub.set(req.body);
+    req.game.save(function (err) {
+      if (err) return res.status(500).send(err);
+      res.send(req.body);
+      io.to(req.game.name).emit('editSub',y);
     });
   })
   .delete(function (req,res) {
-    games.findById(req.params.id,function(err,z) {
-      if (err) res.status(500).send(err);
-      else if (z) {
-        var y = z.submissions.id(req.params.s);
-        if (y) {
-          y.remove();
-          z.save (function (err) {
-            if (err) res.status(500).send (err);
-            else {
-              io.to(z.name).emit('delSub',y);
-              res.send("Removed: "+y._id)
-            };
-          });
-        }
-        else res.status(500).send('Error: submission not found');
-      }
+    if (req.authlevel < 2) return res.status(401).send("Not authorized");
+    req.sub.remove(function (err) {
+      if (err) return res.status(500).send(err);
+      io.to(req.game.name).emit('delSub',req.sub);
+      res.send(req.sub._id);
     });
   });
 
-router.route('/game/:id/sub')
+router.route('/game/:game/sub')
   .get(function (req,res) {
-    games.findById(req.params.id, function (err,x) {
-      if (err) res.status(500).send(err);
-      else res.send(x.submissions);
-    });
+    if (req.authlevel < 1) return res.status(401).send("Not authorized");
+    res.send(req.game.submissions);
   })
   .post(function (req,res) { //add match
-    games.findById(req.params.id, function (err,x) {
-      if (err) res.status(500).send(err);
-      else {
-        y = x.submissions.push(req.body);
-        x.save(function (err) {
-          if (err) res.status(500).send(err);
-          else {
-            io.to(x.name).emit('newSub',x.submissions[y-1]);
-            res.send(x.submissions[y-1])
-          };
-        });
-      }
+    if (req.authlevel < 2) return res.status(401).send("Not authorized");
+    var y = req.game.submissions.push(req.body);
+    req.game(function (err) {
+      if (err) return res.status(500).send(err);
+      io.to(req.game.name).emit('newSub',y);
+      res.send(y);
     });
   });
 
@@ -193,14 +168,23 @@ router.route('/game/:game')
   })
   .delete(function (req,res) {
     if (req.authlevel < 4) return res.status(401).end();
-    req.game.remove(function (err) {
+    req.game.remove(function (err,x) {
       if (err) res.status(500).send(err);
-      else res.end();
+      else {
+        for (var z in req.user.games) if (req.user.games[z].name === x.name) {
+          req.user.games.splice(y);
+          req.user.save(function (err) {
+            if (err) req.status(500).send(err);
+            else res.send(x);
+          });
+        }
+      }
     })
   });
 
 router.post('/game',function (req,res) {
   if (!req.user) return res.status(401).send("Need to be logged in to create game");
+
   req.body.permissions = req.body.permissions || {}
   req.body.permissions.others = req.body.permissions.others || 1;
   req.body.permissions.users = req.body.permissions.users || {};
@@ -209,7 +193,13 @@ router.post('/game',function (req,res) {
   req.body.teams=[];
   games.create(req.body,function(err,x) {
     if (err) res.status(500).send(err);
-    else res.send(x);
+    else {
+      req.user.games.push({name:x.name,authlevel:x.permissions.users[req.user.username] || 4});
+      req.user.save(function (err,y) {
+        if (err) return res.status(500).send(err);
+        res.send(x);
+      });
+    }
   });
 });
 

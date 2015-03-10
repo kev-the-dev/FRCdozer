@@ -557,6 +557,7 @@
           $scope.sortMatches();
           socketConf();
     	  	$scope.tbaGrabInfo();
+					$scope.tbaGrabMatches();
         }
         else if (err) {
 					if (err.status === 401) $state.go('401');
