@@ -36,11 +36,13 @@
     function discon (x) {
       $scope.$apply(function() {
         $scope.connected=false;
+				$scope.userInit();
       });
     }
     function con(x) {
       $scope.$apply(function() {
         $scope.connected=true;
+				$scope.userInit();
       });
     }
     $scope.unfilt = function () {
@@ -131,6 +133,30 @@
 				return;
 			}
 			$scope.matches.push(match);
+		};
+		$scope.resetSubs = function () {
+			if (!confirm("Are you sure you want to clear all submissions for "+$scope.curGame.name+"?")) return false;
+			$http.delete("api/game/"+$scope.curGame._id+"/sub")
+				.success(function (x) {
+					$scope.subs=[];
+					$scope.sortMatches();
+					$scope.sortTeams();
+				})
+				.error(function (x) {
+					console.log("Error resetting subs",x);
+				});
+		};
+		$scope.resetTeams = function () {
+			if (!confirm("Are you sure you want delete all teams for "+$scope.curGame.name+"?")) return false;
+			$http.delete("api/game/"+$scope.curGame._id+"/team")
+				.success(function (x) {
+					$scope.teams=[];
+					$scope.sortMatches();
+					$scope.sortTeams();
+				})
+				.error(function (x) {
+					console.log("Error resetting subs",x);
+				});
 		};
 		$scope.tbaGrabTeams = function () {
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/teams?X-TBA-App-Id=frc4118:scouting:1")
@@ -272,6 +298,12 @@
 				'number':number
 			};
 		};
+		$scope.getVideoUrl = function (obj) {
+			switch (obj.type) {
+				case "youtube":
+					return 'https://www.youtube.com/watch?v='+obj.key;
+			}
+		};
 		function parseTBAmatch (match) {
 			var o = {};
 			var m = {};
@@ -299,7 +331,8 @@
 				red : {
 					score : (match.alliances.red.score > 0 ? match.alliances.red.score :  0),
 					teams : m
-				}
+				},
+				videos: match.videos
 			};
 		}
 		$scope.tbaGrabMatches = function () {
@@ -377,6 +410,7 @@
     $scope.getTeam = function (team) {
       team = Number(team);
       for (x in $scope.teams) if (Number($scope.teams[x].team) === team) return $scope.teams[x];
+			return {team:team,name:""};
     }
     $scope.editSub = function (x) {
       $http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
@@ -431,7 +465,7 @@
     $scope.addSub = function (elements) {
       $http.post ('api/game/'+$scope.curGame._id+'/sub',elements)
         .success(function (x) {
-	    $scope.add = {};
+	    		$scope.add = {};
           $scope.handle('newSub');
           if (!$scope.connected) $scope.appendSub(data);
         })
@@ -529,6 +563,8 @@
         .on('editSub',function(x){$scope.$apply(function () {$scope.changeSub(x);});})
         .on('editTeam',function(x){$scope.$apply(function () {$scope.changeTeam(x);});})
         .on('editGame',function(x){$scope.$apply(function () {$scope.changeGame(x);});})
+				.on('resetSubs',function(x){$scope.$apply(function () {$scope.resetSubs();});})
+				.on('resetTeams',function(x){$scope.$apply(function () {$scope.resetTeams();});})
 				.on('TBAverification',function(x){$scope.$apply(function () {
 					console.log(x);
 				});})

@@ -70,7 +70,11 @@ angular.module('FRCdozer',['ui.router'])
       .state('game.matches', {
         url: '/matches',
         templateUrl: 'views/matches.html'
-      });
+      })
+      .state('game.advanced', {
+        url:'/advanced',
+        templateUrl: 'views/advanced.html'
+      })
       $urlRouterProvider
       .when('/g/:name', '/game/:name')
       .otherwise('/404');
@@ -101,7 +105,10 @@ angular.module('FRCdozer',['ui.router'])
           $scope.user=data;
           $scope.handle('init');
         })
-        .error(function(x){$scope.handle('init',x)});
+        .error(function(x,sta){
+          if (sta === 401) $scope.user = undefined;
+          $scope.handle('init',x)
+        });
     };
     $scope.addGame = function (game) {
       console.log(game);
@@ -137,6 +144,8 @@ angular.module('FRCdozer',['ui.router'])
     $scope.login = function (user,pass) {
       $http.post('api/login',{username:user,password:pass})
         .success(function (data) {
+          $scope.userName  = "";
+          $scope.password = "";
           $scope.user = data;
           $scope.handle('login');
         })

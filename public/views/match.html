@@ -1,5 +1,69 @@
 <h2>Match: {{match = getMatch(matchId);matchId}}</h2>
-<h2>Blue</h2>
+<ul ng-show="match.videos" class="list-group">
+  <li ng-repeat="x in match.videos" class="list-group-item"><a ng-href="{{getVideoUrl(x)}}" target="_blank">{{x.type}} video</a></li>
+</ul>
+<table class='table table-bordered table-striped table-hover'>
+  <thead>
+    <tr>
+      <th>
+        Match Time
+        <button class="btn btn-xs btn-primary" ng-click='sort("time","matches","Match Time")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+      </th>
+      <th class="btn-primary">Blue Alliance</th>
+      <th class="btn-danger">Red Alliance</th>
+      <th ng-repeat="g in curGame.calc" class="btn-primary">
+        {{g.name}}
+      </th>
+      <th class="btn-primary">
+        TBA Score
+      </th>
+      <th ng-repeat="g in curGame.calc" class="btn-danger">
+        {{g.name}}
+      </th>
+      <th class="btn-danger">
+        TBA Score
+      </th>
+      <th class="bg-info">
+        Winner
+      </th>
+    </tr>
+  </thead>
+  <tr>
+    <td>{{(match.time | date:'EEEE, h:mm') || "n/a"}}</td>
+    <td>
+      <ul class="list-inline">
+        <li ng-repeat="(y,x) in match.blue.teams">
+          <a ng-show="x !== true" href="#/game/{{curGame.name}}/sub/{{x._id}}" class="text-success"><b>{{y}}</b></a>
+          <a ng-show="x === true" href="#/game/{{curGame.name}}/team/{{y}}" class="text-warning">{{y}}</a>
+        </li>
+      </ul>
+    </td>
+    <td>
+      <ul class="list-inline">
+        <li ng-repeat="(y,x) in match.red.teams">
+          <a ng-show="x !== true" href="#/game/{{curGame.name}}/sub/{{x._id}}" class="text-success"><b>{{y}}</b></a>
+          <a ng-show="x === true" href="#/game/{{curGame.name}}/team/{{y}}" class="text-warning">{{y}}</a>
+        </li>
+      </ul>
+    </td>
+    <td ng-repeat="g in curGame.calc">
+      <b>{{match.blue.calc[g.name] = matchCalc(match.blue.teams,g.elements); match.blue.calc[g.name]}}</b>
+    </td>
+    <td>
+      <b>{{match.blue.score}}</b>
+    </td>
+    <td ng-repeat="g in curGame.calc">
+      <b>{{match.red.calc[g.name] = matchCalc(match.red.teams,g.elements)}}</b>
+    </td>
+    <td>
+      <b>{{match.red.score}}</b>
+    </td>
+    <td>
+      <b>{{match.winner = winnerString(match.blue.score,match.red.score)}}</b>
+    </td>
+  </tr>
+</table>
+<h4>Blue</h4>
 <div ng-show='filters.matchBlue.key' class="btn alert alert-info alert-dismissible" role="alert">
   <button class="close" data-dismiss="alert" aria-label="Close" ng-click='sort(undefined,"matchBlue")'>
     <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>
@@ -53,8 +117,7 @@
     </tr>
   </tbody>
 </table>
-
-<h2>Red</h2>
+<h4>Red</h4>
 <div ng-show='filters.matchRed.key' class="btn alert alert-info alert-dismissible" role="alert">
   <button class="close" data-dismiss="alert" aria-label="Close" ng-click='sort(undefined,"matchRed")'>
     <span class='glyphicon glyphicon-remove-circle' aria-hidden="true"></span>

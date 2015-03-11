@@ -9,6 +9,7 @@
       <li ui-sref-active='active'><a ui-sref="game.submissions">Submissions <span class="badge">{{subs.length}}</span></a></li>
       <li ui-sref-active='active'><a ui-sref="game.teams">Teams <span class="badge">{{teams.length}}</span></a></li>
       <li ui-sref-active='active'><a ui-sref="game.matches">Matches <span class="badge">{{matches.length}}</span></a></li>
+      <li ui-sref-active='active' ng-show="authlevel>=3"><a ui-sref="game.advanced">Advanced</a></li>
       <li>
         <span data-ng-show='!connected'><span class='label label-warning bg-warning'>Live update off <span class='glyphicon glyphicon-remove' aria-hidden="true"></span></span> <button data-ng-click='init()' class='btn btn-success'><span class='glyphicon glyphicon-refresh' aria-hidden="true"></span></button></span>
         <span data-ng-show='connected'><span  class='label label-success bg-primary'>Live update on <span class='glyphicon glyphicon-ok' aria-hidden="true"></span></span></span>

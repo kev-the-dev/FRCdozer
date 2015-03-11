@@ -26,7 +26,6 @@
     </div>
   </div>
     <br>
-    {{user.games}}
     <table class="table table-striped table-condensed table-bordered">
       <tr>
         <th colspan="2">My Games</th>
@@ -36,7 +35,11 @@
       </tr>
       <tr ng-repeat="x in user.games">
         <td><a ui-sref="game({name:x.name})">{{x.name}}</a></td>
-        <td><button ng-click="delGame(x.name)" class="btn btn-sm btn-danger"><span class='glyphicon glyphicon-minus-sign' aria-hidden="true"></span><button></td>
+        <td>
+          <button ng-click="delGame(x.name)" class="btn btn-sm btn-danger">
+            <span class='glyphicon glyphicon-minus-sign' aria-hidden="true"></span>
+          </button>
+        </td>
       </tr>
       <tr>
         <td>
