@@ -40,7 +40,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr data-ng-repeat='x in subs | orderBy:filters.subs.key:!filters.subs.reverse | startAt: limits.subs.start | limitTo : limits.subs.limit'>
+          <tr dir-paginate='x in subs | orderBy:filters.subs.key:!filters.subs.reverse | itemsPerPage: 10'>
             <td data-title="Links">
               <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
               <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
@@ -89,25 +89,7 @@
         </tbody>
       </table>
       <div class="row">
-        <nav>
-          <ul class="pagination">
-            <li>
-              <a ng-disabled="limits.subs.start <= 0" ng-click="limits.subs.start = limits.subs.start-10"  aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <li ng-repeat="x in numToArray(subs.length,limits.subs.limit,limits.subs.start) track by $index " ng-click="limits.subs.start = x*limits.subs.limit">
-              <a>
-                {{x+1}}
-              </a>
-            </li>
-            <li>
-              <a ng-disabled="limits.subs.start> subs.length/limits.subs.limit " ng-click="limits.subs.start = limits.subs.start+10" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <dir-pagination-controls></dir-pagination-controls>
       </div>
   </div>
 </div>

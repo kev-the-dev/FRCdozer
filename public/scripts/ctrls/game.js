@@ -32,28 +32,6 @@
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
     $scope.newTeam;
-		$scope.limits = {
-			subs: {start:0,limit:10}
-		}
-		$scope.numToArray = function (num,cnt,start) { //maintains
-			var len = 7; //must be odd nubmer
-
-			var res = [];
-
-			var total = Math.round(num/cnt);
-
-			if (start/cnt < len/2)  {
-				for (var i = 0; i<len;i++) {
-					res.push(i);
-				}
-			}
-			else for (var i = -((len-1)/2); i<=(len-1)/2;i++) { //if in the middle
-				if (start/cnt+i>total) break;
-				res.push(start/cnt+i);
-			}
-
-			return res;
-		};
     $scope.getDate = function (id) {
       if (id) {
         var date = new Date(parseInt(id.substring(0, 8), 16) * 1000);

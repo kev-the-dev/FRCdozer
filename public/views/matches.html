@@ -43,7 +43,7 @@
     <tr data-ng-repeat='x in matches | orderBy:filters.matches.key:!filters.matches.reverse'>
       <td>
         <a href='#/game/{{curGame.name}}/match/{{x.match}}'>{{x.matchObj = x.matchObj || deserializeMatch(x.match);x.match}}</a>
-        <span ng-show="x.videos" class="glyphicon glyphicon-film" aria-hidden="true"></span>
+        <span ng-show="x.videos.length" class="glyphicon glyphicon-film" aria-hidden="true"></span>
       </td>
       <td>{{(x.time | date:'EEEE, h:mm') || "n/a"}}</td>
       <td>

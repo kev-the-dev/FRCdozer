@@ -1,6 +1,9 @@
 <h2>Match: {{match = getMatch(matchId);matchId}}</h2>
-<ul ng-show="match.videos" class="list-group">
-  <li ng-repeat="x in match.videos" class="list-group-item"><a ng-href="{{getVideoUrl(x)}}" target="_blank">{{x.type}} video</a></li>
+<ul ng-show="match.videos.length" class="list-group">
+  <li ng-repeat="x in match.videos" class="list-group-item"><a ng-href="{{getVideoUrl(x)}}" target="_blank">
+    <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+    {{x.type}} video
+  </a></li>
 </ul>
 <table class='table table-bordered table-striped table-hover'>
   <thead>
