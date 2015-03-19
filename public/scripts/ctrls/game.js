@@ -576,11 +576,20 @@
       return Math.round(val*100)/100 || 0;
     };
     $scope.sortTeams = function () { //sorts aray of submissions or $scope.subs into teams
-			for (i in $scope.teams) { //For each team
-				$scope.teams[i].subs = []; //Reset the submissions of that team
-				for (h in $scope.subs) if (Number($scope.subs[h].team) === Number($scope.teams[i].team)) { //For each submission, if the submission and team are same, add to team
-					$scope.teams[i].subs.push($scope.subs[h])
+			for (k in $scope.teams) { //For each team
+				$scope.teams[k].subs = [];
+			}
+			s: for (h in $scope.subs) {
+				for (i in $scope.teams) {
+					if (Number($scope.subs[h].team) === Number($scope.teams[i].team)) {
+						$scope.teams[i].subs.push($scope.subs[h])
+						continue s;
+					}
 				}
+				$scope.teams.push({
+					team:($scope.subs[h].team),
+					subs:[$scope.subs[h]]
+				});
 			}
     };
     $scope.getAverage = function (prop,subs) {
