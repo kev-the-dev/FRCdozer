@@ -28,9 +28,10 @@
         <tbody>
           <tr>
             <td>Match</td>
-            <td>
+            <td>{{nextMatch}}
               <select ng-disabled="authlevel<2" class="form-control" ng-model='add.match'
                       ng-options="x.match as x.match for x in matches | orderBy:matchSort">
+                      <option ng-if="nextMatch.match" value="nextMatch.match">{{nextMatch.match}}</option>
                       <option value="">new</option>
               </select>
             </td>

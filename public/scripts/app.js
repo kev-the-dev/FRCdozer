@@ -82,21 +82,19 @@ angular.module('FRCdozer',['ui.router'])
   }])
   .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
     $scope.user = undefined;
-    $scope.error = {};
-    $scope.errors = [];
-    $scope.success = {};
-    $scope.handle = function (type,error) { //given http req and type string, handle with timout
-      if (error !== undefined) {
-        $scope.errors.push({type:type,error:error});
-        $scope.error[type] = JSON.stringify(error);
+    $scope.errors = {};
+    $scope.successes = {};
+    $scope.handle = function (type,error,description) { //given http req and type string, handle with timout
+      if (error !== undefined) { //if there isnt an error (a sucess)
+        $scope.errors[type] = {error:error};
         $timeout(function () {
-          $scope.error[type] = false;
-        },8000);
+          delete $scope.errors[type];
+        },3000);
       } else {
-        $scope.success[type] = true;
+        $scope.successes[type] = true;
         $timeout(function () {
-          $scope.success[type] = false;
-        },1000);
+          delete $scope.successes[type];
+        },3000);
       }
     };
     $scope.userInit = function () {

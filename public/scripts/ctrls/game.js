@@ -8,6 +8,11 @@
 	$httpProvider.defaults.useXDomain = true;
 	delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }])
+.filter('startAt', [function() {
+	return function(input, start) {
+		return input.slice(parseInt(start, 10));
+	};
+}])
 .controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
 		$scope.authlevel = 1;
     $scope.subs = []; //stores matches for current game
@@ -27,6 +32,28 @@
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
     $scope.newTeam;
+		$scope.limits = {
+			subs: {start:0,limit:10}
+		}
+		$scope.numToArray = function (num,cnt,start) { //maintains
+			var len = 7; //must be odd nubmer
+
+			var res = [];
+
+			var total = Math.round(num/cnt);
+
+			if (start/cnt < len/2)  {
+				for (var i = 0; i<len;i++) {
+					res.push(i);
+				}
+			}
+			else for (var i = -((len-1)/2); i<=(len-1)/2;i++) { //if in the middle
+				if (start/cnt+i>total) break;
+				res.push(start/cnt+i);
+			}
+
+			return res;
+		};
     $scope.getDate = function (id) {
       if (id) {
         var date = new Date(parseInt(id.substring(0, 8), 16) * 1000);
@@ -188,6 +215,8 @@
       var subs = $scope.subs;
       var matches = $scope.matches;
 			for (var z in matches) {
+				matches[z].noAlliance = [];
+
 				if (!matches[z].blue) matches[z].blue = {teams:{},score:0};
 				if (!matches[z].red) matches[z].red = {teams:{},score:0};
 
@@ -203,6 +232,7 @@
 					for (var y in matches) if (matches[y].match === subs[x].match.toLowerCase()) { //If the match with that sub's match exsists, add it to that match
 						if (subs[x].side === "Blue") matches[y].blue.teams[subs[x].team] = subs[x];
 						else if (subs[x].side === "Red") matches[y].red.teams[subs[x].team] = subs[x];
+						else matches[y].noAlliance.push(subs[x]);
 						continue s;
 					}
 					if (subs[x].side === "Blue") {
@@ -216,7 +246,8 @@
 							},
 							red : {
 								teams:{}
-							}
+							},
+							noAlliance : []
 						};
 					}
 					else if (subs[x].side === "Red")  {
@@ -230,7 +261,21 @@
 							},
 							blue : {
 								teams:{}
-							}
+							},
+							noAlliance : []
+						};
+					}
+					else {
+						matches[matches.length] = {
+							match:subs[x].match.toLowerCase(),
+							matchObj:$scope.deserializeMatch(subs[x].match),
+							red:{
+								teams:{}
+							},
+							blue : {
+								teams:{}
+							},
+							noAlliance : [subs[x]]
 						};
 					}
 				}
@@ -332,6 +377,7 @@
 					score : (match.alliances.red.score > 0 ? match.alliances.red.score :  0),
 					teams : m
 				},
+				noAlliance : [],
 				videos: match.videos
 			};
 		}
@@ -574,7 +620,19 @@
 				.on('editMatch',function(x){$scope.$apply(function () {
 					if (x.message_data.match.event_key === $scope.curGame.tbakey) {
 						$scope.changeMatch(parseTBAmatch(x.message_data.match));
-					}
+						return;
+					} else console.log("Not using match score beacuase wrong event key",x);
+				});})
+				.on('upcomingMatch',function(x){$scope.$apply(function () {
+					//if (x.message_data.match.event_key === $scope.curGame.tbakey) {
+						var m = {};
+						m.match = x['message_data']['match_key'].split('_')[1];
+						m.matchObj = $scope.deserializeMatch(m.match);
+						m.predictedTime = x['message_data']['predicted_time'];
+						m.scheduledTime = x['message_data']['scheduled_time'];
+						$scope.nextMatch = m;
+						return;
+					//} else console.log("Not using match score beacuase wrong event key",x);
 				});})
         .on('error',function(x){console.log(x);});
     }

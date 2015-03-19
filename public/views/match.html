@@ -98,7 +98,14 @@
         <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
         <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
       </td>
-      <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
+      <td>
+        <div class='row'>
+          <div class="matchRow col-xs-12" >
+            <input class='form-control' ng-model='x.team'>
+            <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+          </div>
+        </div>
+      </td>
       <td data-ng-repeat='y in curGame.game'>
         <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
         <form data-ng-if='y.type==="Boolean"' ng-init='x.elements[y.name] = x.elements[y.name] || false'>
@@ -117,6 +124,7 @@
     </tr>
   </tbody>
 </table>
+<hr>
 <h4>Red</h4>
 <div ng-show='filters.matchRed.key' class="btn alert alert-info alert-dismissible" role="alert">
   <button class="close" data-dismiss="alert" aria-label="Close" ng-click='sort(undefined,"matchRed")'>
@@ -152,7 +160,14 @@
         <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
         <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
       </td>
-      <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
+      <td>
+        <div class='row'>
+          <div class="matchRow col-xs-12" >
+            <input class='form-control' ng-model='x.team'>
+            <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+          </div>
+        </div>
+      </td>
       <td data-ng-repeat='y in curGame.game'>
         <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
         <form data-ng-if='y.type==="Boolean"' ng-init='x.elements[y.name] = x.elements[y.name] || false'>
@@ -171,3 +186,59 @@
     </tr>
   </tbody>
 </table>
+<hr>
+<div ng-show="match.noAlliance.length">
+  <h4>No Alliance (Please Sort)</h4>
+  <table class='table table-bordered table-striped table-hover table-condensed'>
+    <thead>
+      <tr>
+        <th>Links</th>
+        <th>Team
+        </th>
+        <th>
+          Alliance
+        </th>
+        <th data-ng-repeat='x in curGame.game'>{{x.name}}
+        </th>
+        <th data-ng-repeat='y in curGame.calc'>{{y.name}}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-ng-repeat='x in match.noAlliance'>
+        <td>
+          <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+          <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
+          <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
+        </td>
+        <td>
+          <div class='row'>
+            <div class="matchRow col-xs-12" >
+              <input class='form-control' ng-model='x.team'>
+              <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+            </div>
+          </div>
+        </td>
+        <td>
+          <button ng-class='x.side!="Red" ? "btn-primary" : "btn-default"' ng-click='x.side="Blue" ' class="btn">Blue</button>
+          <button ng-class='x.side!="Blue" ? "btn-danger" : "btn-default"' ng-click='x.side="Red" ' class="btn">Red</button>
+        </td>
+        <td data-ng-repeat='y in curGame.game'>
+          <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
+          <form data-ng-if='y.type==="Boolean"' ng-init='x.elements[y.name] = x.elements[y.name] || false'>
+            <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
+              <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true' type="button" class="btn">True</button>
+              <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false' type="button" class="btn">False</button>
+            </div>
+          </form>
+          <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
+            <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success"><span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span></button>
+            <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]  = x.elements[y.name] || 0 }}</button>
+            <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger"><span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span></button>
+          </div>
+        </td>
+        <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

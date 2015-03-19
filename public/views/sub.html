@@ -18,8 +18,22 @@
           <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
           <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
         </td>
-        <td><input class='form-control' ng-model='x.match'></td>
-        <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
+        <td>
+          <div class='row'>
+            <div class="matchRow col-xs-12" >
+              <input class='form-control' ng-model='x.match'>
+              <a ui-sref="game.match({id:x.match})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class='row'>
+            <div class="matchRow col-xs-12" >
+              <input class='form-control' ng-model='x.team'>
+              <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+            </div>
+          </div>
+        </td>
         <td data-ng-repeat='y in curGame.game'>
           <textarea data-ng-if='y.type==="String"' class="form-control" data-ng-model='x.elements[y.name]' placeholder='wow!'></textarea>
           <form data-ng-if='y.type==="Boolean"' ng-init="x.elements[y.name] = x.elements[y.name] || false">

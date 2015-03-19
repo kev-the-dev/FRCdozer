@@ -91,7 +91,12 @@ router.post('/:game/TBAhook', function (req,res) { //Respond to webhook requests
   req.body = JSON.parse(Object.keys(req.body)[0]);
   switch (req.body.message_type) {
     case "match_score":
-      io.to(req.game).emit("editMatch",req.body);
+      io.to(req.game.name).emit("editMatch",req.body);
+      res.end();
+      break;
+    case "upcoming_match":
+      console.log(req.body);
+      io.to(req.game.name).emit('upcomingMatch',req.body);
       res.end();
       break;
     case "verification" :

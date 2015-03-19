@@ -22,6 +22,16 @@
           <span ng-switch-when="1" class="label label-warning">Read Only</span>
         </span>
       </li>
+      <li>
+        <span ng-repeat="(key,x) in successes" class="label label-success">
+          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span><span>Success {{key}}</span>
+        </span>
+      </li>
+      <li>
+        <span ng-repeat="(key,x) in errors" class="label label-danger">
+          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error {{key}}</span>
+        </span>
+      </li>
     </ul>
   </nav>
   <div data-ui-view>

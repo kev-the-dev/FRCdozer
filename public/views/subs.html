@@ -6,21 +6,7 @@
         </button>
         <strong>{{"Filtering by "+ filters.subs.key}}<span ng-show='filters.subs.reverse'>, Decending</span></strong>
       </div>
-      <div id='errors'>
-        <span ng-show='success.editSub' class="text-success">
-          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Submission changed!
-        </span>
-        <span ng-show='error.editSub' class="text-danger" style="cursor:pointer;" title="{{error.editSub}}">
-          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error changing submission!</span>
-        </span>
-        <span ng-show='success.delSub' class="text-success">
-          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Submission removed!
-        </span>
-        <span ng-show='error.delSub' class="text-danger" style="cursor:pointer;" title="{{error.delSub}}">
-          <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span><span>Error removing submission!</span>
-        </span>
-      </div>
-      <table class='table table-bordered table-striped table-hover table-condensed'>
+      <table class='table table-bordered table-striped table-condensed'>
         <thead>
           <tr>
             <th>Links</th>
@@ -54,22 +40,28 @@
           </tr>
         </thead>
         <tbody>
-          <tr data-ng-repeat='x in subs | orderBy:filters.subs.key:!filters.subs.reverse'>
-            <td>
+          <tr data-ng-repeat='x in subs | orderBy:filters.subs.key:!filters.subs.reverse | startAt: limits.subs.start | limitTo : limits.subs.limit'>
+            <td data-title="Links">
               <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
               <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
               <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
             </td>
-            <td >
+            <td>
               <div class='row'>
                 <div class="matchRow col-xs-12" >
-                  <!-- textarea ng-model='x.match' rows='1' class="form-control" id="ex1" type="text"></textarea -->
                   <input class='form-control' ng-model='x.match'>
                   <a ui-sref="game.match({id:x.match})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
                 </div>
               </div>
             </td>
-            <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a></td>
+            <td>
+              <div class='row'>
+                <div class="matchRow col-xs-12" >
+                  <input class='form-control' ng-model='x.team'>
+                  <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+                </div>
+              </div>
+            </td>
             <td>
               <button ng-class='x.side!="Red" ? "btn-primary" : "btn-default"' ng-click='x.side="Blue" ' class="btn">Blue</button>
               <button ng-class='x.side!="Blue" ? "btn-danger" : "btn-default"' ng-click='x.side="Red" ' class="btn">Red</button>
@@ -83,14 +75,39 @@
                 </div>
               </form>
               <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
-                <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success"><span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span></button>
+                <button ng-click="x.elements[y.name] = x.elements[y.name] + 1" type="button" class="btn btn-xs btn-success">
+                  <span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span>
+                </button>
                 <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]  = x.elements[y.name] || 0 }}</button>
-                <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger"><span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span></button>
+                <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1" type="button" class="btn btn-xs btn-danger">
+                  <span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span>
+                </button>
               </div>
             </td>
             <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name] = getValue(x.elements,r.elements)}}</h4></td>
           </tr>
         </tbody>
       </table>
+      <div class="row">
+        <nav>
+          <ul class="pagination">
+            <li>
+              <a ng-disabled="limits.subs.start <= 0" ng-click="limits.subs.start = limits.subs.start-10"  aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li ng-repeat="x in numToArray(subs.length,limits.subs.limit,limits.subs.start) track by $index " ng-click="limits.subs.start = x*limits.subs.limit">
+              <a>
+                {{x+1}}
+              </a>
+            </li>
+            <li>
+              <a ng-disabled="limits.subs.start> subs.length/limits.subs.limit " ng-click="limits.subs.start = limits.subs.start+10" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
   </div>
 </div>
