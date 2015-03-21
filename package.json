@@ -20,5 +20,9 @@
     "cookie":"~0.1.2",
     "compression":"~1.2.2",
     "multer":"*"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-uglify": "*"
   }
 }
