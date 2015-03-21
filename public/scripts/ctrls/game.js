@@ -283,6 +283,9 @@
 			return z;
 		};
 		$scope.matchSort = [ //Array of functions for sorting matches
+			function (pre) {
+				console.log(pre.matchObj);
+			},
 			function (pre,rev) { //sorts first by match level (quaterfinals)
 				var l = pre.matchObj.level;
 				if (l === "qm" || l === "q" ) return 1;

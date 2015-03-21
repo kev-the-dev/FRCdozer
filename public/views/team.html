@@ -34,30 +34,12 @@
             </div>
           </div>
         </form>
-        <div>
-          <img ng-src="{{team.pic}}" alt="No Picture" class="img-responsive img-thumbnail">
-          <button ng-disabled="authlevel<2" ng-click="team.pic=undefined" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
     </div>
     <div class='col-md-6'>
-      <table class='table table-striped table-striped table-hover table-condensed'>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Average</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat='x in curGame.game | filter: {type:"!String"}'>
-            <td>{{x.name}}</td>
-            <td>{{team.averages[x.name] = getAverage(x.name,team.subs)}}</td>
-          </tr>
-          <tr ng-repeat='y in curGame.calc'>
-            <td>{{y.name}}</td>
-            <td>{{getValue(team.averages,y.elements)}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div>
+        <img ng-src="{{team.pic}}" alt="No Picture" class="img-responsive img-thumbnail">
+        <button ng-disabled="authlevel<2" ng-click="team.pic=undefined" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
     </div>
   </div>
   <hr>
@@ -70,7 +52,7 @@
       <tr>
         <th>Links</th>
         <th>Match
-          <button class="btn btn-xs btn-primary" ng-click='sort("match","team","Match")'>
+          <button class="btn btn-xs btn-primary" ng-click='sort(matchSort,"team","Match")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
@@ -89,6 +71,20 @@
           <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","team",y.name)'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
+        </th>
+      </tr>
+      <tr class="averages">
+        <th colspan="3" class="success">
+          Average
+        </th>
+        <th ng-repeat="x in curGame.game" class="info">
+          <span ng-switch="x.type">
+            <span ng-switch-when="Number">{{team.averages[x.name]}}</span>
+            <span ng-switch-when="Boolean">{{team.averages[x.name]*100+"%"}}</span>
+          </span>
+        </th>
+        <th class="success" ng-repeat="y in curGame.calc">
+          {{team.calc[y.name]}}
         </th>
       </tr>
     </thead>
@@ -115,16 +111,16 @@
           <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
           <form data-ng-if='y.type==="Boolean"'>
             <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
-              <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true;x.calc=getValues(x.elements)' type="button" class="btn">True</button>
-              <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false;x.calc=getValues(x.elements)' type="button" class="btn">False</button>
+              <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true;x.calc=getValues(x.elements);team=fixTeam(team)' type="button" class="btn">True</button>
+              <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false;x.calc=getValues(x.elements);team=fixTeam(team)' type="button" class="btn">False</button>
             </div>
           </form>
           <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
-            <button ng-click="x.elements[y.name] = x.elements[y.name] + 1;x.calc=getValues(x.elements)" type="button" class="btn btn-xs btn-success">
+            <button ng-click="x.elements[y.name] = x.elements[y.name] + 1;x.calc=getValues(x.elements);team=fixTeam(team)" type="button" class="btn btn-xs btn-success">
               <span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span>
             </button>
             <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]}}</button>
-            <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1;x.calc=getValues(x.elements)" type="button" class="btn btn-xs btn-danger">
+            <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1;x.calc=getValues(x.elements);team=fixTeam(team)" type="button" class="btn btn-xs btn-danger">
               <span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span>
             </button>
           </div>

@@ -1,3 +1,10 @@
+.averages th {
+  text-align: center;
+}
+.average {
+  border: 1px solid black !important;
+  border-collapse: collapse !important;
+}
 .vertical {
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);

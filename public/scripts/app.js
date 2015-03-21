@@ -89,7 +89,8 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
     $scope.successes = {};
     $scope.handle = function (type,error,description) { //given http req and type string, handle with timout
       if (error !== undefined) { //if there isnt an error (a sucess)
-        $scope.errors[type] = {error:error};
+        console.log(error);
+        $scope.errors[type] = error;
         $timeout(function () {
           delete $scope.errors[type];
         },3000);
