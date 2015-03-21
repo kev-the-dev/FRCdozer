@@ -8,11 +8,6 @@
 	$httpProvider.defaults.useXDomain = true;
 	delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }])
-.filter('startAt', [function() {
-	return function(input, start) {
-		return input.slice(parseInt(start, 10));
-	};
-}])
 .controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
 		$scope.authlevel = 1;
     $scope.subs = []; //stores matches for current game
@@ -78,11 +73,24 @@
     $scope.changeGame = function (game) {
         $scope.curGame = game;
     };
-    $scope.appendSub = function (sub) {
-        $scope.subs.push(sub);
-        $scope.sortTeams();
-        $scope.sortMatches();
+    $scope.appendSubs = function (subs) {
+			for (i in subs) $scope.subs.push($scope.fixSub(subs[i]));
+      $scope.sortTeams();
+      $scope.sortMatches();
     };
+		$scope.fixSub = function (sub) { //ensure sub has all needed elements and returns fixed version
+			sub.matchObj = sub.matchObj || $scope.deserializeMatch(sub.match);
+			sub.calc = sub.calc || {};
+			sub.elements = sub.elements || {};
+
+			for (i in $scope.curGame.game) {
+				ele = $scope.curGame.game[i];
+				if (ele.type === "Boolean") sub.elements[ele.name] = sub.elements[ele.name] || false;
+				else if (ele.type === "Number") sub.elements[ele.name] = sub.elements[ele.name] || 0;
+			}
+			sub.calc = $scope.getValues(sub.elements);
+			return sub;
+		};
     $scope.appendTeam = function (team) {
       $scope.teams.push(team);
       $scope.sortMatches();
@@ -116,7 +124,7 @@
     };
     $scope.changeSub = function (sub) {
       for (x in $scope.subs) if (sub._id === $scope.subs[x]._id) {
-        $scope.subs[x]=sub;
+        $scope.subs[x]=$scope.fixSub(sub);
         break;
       }
 			$scope.sortTeams();
@@ -292,34 +300,29 @@
 			return ret;
 		};
 		$scope.deserializeMatch = function  (match) { //given string, turn in into an object
-			var level = undefined;
-			var set = undefined;
-			var number = undefined;
+			var res = {};
+			if (!match) return {};
 			var x;
 			for (x=0;x<match.length;x++) {
-				if (Boolean(Number(match[x]))) { //if you hit a number, you have level
-					level = match.slice(0,x).toLowerCase();
+				if (!isNaN(match[x])) { //if you hit a number, you have level
+					res.level = match.slice(0,x).toLowerCase();
 					break;
 				}
 			}
 			for (var y = x; y<match.length; y++) {
-				if (!Boolean(Number(match[y]))) { // If you hit a character, has a set
-					set = Number(match.slice(x,y));
+				if (isNaN(match[y])) { // If you hit a character, has a set
+					res.set = Number(match.slice(x,y));
 					break;
 				}
 			}
-			if (set) { //if there is a set and next character is m
-				number = Number(match.slice(y+1));
+			if (res.set) { //if there is a set and next character is m
+				res.number = Number(match.slice(y+1));
 			}
 			else {
-				set = 1;
-				number = Number(match.slice(x));
+				res.set = 1;
+				res.number = Number(match.slice(x));
 			}
-			return {
-				'level':level,
-				'set':set,
-				'number':number
-			};
+			return res;
 		};
 		$scope.getVideoUrl = function (obj) {
 			switch (obj.type) {
@@ -491,7 +494,7 @@
         .success(function (x) {
 	    		$scope.add = {};
           $scope.handle('newSub');
-          if (!$scope.connected) $scope.appendSub(data);
+          if (!$scope.connected) $scope.appendSubs([data]);
         })
         .error(function (x) {$scope.handle('newSub',x)});
     };
@@ -553,6 +556,11 @@
       for (x in calc) val=val+(Number(sub[calc[x].name])*calc[x].worth || 0);
       return Math.round(val*100)/100 || 0;
     };
+		$scope.getValues = function (elements) {
+			var res = {};
+			for (i in $scope.curGame.calc) res[$scope.curGame.calc[i].name] = $scope.getValue(elements,$scope.curGame.calc[i].elements);
+			return res;
+		};
     $scope.sortTeams = function () { //sorts aray of submissions or $scope.subs into teams
 			for (k in $scope.teams) { //For each team
 				$scope.teams[k].subs = [];
@@ -589,7 +597,7 @@
         .on('reconnecting', discon)
         .on('reconnect_error',discon)
         .on('reconnect_failed',discon)
-        .on('newSub', function(x){$scope.$apply(function () {$scope.appendSub(x);});})
+        .on('newSub', function(x){$scope.$apply(function () {$scope.appendSubs([x]);});})
         .on('newTeam',function(x){$scope.$apply(function () {$scope.changeTeam(x);});})
         .on('delSub', function(x){$scope.$apply(function () {$scope.removeSub(x._id);});})
         .on('delTeam', function(x){$scope.$apply(function () {$scope.removeTeam(x);});})
@@ -627,13 +635,14 @@
       if (!$stateParams.name) $state.go('404');
       $scope.getGame($stateParams.name, function (err,x) {
         if (x) {
-					$scope.subs = x.submissions;
+					$scope.curGame = x;
+
+					$scope.appendSubs(x.submissions)
 					$scope.teams = x.teams;
 
-					delete x.submissions;
-					delete x.teams;
+					delete $scope.curGame.submissions;
+					delete $scope.curGame.teams;
 
-          $scope.curGame = x;
           $scope.sortTeams();
           $scope.sortMatches();
           socketConf();
