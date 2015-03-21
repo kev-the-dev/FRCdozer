@@ -14,24 +14,24 @@
               </button>
             </th>
             <th>Team
-              <button class="btn btn-xs btn-primary" ng-click='sort("team","subs")'>
+              <button class="btn btn-xs btn-primary" ng-click='sort("team","subs","Team")'>
                 <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
               </button>
             </th>
             <th>
               Aliance
-              <button class="btn btn-xs btn-primary" ng-click='sort("side","subs")'>
+              <button class="btn btn-xs btn-primary" ng-click='sort("side","subs","Alliance")'>
                 <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
               </button>
             </th>
             <th data-ng-repeat='x in curGame.game'>
               {{x.name}}
-              <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","subs")'>
+              <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","subs",x.name)'>
                 <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
               </button>
             </th>
             <th data-ng-repeat='y in curGame.calc'>{{y.name}}
-              <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","subs")'>
+              <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","subs",y.name)'>
                 <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
               </button>
             </th>

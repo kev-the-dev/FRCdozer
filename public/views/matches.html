@@ -42,10 +42,10 @@
   <tbody>
     <tr data-ng-repeat='x in matches | orderBy:filters.matches.key:!filters.matches.reverse'>
       <td>
-        <a href='#/game/{{curGame.name}}/match/{{x.match}}'>{{x.matchObj = x.matchObj || deserializeMatch(x.match);x.match}}</a>
+        <a href='#/game/{{curGame.name}}/match/{{x.match}}'>{{x.match}}</a>
         <span ng-show="x.videos.length" class="glyphicon glyphicon-film" aria-hidden="true"></span>
       </td>
-      <td>{{(x.time | date:'EEEE, h:mm') || "n/a"}}</td>
+      <td>{{(x.time | date:'EEEE, h:mm')}}</td>
       <td>
         <ul class="list-inline">
           <li ng-repeat="(y,x) in x.blue.teams">
@@ -63,19 +63,19 @@
         </ul>
       </td>
       <td ng-repeat="g in curGame.calc">
-        <b>{{x.blue.calc[g.name] = matchCalc(x.blue.teams,g.elements); x.blue.calc[g.name]}}</b>
+        <b>{{x.blue.calc[g.name]}}</b>
       </td>
       <td>
         <b>{{x.blue.score}}</b>
       </td>
       <td ng-repeat="g in curGame.calc">
-        <b>{{x.red.calc[g.name] = matchCalc(x.red.teams,g.elements)}}</b>
+        <b>{{x.red.calc[g.name]}}</b>
       </td>
       <td>
         <b>{{x.red.score}}</b>
       </td>
       <td>
-        <b>{{x.winner = winnerString(x.blue.score,x.red.score)}}</b>
+        <b>{{x.winner}}</b>
       </td>
     </tr>
   </tbody>

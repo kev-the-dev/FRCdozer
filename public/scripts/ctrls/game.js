@@ -92,7 +92,7 @@
 			return sub;
 		};
     $scope.appendTeam = function (team) {
-      $scope.teams.push(team);
+      $scope.teams.push($scope.fixTeam(team));
       $scope.sortMatches();
     };
     $scope.removeSub = function (id) {
@@ -142,10 +142,17 @@
 				for (var z in match.red.teams) if (match.red.teams.hasOwnProperty(z)) {
 					match.red.teams[z] = (typeof $scope.matches[x].red.teams[z] === "object") ? $scope.matches[x].red.teams[z] : match.red.teams[z]
 				}
-				$scope.matches[x] = match;
+				$scope.matches[x] = $scope.fixMatch(match);
 				return;
 			}
 			$scope.matches.push(match);
+		};
+		$scope.fixMatch = function (match) {
+			match.matchObj = match.matchObj || $scope.deserializeMatch(match.match);
+			match.blue.calc = $scope.matchCalcs(match.blue.teams);
+			match.red.calc =  $scope.matchCalcs(match.red.teams);
+			match.winner = $scope.winnerString(match.blue.score,match.red.score);
+			return match;
 		};
 		$scope.resetSubs = function () {
 			if (!confirm("Are you sure you want to clear all submissions for "+$scope.curGame.name+"?")) return false;
@@ -189,6 +196,7 @@
         $scope.teams[x].notes = team.notes;
 
         $scope.teams[x]._id = team._id  || undefined;
+				$scope.teams[x] = $scope.fixTeam($scope.teams[x]);
         return false;
       }
       $scope.appendTeam(team);
@@ -266,6 +274,7 @@
 					}
 				}
       }
+			for (var f in matches) matches[f] = $scope.fixMatch(matches[f]);
       $scope.matches = matches;
     };
 		$scope.matchTeams = function (teams) { //given object of teams, return array of team keys
@@ -382,6 +391,11 @@
 				}
 			}
 			return total;
+		};
+		$scope.matchCalcs = function (teams) {
+			var res = {};
+			for (i in $scope.curGame.calc) res[$scope.curGame.calc[i].name] = $scope.matchCalc(teams,$scope.curGame.calc[i].elements);
+			return res;
 		};
     $scope.getGame = function (id,call) {
       $http.get('api/game/'+id)
@@ -562,22 +576,32 @@
 			return res;
 		};
     $scope.sortTeams = function () { //sorts aray of submissions or $scope.subs into teams
-			for (k in $scope.teams) { //For each team
-				$scope.teams[k].subs = [];
-			}
-			s: for (h in $scope.subs) {
-				for (i in $scope.teams) {
-					if (Number($scope.subs[h].team) === Number($scope.teams[i].team)) {
-						$scope.teams[i].subs.push($scope.subs[h])
+			var teams = $scope.teams;
+			var subs = $scope.subs;
+			for (k in teams) teams[k].subs = [];
+
+			s: for (h in subs) {
+				for (i in teams) {
+					if (Number(subs[h].team) === Number(teams[i].team)) {
+						teams[i].subs.push(subs[h])
 						continue s;
 					}
 				}
-				$scope.teams.push({
-					team:($scope.subs[h].team),
-					subs:[$scope.subs[h]]
+				teams.push({
+					team:(subs[h].team),
+					subs:[subs[h]]
 				});
 			}
+
+			for (k in teams) teams[k] = $scope.fixTeam(teams[k]);
+
+			$scope.teams = teams;
     };
+		$scope.fixTeam = function (team) {
+			team.averages =  $scope.getAverages(team.subs);
+			team.calc = $scope.getValues(team.averages);
+			return team;
+		};
     $scope.getAverage = function (prop,subs) {
       subs = subs || [];
       var avr = 0;
@@ -586,6 +610,11 @@
       avr = Math.round(avr*100)/100 || 0;
       return avr;
     };
+		$scope.getAverages = function (subs) {
+			var res = {}
+			for (i in $scope.curGame.game) res[$scope.curGame.game[i].name] = $scope.getAverage($scope.curGame.game[i].name,subs);
+			return res;
+		};
     function socketConf () {
       $scope.socket = io('/game?name='+$scope.curGame.name,{path:window.location.pathname+'socket.io/','force new connection' : true})
         .on('message', function (data) {console.log(data);})
@@ -637,14 +666,12 @@
         if (x) {
 					$scope.curGame = x;
 
-					$scope.appendSubs(x.submissions)
 					$scope.teams = x.teams;
+					$scope.appendSubs(x.submissions)
 
 					delete $scope.curGame.submissions;
 					delete $scope.curGame.teams;
 
-          $scope.sortTeams();
-          $scope.sortMatches();
           socketConf();
     	  	$scope.tbaGrabInfo();
 					$scope.tbaGrabMatches();
