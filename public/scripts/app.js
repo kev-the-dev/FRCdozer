@@ -113,7 +113,6 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         });
     };
     $scope.addGame = function (game) {
-      console.log(game);
       if (!$scope.user || !game || !game.name) return false;
       game.teams = game.teams || [];
       game.submissions = game.submissions || [];
@@ -121,9 +120,10 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         .success(function (x) {
           $scope.newGame == {};
           console.log(x);
-          $scope.user.games.push({name:x.name,authlevel:x.permissions.users[$scope.user.username] || 4});
+          $scope.user.games.push(x);
         })
         .error(function (x) {
+          $scope.newGame == {};
           console.log(x);
         });
     };
@@ -131,9 +131,8 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       if (!confirm("Are you sure you want to delete "+name+"?")) return;
       $http.delete('api/game/'+name)
       .success(function (x) {
-        console.log(x);
         for (y in $scope.user.games) {
-          if (name === x.name) $scope.user.games.splice(y);
+          if (name === $scope.user.games[y].name) $scope.user.games.splice(y,1);
         }
       })
       .error(function (x){console.log(x);});

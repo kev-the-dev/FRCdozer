@@ -54,16 +54,8 @@ router.route('/:game')
     if (req.authlevel < 4) return res.status(401).end();
     req.game.remove(function (err,x) {
       if (err) res.status(500).send(err);
-      else {
-        for (var z in req.user.games) if (req.user.games[z].name === x.name) {
-          req.user.games.splice(z);
-          req.user.save(function (err) {
-            if (err) req.status(500).send(err);
-            else res.send(x);
-          });
-        }
-      }
-    })
+      else res.end();
+    });
   });
 
 router.post('/',function (req,res) {
@@ -76,9 +68,11 @@ router.post('/',function (req,res) {
   req.body.submissions=[];
   req.body.teams=[];
   games.create(req.body,function(err,x) {
-    if (err) res.status(500).send(err);
+    if (err) {
+      res.status(500).send(err);
+    }
     else {
-      req.user.games.push({name:x.name,authlevel:x.permissions.users[req.user.username] || 4});
+      req.user.games.push(x);
       req.user.save(function (err,y) {
         if (err) return res.status(500).send(err);
         res.send(x);

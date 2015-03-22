@@ -38,7 +38,7 @@ exports.initDB = function (url) {
     password: { type: String, required: true },
     salt:String,
     info:Object,
-    games:[new sch({name:String,authlevel:Number}) ] //List of games with permission levels
+    games:[{ type: sch.Types.ObjectId, ref: 'games' }]
   }));
 }
 

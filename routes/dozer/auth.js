@@ -27,6 +27,18 @@ function safe (x) {
   x.salt = undefined;
   return x;
 }
+function sendUser(req,res) {
+  if (!req.user) return res.status(401).send("Not logged in");
+  if (req.user) {
+    req.user.populate({
+      path: 'games',
+      select: 'name permissions'
+    }, function (err,usr) {
+      if (err) res.status(500).send(err);
+      else res.send(safe(usr));
+    });
+  }
+}
 
 router.use(passport.initialize());
 router.use(passport.session());
@@ -56,13 +68,13 @@ passport.deserializeUser(function (id,done) {
     else done(null,null);
   })
 });
-router.post('/login',passport.authenticate('local'),function (req,res) {
-  res.send(safe(req.user));
-});
+router.post('/login',passport.authenticate('local'),sendUser);
+
 router.post('/logout', function (req,res) {
   req.logout();
   res.send('You have logged out');
 });
+
 router.post('/register', function (req,res) {
   var user = req.body.username;
   var pass = req.body.password;
@@ -84,10 +96,9 @@ router.post('/register', function (req,res) {
   }
   else res.status(500).send('No username or password');
 });
-router.get('/hello', function (req,res) {
-  if (req.user) res.send (safe(req.user));
-  else res.status(401).send("Not logged in");
-});
+
+router.get('/hello',sendUser);
+
 router.put('/password', function (req,res) { //Change password
   if (req.user && req.body.password && req.user.salt) users.findById(req.user._id, function (err,x) {
     if (err) res.status(500).send(err);
