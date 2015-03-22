@@ -33,6 +33,22 @@
             <input ng-disabled="authlevel<3" data-ng-model='curGame.tbakey' class="form-control" placeholder="2015flor">
           </td>
         </tr>
+        <tr ng-show="curGame.tbakey && !curGame.verification">
+          <td>
+            <a href="http://www.thebluealliance.com/webhooks/add">URL for live TBA updates</a>
+          </td>
+          <td>
+            {{location.origin+'/api/game/'+curGame._id+'/TBAhook'}}
+          </td>
+        </tr>
+        <tr ng-show="curGame.verification">
+          <td>
+            TBA verification key
+          </td>
+          <td>
+            {{curGame.verification}}
+          </td>
+        </tr>
       </table>
     </div>
     <div class="col-md-6">

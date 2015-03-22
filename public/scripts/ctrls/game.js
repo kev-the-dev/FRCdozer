@@ -8,7 +8,8 @@
 	$httpProvider.defaults.useXDomain = true;
 	delete $httpProvider.defaults.headers.common['X-Requested-With'];
 }])
-.controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
+.controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
+		$scope.location = window.location;
 		$scope.authlevel = 1;
     $scope.subs = []; //stores matches for current game
     $scope.sub = {};
@@ -180,28 +181,66 @@
 		};
 		$scope.tbaGrabTeams = function () {
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/teams?X-TBA-App-Id=frc4118:scouting:1")
-			.success(function (x) {
-				$scope.tbaTeams = x;
-				for (i in x) {
-					if ($scope.changeTeam({team:x[i].team_number,name:x[i].nickname})) $scope.editTeam({team:x[i].team_number,name:x[i].nickname});
+			.success(function (res) {
+				for (i in res) {
+					var team = {team:res[i].team_number,name:res[i].nickname};
+					for (x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
+						team._id = $scope.teams[x]._id;
 					}
+					$scope.editTeam(team);
+				}
+			})
+			.error(function (x) {
+				console.log(x);
+			});
+		};
+		$scope.changeTeam = function (team) { //if you want a preporty to not be there, set to null
+			for (x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
+				console.log("found");
+				$scope.teams[x].name = team.name;
+				$scope.teams[x].notes = team.notes;
+
+				$scope.teams[x]._id = team._id  || undefined;
+				$scope.teams[x] = $scope.fixTeam($scope.teams[x]);
+				return false;
+			}
+			$scope.appendTeam(team);
+			return true;
+		};
+		$scope.editTeam = function (x,event) {
+			if (event) var file = event.target.form.elements.files.files[0];
+			if (file) {
+				var uri = 'api/game/'+$scope.curGame._id+'/team/'+x._id+'/pic';
+				var fd = new FormData();
+				fd.append('pic', file);
+				$http.post(uri,fd,{
+					transformRequest: angular.identity,
+					headers: {'Content-Type': undefined}
+				})
+				.success(function (res) {
+					x.pic = res;
+					$scope.changeTeam(x);
 				})
 				.error(function (x) {
 					console.log(x);
 				});
-			};
-    $scope.changeTeam = function (team) { //if you want a preporty to not be there, set to null
-      for (x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
-        $scope.teams[x].name = team.name;
-        $scope.teams[x].notes = team.notes;
+			}
 
-        $scope.teams[x]._id = team._id  || undefined;
-				$scope.teams[x] = $scope.fixTeam($scope.teams[x]);
-        return false;
-      }
-      $scope.appendTeam(team);
-			return true;
-    };
+			if (x._id) {
+				var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,x);
+			}
+			else var req = $http.post ('api/game/'+$scope.curGame._id+'/team',x);
+
+			req
+			.success(function(x,sta){
+				$scope.newTeam = {};
+				$scope.handle('editTeam');
+				$scope.changeTeam(x);
+			})
+			.error(function(x,sta){
+				$scope.handle('editTeam',x);
+			});
+		};
     $scope.getMatch = function (match) {
       for (x in $scope.matches) if ($scope.matches[x].match === match.toLowerCase()) return $scope.matches[x];
     };
@@ -461,48 +500,6 @@
         })
         .error(function (x) {$scope.handle('editSub',x)});
     };
-    $scope.editTeam = function (x,event) {
-			if (event) var file = event.target.form.elements.files.files[0];
-			if (file) {
-					var uri = 'api/game/'+$scope.curGame._id+'/team/'+x._id+'/pic';
-					var fd = new FormData();
-					fd.append('pic', file);
-					$http.post(uri,fd,{
-						transformRequest: angular.identity,
-						headers: {'Content-Type': undefined}
-					})
-					.success(function (res) {
-						x.pic = res;
-						$scope.changeTeam(x);
-					})
-					.error(function (x) {
-						console.log(x);
-					});
-			}
-
-      if (x._id) {
-				var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,{
-					_id:x._id,
-					name:x.name || "",
-					notes:x.notes || "",
-					team:Number(x.team)
-				});
-			}
-      else var req = $http.post ('api/game/'+$scope.curGame._id+'/team',{
-        name:x.name || "",
-        notes:x.notes || "",
-        team:Number(x.team)
-      });
-      req
-        .success(function(x,sta){
-          $scope.newTeam = {};
-          $scope.handle('editTeam');
-          $scope.changeTeam(x);
-        })
-        .error(function(x,sta){
-					$scope.handle('editTeam',x);
-				});
-    };
     $scope.addSub = function (elements) {
       $http.post ('api/game/'+$scope.curGame._id+'/sub',elements)
         .success(function (x) {
@@ -636,7 +633,7 @@
 				.on('resetSubs',function(x){$scope.$apply(function () {$scope.resetSubs();});})
 				.on('resetTeams',function(x){$scope.$apply(function () {$scope.resetTeams();});})
 				.on('TBAverification',function(x){$scope.$apply(function () {
-					console.log(x);
+					$scope.curGame.verification = x;
 				});})
 				.on('TBAping',function(x){$scope.$apply(function () {
 					console.log(x);

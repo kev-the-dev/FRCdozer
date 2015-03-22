@@ -89,16 +89,15 @@ router.post('/:game/TBAhook', function (req,res) { //Respond to webhook requests
       res.end();
       break;
     case "upcoming_match":
-      console.log(req.body);
       io.to(req.game.name).emit('upcomingMatch',req.body);
       res.end();
       break;
     case "verification" :
-      x.verification = (req.body.message_data || {}).verification_key || undefined;
-      x.save(function (err) {
+      req.game.verification = (req.body.message_data || {}).verification_key || undefined;
+      req.game.save(function (err) {
         if (!err) {
           res.end();
-          io.to(req.game.name).emit('TBAverification',x.verification);
+          io.to(req.game.name).emit('TBAverification',req.game.verification);
         } else res.end();
       });
       break;

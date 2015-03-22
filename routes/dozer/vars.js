@@ -14,7 +14,7 @@ exports.initDB = function (url) {
     game: [new sch({name:String,type:String})],
     calc: [{name:String,elements:[{name:String,worth:Number}]}],
     tbakey: String,
-    tbaverification:String,
+    verification:String,
     submissions: [new sch({
       match: String,
       side: String,
