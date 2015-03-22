@@ -14,53 +14,58 @@ var passport = require('passport');
 var expressSession = require('express-session');
 var compression = require('compression');
 var server;
-var configApp = function () {
-  require('./routes/dozer/vars.js').io=require("socket.io")(server);
-  app.use(favicon(__dirname + '/public/favicon.ico'));
-  app.use(logger('dev'));
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(cookieParser());
-  app.use(compression());
-
-  app.use('/',require('./routes/dozer/index.js'));
-
-  // catch 404 and forward to error handler
-  app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-  });
-
-  // error handler
-  app.use(function(err, req, res, next) {
-    console.log(err);
-    res.status(err.status || 500);
-    res.send(err);
-  });
-
-  var debug = require('debug')('expressTest');
-  app.set('port', process.env.PORT || 3000);
-  server.listen(app.get('port'), function() {
-    debug('Express server listening on port ' + server.address().port);
-  });
-}
-fs.readFile('/etc/nginx/ssl/riptiderobotics-dec.key', function (err,keyfile) { //tries to find key and cert file, makes http server if not found
-  if (err || !keyfile) {
-    server = http.createServer(app);
-    configApp();
+var defaultSettings = {
+  port : 3002,
+  database : {
+    url : "mongodb://localhost/FRCdev"
   }
-  else fs.readFile('/etc/nginx/ssl/ssl-unified.crt', function (err, certfile) {
-    if (err || !certfile) {
-      server = http.createServer(app);
-      configApp();
-    }
-    else {
-      server = https.createServer({
-        cert: certfile,
-        key: keyfile
-      },app);
-      configApp();
-    }
-  });
+}
+
+var settings = JSON.parse(fs.readFileSync("./config.json"));
+
+if (!settings) settings= defaultSettings;
+
+if (settings.https) {
+  var key = fs.readFileSync(settings.https.key);
+  var cert = fs.readFileSync(settings.https.cert);
+  if (key && cert) server = https.createServer({
+    cert: cert,
+    key: key
+  },app);
+  else server = http.createServer(app);
+} else server = http.createServer(app);
+
+var vars = require('./routes/dozer/vars.js');
+    vars.io=require("socket.io")(server);
+    vars.initDB(settings.database.url || defaultSettings.database.url);
+
+app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(compression());
+
+app.use('/',require('./routes/dozer/index.js'));
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handler
+app.use(function(err, req, res, next) {
+  console.log(err);
+  res.status(err.status || 500);
+  res.send(err);
+});
+
+var debug = require('debug')('expressTest');
+
+app.set('port', settings.port || defaultSettings.port);
+
+server.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
 });
