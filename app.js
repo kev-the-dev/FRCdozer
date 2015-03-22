@@ -15,9 +15,9 @@ var expressSession = require('express-session');
 var compression = require('compression');
 var server;
 var defaultSettings = {
-  port : 3002,
+  port : 3000,
   database : {
-    url : "mongodb://localhost/FRCdev"
+    url : "mongodb://localhost/dozer"
   }
 }
 
