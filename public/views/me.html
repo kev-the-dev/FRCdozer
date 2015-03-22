@@ -37,7 +37,7 @@
           <th>Remove Game</th>
         </tr>
         <tr ng-repeat="x in user.games">
-          <td><a ui-sref="game({name:x._id})">{{x.name}}</a></td>
+          <td><a ui-sref="game({name:x.name})">{{x.name}}</a></td>
           <td>
             {{x.permissions.users[user.username] || x.permissions.others}}
           </td>
