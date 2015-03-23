@@ -45,6 +45,34 @@ module.exports = function(grunt) {
         }
         ]
       }
+    },
+    concurrent: {
+      dev: {
+        tasks: ['nodemon', 'watch'],
+        options: {
+          logConcurrentOutput: true
+        }
+      },
+      minify : {
+        tasks: ['uglify','htmlmin','cssmin'],
+        options: {
+          logConcurrentOutput: true
+        }
+      }
+    },
+    nodemon: {
+      dev: {
+        script: 'app.js',
+        options: {
+          ignore: 'public/**'
+        }
+      }
+    },
+    watch: {
+      dev: {
+        files: ['public/src/**'],
+        tasks: ['uglify','htmlmin','cssmin'],
+      }
     }
   });
 
@@ -53,7 +81,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-concurrent');
+
   // Default task(s).
-  grunt.registerTask('build', ['uglify','htmlmin','cssmin']);
-  grunt.registerTask('test', ['jshint']);
+  grunt.registerTask('build', ['concurrent:minify']);
+  grunt.registerTask('dev', ['concurrent:minify','concurrent:dev']);
 };
