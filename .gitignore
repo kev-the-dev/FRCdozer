@@ -2,6 +2,8 @@
 logs
 *.log
 
+#Ignore ssl key/certs
+ssl/
 # Runtime data
 pids
 *.pid

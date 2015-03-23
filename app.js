@@ -18,7 +18,8 @@ var defaultSettings = {
   port : 3000,
   database : {
     url : "mongodb://localhost/dozer"
-  }
+  },
+  publicDir : "./public/dest"
 }
 
 var settings = JSON.parse(fs.readFileSync("./config.json"));
@@ -38,6 +39,7 @@ if (settings.https) {
 var vars = require('./routes/dozer/vars.js');
     vars.io=require("socket.io")(server);
     vars.initDB(settings.database.url || defaultSettings.database.url);
+    vars.publicDir = settings.publicDir || defaultSettings.publicDir;
 
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -69,3 +71,4 @@ app.set('port', settings.port || defaultSettings.port);
 server.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
 });
+module.exports = server;

@@ -1,7 +1,7 @@
 angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
-.config(function(paginationTemplateProvider) {
-  paginationTemplateProvider.setPath('views/paginate.html');
-})
+  .config(['paginationTemplateProvider',function(paginationTemplateProvider) {
+    paginationTemplateProvider.setPath('views/paginate.html');
+  }])
   .config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('home', {
