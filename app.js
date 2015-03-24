@@ -71,4 +71,3 @@ app.set('port', settings.port || defaultSettings.port);
 server.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
 });
-module.exports = server;
