@@ -56,7 +56,7 @@ module.exports = function(grunt) {
         }
       },
       dist : {
-        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app','copy:fonts'],
+        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app','copy:fonts','copy:favicon'],
         options: {
           logConcurrentOutput: true
         }
@@ -90,6 +90,10 @@ module.exports = function(grunt) {
         src : '*',
         cwd: 'public/src/fonts/',
         dest: 'public/dist/fonts/'
+      },
+      favicon : {
+        src: 'public/src/favicon.ico',
+        dest:'public/dist/favicon.ico'
       }
     }
   });
