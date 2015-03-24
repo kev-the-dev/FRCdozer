@@ -30,6 +30,7 @@
     "grunt-contrib-cssmin":"*",
     "grunt-nodemon":"*",
     "grunt-contrib-watch":"*",
-    "grunt-concurrent":"*"
+    "grunt-concurrent":"*",
+    "grunt-contrib-copy":"*"
   }
 }

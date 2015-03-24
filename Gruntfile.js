@@ -4,18 +4,22 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     uglify: {
-      public : {
-        files : {
-          'public/dest/js/all.min.js':[
-          'public/src/scripts/app.js',
-          'public/src/scripts/ctrls/game.js',
-          'public/src/scripts/paginate.js'
-          ]
-        }
+      app : {
+        src : ['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
+        dest: 'public/dist/js/app.js'
+      },
+      vendor : {
+        src: [
+          'public/src/js/vendor/angular.js',
+          'public/src/js/vendor/angular-ui-router.js',
+          'public/src/js/vendor/paginate.js',
+          'public/src/js/vendor/socket.io.js'
+        ],
+        dest:'public/dist/js/vendor.js'
       }
     },
     htmlmin: {
-      public: {
+      app: {
         options: {
             removeComments: true,
             collapseWhitespace: true
@@ -23,38 +27,36 @@ module.exports = function(grunt) {
         files: [
           {
             src: 'public/src/index.html',
-            dest: 'public/dest/index.html'
+            dest: 'public/dist/index.html'
           },
           {
             expand: true,
             cwd: 'public/src/views/',
             src: '*.html',
-            dest: 'public/dest/views/'
+            dest: 'public/dist/views/'
           }
         ]
       }
     },
     cssmin : {
-      public : {
-        files : [
-        {
-          expand: true,
-          cwd: 'public/src/styles/',
-          src: '*.css',
-          dest: 'public/dest/css/'
-        }
-        ]
+      app : {
+        src: 'public/src/css/app/**.css',
+        dest: 'public/dist/css/app.css'
+      },
+      vendor : {
+        src : 'public/src/css/vendor/**.css',
+        dest: 'public/dist/css/vendor.css'
       }
     },
     concurrent: {
       dev: {
-        tasks: ['nodemon', 'watch'],
+        tasks: ['nodemon', 'watch:dev'],
         options: {
           logConcurrentOutput: true
         }
       },
       minify : {
-        tasks: ['uglify','htmlmin','cssmin'],
+        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app'],
         options: {
           logConcurrentOutput: true
         }
@@ -71,8 +73,12 @@ module.exports = function(grunt) {
     watch: {
       dev: {
         files: ['public/src/**'],
-        tasks: ['uglify','htmlmin','cssmin'],
+        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app']
       }
+    },
+    jshint : {
+      front : ['public/src/scripts/app.js','public/src/scripts/ctrls/**.js'],
+      back: ['app.js','routes/**.js']
     }
   });
 
@@ -84,8 +90,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-concurrent');
-
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   // Default task(s).
-  grunt.registerTask('build', ['concurrent:minify']);
+  grunt.registerTask('build',['concurrent:minify']);
+  grunt.registerTask('test',['jshint:front']);
   grunt.registerTask('dev', ['concurrent:minify','concurrent:dev']);
 };
