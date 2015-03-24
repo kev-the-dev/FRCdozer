@@ -83,8 +83,9 @@ module.exports = function(grunt) {
     copy : {
       fonts : {
         expand: true,
-        src: 'public/src/fonts/*',
-        dest: 'public/dist/fronts/',
+        src : '*',
+        cwd: 'public/src/fonts/',
+        dest: 'public/dist/fonts/'
       }
     }
   });
