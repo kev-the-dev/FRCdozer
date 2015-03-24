@@ -20,7 +20,7 @@ var defaultSettings = {
     url : "mongodb://localhost/dozer"
   },
   publicDir : "./public/dist"
-}
+};
 
 var settings = JSON.parse(fs.readFileSync("./config.json"));
 

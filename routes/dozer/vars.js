@@ -40,7 +40,7 @@ exports.initDB = function (url) {
     info:Object,
     games:[{ type: sch.Types.ObjectId, ref: 'games' }]
   }));
-}
+};
 
 module.exports = exports;
 

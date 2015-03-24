@@ -21,7 +21,7 @@ router.route('/:team')
   })
   .put(function (req,res) { //edit one match
     if (req.authlevel < 2) return res.status(401).end();
-    req.team.set(req.body)
+    req.team.set(req.body);
     req.game.save(function (err) {
       if (err) return res.status(500).send(err);
       res.send(req.team);

@@ -50,7 +50,7 @@ module.exports = function(grunt) {
     },
     concurrent: {
       dev: {
-        tasks: ['nodemon', 'watch:dev'],
+        tasks: ['nodemon', 'watch:public','watch:server'],
         options: {
           logConcurrentOutput: true
         }
@@ -71,14 +71,18 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      dev: {
+      public: {
         files: ['public/src/**'],
-        tasks: ['concurrent:dist']
+        tasks: ['jshint:front','concurrent:dist']
+      },
+      server : {
+        files: ['app.js','routes/dozer/**/**.js'],
+        tasks: ['jshint:back']
       }
     },
     jshint : {
       front : ['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
-      back: ['app.js','routes/**.js']
+      back: ['app.js','routes/dozer/**/**.js']
     },
     copy : {
       fonts : {
@@ -102,6 +106,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   // Default task(s).
   grunt.registerTask('build',['concurrent:dist']);
-  grunt.registerTask('test',['jshint:front']);
-  grunt.registerTask('dev', ['concurrent:dist','concurrent:dev']);
+  grunt.registerTask('test',['jshint:front','jshint:back']);
+  grunt.registerTask('dev', ['jshint:front','jshint:back','concurrent:dist','concurrent:dev']);
 };

@@ -10,7 +10,7 @@ var cookieParser = require('cookie-parser');
 var vars= require('./vars.js'),
     users=vars.users,
     io=vars.io,
-    games=vars.games
+    games=vars.games;
 
 var COOKIE_SECRET = 'badkey';
 var COOKIE_NAME = 'connect.sid';
@@ -66,7 +66,7 @@ passport.deserializeUser(function (id,done) {
     if (err) done (err,null);
     else if (x) done(null,x);
     else done(null,null);
-  })
+  });
 });
 router.post('/login',passport.authenticate('local'),sendUser);
 
@@ -103,25 +103,24 @@ router.put('/password', function (req,res) { //Change password
   if (req.user && req.body.password && req.user.salt) users.findById(req.user._id, function (err,x) {
     if (err) res.status(500).send(err);
     else if (x) crypto.pbkdf2(req.body.password, req.user.salt, 10000, 64, function(err, derivedKey) {
-      if (err) res.status(500).send(err)
-        else if (derivedKey) {
-          x.password = derivedKey.toString('base64');
-          x.save(function (err,x) {
-            if (err) res.status(500).send(err);
-            else if (x) res.send("Password changed for "+x.username);
-            else res.status(500).send("Not saved.");
-          });
-        }
-        else res.status(500).send("No key made");
-      });
-      else res.status(500).send("No user found");
+      if (err) res.status(500).send(err);
+      else if (derivedKey) {
+        x.password = derivedKey.toString('base64');
+        x.save(function (err,x) {
+          if (err) res.status(500).send(err);
+          else if (x) res.send("Password changed for "+x.username);
+          else res.status(500).send("Not saved.");
+        });
+      }
+      else res.status(500).send("No key made");
     });
-    else res.status(500).send("You are not logged in");
+    else res.status(500).send("No user found");
+  });
+  else res.status(500).send("You are not logged in");
 });
 
-function parseUser(cookies,call) { //given object of cookies, return a user if exsits
-
-  var cookies = cookiejs.parse(cookies);
+function parseUser(rawcookies,call) { //given object of cookies, return a user if exsits
+  var cookies = cookiejs.parse(rawcookies);
   if(!cookies) return ("Could not parse cookies", undefined);
 
   var cookie = cookies[COOKIE_NAME];

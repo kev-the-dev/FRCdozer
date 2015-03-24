@@ -8,24 +8,24 @@ router.param('game', function (req,res,next,id) {
   games.findById(id, function (err,game) {
     if (err) {
       if (err.name === "CastError" && err.type === "ObjectId") games.findOne({name:id}, function (err2,game2) {
-        if (err2) next(err2)
-          else if (!game2) next(new Error("Game not found"))
-            else {
-              req.game = game2;
-              if (req.user) req.authlevel = (game2.permissions.users || {})[req.user.username] || game2.permissions.others;
-              else req.authlevel = game2.permissions.others;
-              next();
-            }
-          });
-          else next(err);
-        }
-        else if (!game) next(new Error("Game not found"));
+        if (err2) next(err2);
+        else if (!game2) next(new Error("Game not found"));
         else {
-          req.game = game;
-          if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username] || game.permissions.others;
-          else req.authlevel = game.permissions.others;
+          req.game = game2;
+          if (req.user) req.authlevel = (game2.permissions.users || {})[req.user.username] || game2.permissions.others;
+          else req.authlevel = game2.permissions.others;
           next();
         }
+      });
+      else next(err);
+    }
+    else if (!game) next(new Error("Game not found"));
+    else {
+      req.game = game;
+      if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username] || game.permissions.others;
+      else req.authlevel = game.permissions.others;
+      next();
+    }
   });
 });
 
@@ -48,7 +48,7 @@ router.route('/:game')
         io.to(x.name).emit('editGame',x);
         res.send(x);
       }
-    })
+    });
   })
   .delete(function (req,res) {
     if (req.authlevel < 4) return res.status(401).end();
@@ -61,7 +61,7 @@ router.route('/:game')
 router.post('/',function (req,res) {
   if (!req.user) return res.status(401).send("Need to be logged in to create game");
 
-  req.body.permissions = req.body.permissions || {}
+  req.body.permissions = req.body.permissions || {};
   req.body.permissions.others = req.body.permissions.others || 1;
   req.body.permissions.users = req.body.permissions.users || {};
   req.body.permissions.users[req.user.username] = 4;

@@ -7,7 +7,7 @@ var vars = require('./vars.js'),
     io = vars.io.of('/game');
 
 router.use(require('./auth.js'));
-router.use('/game',require('./api/game.js'))
+router.use('/game',require('./api/game.js'));
 
 router.get('/tbaproxy*', function(req,res) {
   http.get('http://www.thebluealliance.com/api/v2'+req.url.slice(9), function (tba) {
