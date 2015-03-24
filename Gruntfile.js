@@ -55,8 +55,8 @@ module.exports = function(grunt) {
           logConcurrentOutput: true
         }
       },
-      minify : {
-        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app'],
+      dist : {
+        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app','copy:fonts'],
         options: {
           logConcurrentOutput: true
         }
@@ -73,12 +73,19 @@ module.exports = function(grunt) {
     watch: {
       dev: {
         files: ['public/src/**'],
-        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app']
+        tasks: ['concurrent:dist']
       }
     },
     jshint : {
-      front : ['public/src/scripts/app.js','public/src/scripts/ctrls/**.js'],
+      front : ['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
       back: ['app.js','routes/**.js']
+    },
+    copy : {
+      fonts : {
+        expand: true,
+        src: 'public/src/fonts/*',
+        dest: 'public/dist/fronts/',
+      }
     }
   });
 
@@ -91,8 +98,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   // Default task(s).
-  grunt.registerTask('build',['concurrent:minify']);
+  grunt.registerTask('build',['concurrent:dist']);
   grunt.registerTask('test',['jshint:front']);
-  grunt.registerTask('dev', ['concurrent:minify','concurrent:dev']);
+  grunt.registerTask('dev', ['concurrent:dist','concurrent:dev']);
 };
