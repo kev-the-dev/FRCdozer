@@ -41,7 +41,7 @@ var vars = require('./routes/dozer/vars.js');
     vars.initDB(settings.database.url || defaultSettings.database.url);
     vars.publicDir = settings.publicDir || defaultSettings.publicDir;
 
-app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(vars.publicDir+'/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
