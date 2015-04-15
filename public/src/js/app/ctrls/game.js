@@ -109,6 +109,7 @@
         $scope.teams.splice(x,1);
         break;
       }
+			$scope.sortTeams();
     };
     $scope.changeSub = function (sub) {
       for (var x in $scope.subs) if (sub._id === $scope.subs[x]._id) {
