@@ -66,6 +66,9 @@
     };
     $scope.changeGame = function (game) {
         $scope.curGame = game;
+				$scope.fixSubs();
+				$scope.sortTeams();
+				$scope.sortMatches();
     };
     $scope.appendSubs = function (subs) {
 			for (var i in subs) $scope.subs.push($scope.fixSub(subs[i]));
@@ -84,6 +87,9 @@
 			}
 			sub.calc = $scope.getValues(sub.elements);
 			return sub;
+		};
+		$scope.fixSubs = function () {
+			for (var i in $scope.subs) $scope.subs[i] = $scope.fixSub($scope.subs[i]);
 		};
     $scope.appendTeam = function (team) {
       $scope.teams.push($scope.fixTeam(team));
@@ -516,7 +522,7 @@
       $http.put('api/game/'+x._id,x)
         .success(function (data) {
           $scope.handle('editGame');
-          if (!$scope.connected) $scope.chanVgeGame(data);
+          $scope.changeGame(data);
         })
         .error(function(x){$scope.handle('editGame',x);});
     };
