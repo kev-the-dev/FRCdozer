@@ -1,6 +1,6 @@
 var mon = require('mongoose');
 var sch = mon.Schema;
-var games,users,io,con,publicDir;
+var games,users,io,con,publicDir,pictureDir;
 
 var exports = {};
 

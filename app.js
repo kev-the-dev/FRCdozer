@@ -19,7 +19,8 @@ var defaultSettings = {
   database : {
     url : "mongodb://localhost/dozer"
   },
-  publicDir : "./public/dist"
+  publicDir : "./public/dist",
+  uploadsDir : "./public/uploads"
 };
 
 var settings = JSON.parse(fs.readFileSync("./config.json"));
@@ -40,6 +41,7 @@ var vars = require('./routes/dozer/vars.js');
     vars.io=require("socket.io")(server);
     vars.initDB(settings.database.url || defaultSettings.database.url);
     vars.publicDir = settings.publicDir || defaultSettings.publicDir;
+    vars.uploadsDir = settings.uploadsDir || defaultSettings.uploadsDir;
 
 app.use(favicon(vars.publicDir+'/favicon.ico'));
 app.use(logger('dev'));

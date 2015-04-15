@@ -4,6 +4,7 @@ var router = express.Router();
 var vars = require('./vars.js');
 
 router.use('/',express.static(vars.publicDir));
+router.use('/uploads/',express.static(vars.uploadsDir));
 router.use('/api',require('./api.js'));
 
 module.exports = router;

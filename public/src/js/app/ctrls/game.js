@@ -184,7 +184,6 @@
 		};
 		$scope.changeTeam = function (team) { //if you want a preporty to not be there, set to null
 			for (var x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
-				console.log("found");
 				$scope.teams[x].name = team.name;
 				$scope.teams[x].notes = team.notes;
 
@@ -197,21 +196,24 @@
 		};
 		$scope.editTeam = function (x,event) {
 			if (event) {
-				var file = event.target.form.elements.files.files[0];
-				var uri = 'api/game/'+$scope.curGame._id+'/team/'+x._id+'/pic';
-				var fd = new FormData();
-				fd.append('pic', file);
-				$http.post(uri,fd,{
-					transformRequest: angular.identity,
-					headers: {'Content-Type': undefined}
-				})
-				.success(function (res) {
-					x.pic = res;
-					$scope.changeTeam(x);
-				})
-				.error(function (x) {
-					console.log(x);
-				});
+				var files = event.target.form.elements.files.files;
+				if (files.length > 0) {
+					var file = files[0];
+					var uri = 'api/game/'+$scope.curGame._id+'/team/'+x._id+'/pic';
+					var fd = new FormData();
+					fd.append('pic', file);
+					$http.post(uri,fd,{
+						transformRequest: angular.identity,
+						headers: {'Content-Type': undefined}
+					})
+					.success(function (res) {
+						x.pic = res;
+						$scope.changeTeam(x);
+					})
+					.error(function (x) {
+						console.log(x);
+					});
+				}
 			}
 
 			var req;
