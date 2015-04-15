@@ -1,29 +1,33 @@
 <div>
   <div class='row'>
-    <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
       <table class="table table-striped table-condensed table-bordered">
         <tbody>
           <tr>
             <td>Team</td>
             <td>
-              <select ng-disabled="authlevel<2" class="form-control" ng-model='add.team'
-                      ng-options="x.team as (x.team+' ('+x.name+')') for x in teams | orderBy: 'team' ">
-                <option value="">new</option>
-              </select>
-            </td>
-            <td ng-show='add.team===undefined || add.team===null'>
-              <div class="input-group">
-                <input ng-disabled="authlevel<2" ng-model='newTeam.team' type="text" class="form-control" placeholder="team number ex: 4118">
-                <span class="input-group-btn">
-                  <button ng-disabled="authlevel<2" ng-click='teams.push({team:newTeam.team});add.team=newTeam.team;newTeam=null' class="btn btn-default" type="button">Add</button>
+              <form class="form-inline">
+                <div class="form-group">
+                  <select ng-disabled="authlevel<2" class="form-control" ng-model='add.team'
+                          ng-options="x.team as (x.team+' ('+x.name+')') for x in teams | orderBy: 'team' ">
+                    <option value="">new</option>
+                  </select>
+                </div>
+                <span ng-show='!add.team'>
+                  <div class="form-group">
+                    <input ng-disabled="authlevel<2" ng-model='newTeam.team' type="text" class="form-control" placeholder="team number ex: 4118">
+                  </div>
+                  <button ng-disabled="authlevel<2" ng-click='teams.push({team:newTeam.team});add.team=newTeam.team;newTeam=null'
+                    class="btn btn-default" type="button">Add
+                  </button>
                 </span>
-              </div>
+              </form>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="col-md-4 col-sm-12 col-xs-12">
+    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
       <table class="table table-striped table-condensed table-bordered">
         <tbody>
           <tr>
@@ -47,7 +51,7 @@
         </tbody>
       </table>
     </div>
-    <div class="col-md-2 col-sm-12 col-xs-12">
+    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
       <table class="table table-striped table-condensed table-bordered">
         <tbody>
           <tr>
