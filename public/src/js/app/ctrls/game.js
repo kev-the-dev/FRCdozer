@@ -1,8 +1,4 @@
 ﻿angular.module('FRCdozer')
-.config(['$httpProvider', function($httpProvider) {
-	$httpProvider.defaults.useXDomain = true;
-	delete $httpProvider.defaults.headers.common['X-Requested-With'];
-}])
 .controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
 		$scope.location = window.location;
 		$scope.authlevel = 1;
@@ -23,6 +19,8 @@
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
     $scope.newTeam = {};
+		$scope.noMatch = [];
+		$scope.noTeam = [];
     $scope.getDate = function (id) {
       if (id) {
         var date = new Date(parseInt(id.substring(0, 8), 16) * 1000);
@@ -163,6 +161,7 @@
 				});
 		};
 		$scope.tbaGrabTeams = function () {
+			if (!$scope.curGame.tbakey) return;
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/teams?X-TBA-App-Id=frc4118:scouting:1")
 			.success(function (res) {
 				for (var i in res) {
@@ -241,56 +240,61 @@
 					if (matches[z].red.teams[redkey] !== true) delete matches[z].red.teams[redkey];
 				}
 			}
+
+			$scope.noMatch = [];
       s: for (var x in subs) { //For each submision
-				if (subs[x].match) {
-					for (var y in matches) if (matches[y].match === subs[x].match.toLowerCase()) { //If the match with that sub's match exsists, add it to that match
-						if (subs[x].side === "Blue") matches[y].blue.teams[subs[x].team] = subs[x];
-						else if (subs[x].side === "Red") matches[y].red.teams[subs[x].team] = subs[x];
-						else matches[y].noAlliance.push(subs[x]);
-						continue s;
-					}
-					var o = {};
-					if (subs[x].side === "Blue") {
-						o[subs[x].team] = subs[x];
-						matches[matches.length] = {
-							match:subs[x].match.toLowerCase(),
-							matchObj:$scope.deserializeMatch(subs[x].match),
-							blue:{
-								teams:o
-							},
-							red : {
-								teams:{}
-							},
-							noAlliance : []
-						};
-					}
-					else if (subs[x].side === "Red")  {
-						o[subs[x].team] = subs[x];
-						matches[matches.length] = {
-							match:subs[x].match.toLowerCase(),
-							matchObj:$scope.deserializeMatch(subs[x].match),
-							red:{
-								teams:o
-							},
-							blue : {
-								teams:{}
-							},
-							noAlliance : []
-						};
-					}
-					else {
-						matches[matches.length] = {
-							match:subs[x].match.toLowerCase(),
-							matchObj:$scope.deserializeMatch(subs[x].match),
-							red:{
-								teams:{}
-							},
-							blue : {
-								teams:{}
-							},
-							noAlliance : [subs[x]]
-						};
-					}
+				if (!subs[x].match) {
+					$scope.noMatch.push(subs[x]);
+					continue;
+				}
+
+				for (var y in matches) if (matches[y].match === subs[x].match.toLowerCase()) { //If the match with that sub's match exsists, add it to that match
+					if (subs[x].side === "Blue") matches[y].blue.teams[subs[x].team] = subs[x];
+					else if (subs[x].side === "Red") matches[y].red.teams[subs[x].team] = subs[x];
+					else matches[y].noAlliance.push(subs[x]);
+					continue s;
+				}
+				var o = {};
+				if (subs[x].side === "Blue") {
+					o[subs[x].team] = subs[x];
+					matches[matches.length] = {
+						match:subs[x].match.toLowerCase(),
+						matchObj:$scope.deserializeMatch(subs[x].match),
+						blue:{
+							teams:o
+						},
+						red : {
+							teams:{}
+						},
+						noAlliance : []
+					};
+				}
+				else if (subs[x].side === "Red")  {
+					o[subs[x].team] = subs[x];
+					matches[matches.length] = {
+						match:subs[x].match.toLowerCase(),
+						matchObj:$scope.deserializeMatch(subs[x].match),
+						red:{
+							teams:o
+						},
+						blue : {
+							teams:{}
+						},
+						noAlliance : []
+					};
+				}
+				else {
+					matches[matches.length] = {
+						match:subs[x].match.toLowerCase(),
+						matchObj:$scope.deserializeMatch(subs[x].match),
+						red:{
+							teams:{}
+						},
+						blue : {
+							teams:{}
+						},
+						noAlliance : [subs[x]]
+					};
 				}
       }
 			for (var f in matches) matches[f] = $scope.fixMatch(matches[f]);
@@ -391,6 +395,7 @@
 			};
 		}
 		$scope.tbaGrabMatches = function () {
+			if (!$scope.curGame.tbakey) return;
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/matches?X-TBA-App-Id=frc4118:scouting:1")
 			.success(function (x) {
 				for (var i in x) $scope.changeMatch(parseTBAmatch(x[i]));
@@ -557,7 +562,13 @@
 			var subs = $scope.subs;
 			for (var k in teams) teams[k].subs = [];
 
+			$scope.noTeam = [];
 			s: for (var h in subs) {
+				if (!subs[h].team) {
+					$scope.noTeam.push(subs[h]);
+					continue;
+				}
+
 				for (var i in teams) {
 					if (Number(subs[h].team) === Number(teams[i].team)) {
 						teams[i].subs.push(subs[h]);
@@ -669,6 +680,7 @@
 			delete $scope.curGame.permissions.users[user];
 		};
     $scope.tbaGrabInfo = function () {
+			if (!$scope.curGame.tbakey) return;
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
 					$scope.tbaResponse = x;
