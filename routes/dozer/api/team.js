@@ -54,7 +54,17 @@ router.route('/:team/pic')
         res.send(req.team.pic);
       }
     });
-  }]);
+  }])
+  .delete(function (req,res) {
+    req.team.pic = undefined;
+    req.game.save(function (err) {
+      if (err) res.status(500).send(err);
+      else {
+        io.to(req.game.name).emit('editTeam',req.team);
+        res.send(req.team);
+      }
+    });
+  });
 
 router.route('/')
   .get(function (req,res) {

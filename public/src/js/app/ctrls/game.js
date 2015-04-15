@@ -230,6 +230,17 @@
 					$scope.handle('editTeam',x);
 				});
 		};
+		$scope.removeTeamPic = function (team) {
+			if (!team._id) return;
+			var req = $http.delete('api/game/'+$scope.curGame._id+'/team/'+team._id+'/pic');
+			req.success(function (x) {
+				team.pic = undefined;
+				$scope.changeTeam(team);
+			});
+			req.error(function (x) {
+				console.log(x);
+			});
+		};
     $scope.getMatch = function (match) {
       for (var x in $scope.matches) if ($scope.matches[x].match === match.toLowerCase()) return $scope.matches[x];
     };

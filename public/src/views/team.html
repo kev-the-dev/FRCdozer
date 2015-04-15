@@ -35,10 +35,10 @@
           </div>
         </form>
     </div>
-    <div class='col-md-6'>
+    <div ng-show ="team.pic" class='col-md-6'>
       <div>
         <img ng-src="{{team.pic}}" alt="No Picture" class="img-responsive img-thumbnail">
-        <button ng-disabled="authlevel<2" ng-click="team.pic=undefined" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button ng-disabled="authlevel<2" ng-click="removeTeamPic(team)" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
     </div>
   </div>
