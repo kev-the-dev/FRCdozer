@@ -1,6 +1,6 @@
 <div>
   <p>Game ID: {{curGame._id}}</p>
-  <h4>Created on: {{getDate(curGame._id) | date:'short'}}</h4>
+  <h4 ng-bind=" 'Time : ' + (curGame._id | mongoDate | date:'short') "></h4>
   <div class="row">
     <div class="col-md-6">
       <table class='table table-bordered table-striped table-hover'>

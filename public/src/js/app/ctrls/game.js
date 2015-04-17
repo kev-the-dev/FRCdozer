@@ -1,4 +1,9 @@
 ﻿angular.module('FRCdozer')
+.filter('mongoDate', function() {
+	return function(id) {
+		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
+	};
+})
 .controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
 		$scope.location = window.location;
 		$scope.authlevel = 1;

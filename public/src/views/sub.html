@@ -1,6 +1,6 @@
 <div>
   <h2>Submission: {{x=getSub(subId);x._id}}</h2>
-  <h3>Time: {{getDate(x._id) | date:'short'}}</h3>
+  <h3 ng-bind=" 'Time :' + (x._id | mongoDate | date:'short') "></h3>
   <table class='table table-bordered table-striped table-hover'>
     <thead>
       <tr>
