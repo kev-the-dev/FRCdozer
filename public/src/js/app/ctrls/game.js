@@ -26,12 +26,6 @@
     $scope.newTeam = {};
 		$scope.noMatch = [];
 		$scope.noTeam = [];
-    $scope.getDate = function (id) {
-      if (id) {
-        var date = new Date(parseInt(id.substring(0, 8), 16) * 1000);
-        return date;
-      }
-    };
     function discon (x) {
       $scope.$apply(function() {
         $scope.connected=false;
