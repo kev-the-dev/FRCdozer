@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var multer  = require('multer');
+var fs = require('fs');
 var vars = require('./../vars.js'),
   io = vars.io.of('/game');
   uploadsDir = vars.uploadsDir;
@@ -43,7 +44,7 @@ router.route('/:team/pic')
   .post([function (req,res,next) {
     if (req.authlevel < 2) return res.status(401).end();
     next();
-  },multer({limits:{files:1},dest: uploadsDir, rename: function (fieldname, filename, req, res) {
+  },multer({limits:{files:1},dest: uploadsDir+'/uploads', rename: function (fieldname, filename, req, res) {
     return req.team._id;
   }}),function (req,res) {
     req.team.pic = '/uploads/' + req.files.pic.name;
@@ -56,12 +57,19 @@ router.route('/:team/pic')
     });
   }])
   .delete(function (req,res) {
-    req.team.pic = undefined;
-    req.game.save(function (err) {
+    if (req.authLevel < 2) return res.status(401).end();
+    
+    fs.unlink(uploadsDir+req.team.pic,function (err) {
       if (err) res.status(500).send(err);
       else {
-        io.to(req.game.name).emit('editTeam',req.team);
-        res.send(req.team);
+        req.team.pic = undefined;
+        req.game.save(function (err) {
+          if (err) res.status(500).send(err);
+          else {
+            io.to(req.game.name).emit('editTeam',req.team);
+            res.send(req.team);
+          }
+        });
       }
     });
   });
