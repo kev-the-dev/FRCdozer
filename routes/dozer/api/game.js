@@ -1,32 +1,32 @@
 var express = require('express');
 var router = express.Router();
+var crypto = require('crypto');
 var vars = require('./../vars.js'),
   io = vars.io.of('/game');
   games = vars.games;
 
 router.param('game', function (req,res,next,id) {
-  games.findById(id, function (err,game) {
-    if (err) {
-      if (err.name === "CastError" && err.type === "ObjectId") games.findOne({name:id}, function (err2,game2) {
-        if (err2) next(err2);
-        else if (!game2) next(new Error("Game not found"));
-        else {
-          req.game = game2;
-          if (req.user) req.authlevel = (game2.permissions.users || {})[req.user.username] || game2.permissions.others;
-          else req.authlevel = game2.permissions.others;
-          next();
-        }
-      });
-      else next(err);
-    }
-    else if (!game) next(new Error("Game not found"));
-    else {
-      req.game = game;
-      if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username] || game.permissions.others;
-      else req.authlevel = game.permissions.others;
-      next();
-    }
-  });
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    games.findById(id, function (err, game) {
+      if (err) next(err);
+      else if (!game) next("No game found with id "+id);
+      else {
+        req.game  = game;
+        if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username] || game.permissions.others;
+        next();
+      }
+    });
+  } else { //treat id as name;
+    games.findOne({name:id}, function (err,game) {
+      if (err) next(err);
+      else if (!game) next("No game found with id "+id);
+      else {
+        req.game  = game;
+        if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username] || game.permissions.others;
+        next();
+      }
+    });
+  }
 });
 
 router.use('/:game/sub',require('./subs.js'));
@@ -82,7 +82,14 @@ router.post('/',function (req,res) {
 });
 
 router.post('/:game/TBAhook', function (req,res) { //Respond to webhook requests from TBA
-  req.body = JSON.parse(Object.keys(req.body)[0]);
+
+  var confirm = crypto.createHash('sha1');
+  confirm.update('test');
+  confirm.update(req.rawPayload);
+  var sum = confirm.digest('hex');
+  console.log(sum,"\n",req.headers['x-tba-checksum'],"\n",sum === req.headers['x-tba-checksum'],"\n");
+
+  req.body = JSON.parse(req.rawPayload);
   switch (req.body.message_type) {
     case "match_score":
       io.to(req.game.name).emit("editMatch",req.body);
