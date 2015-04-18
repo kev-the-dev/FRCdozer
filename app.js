@@ -45,8 +45,16 @@ var vars = require('./routes/dozer/vars.js');
 
 app.use(favicon(vars.publicDir+'/favicon.ico'));
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({
+
+}));
+app.use(bodyParser.urlencoded({
+  extended: false,
+  verify: function (req, res, buf, encoding) {
+    //Annoyingly, nessesary for TBA hooks, because tba falsely sends url encoded header
+    if (req.headers["x-tba-checksum"]) req.rawPayload = buf.toString();
+  }
+}));
 app.use(cookieParser());
 app.use(compression());
 
