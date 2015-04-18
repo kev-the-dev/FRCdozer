@@ -652,7 +652,7 @@
 					$scope.curGame.verification = x;
 				});})
 				.on('TBAping',function(x){$scope.$apply(function () {
-					console.log(x);
+					console.log("TBA ping: ",x);
 				});})
 				.on('editMatch',function(x){$scope.$apply(function () {
 					if (x.message_data.match.event_key === $scope.curGame.tbakey) {

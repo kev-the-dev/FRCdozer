@@ -102,7 +102,7 @@ router.post('/:game/TBAhook', function (req,res) { //Respond to webhook requests
       });
       break;
     case "ping" :
-      io.to(req.game).emit("TBAping","Ping!");
+      io.to(req.game.name).emit("TBAping",req.body.message_data);
       res.end();
       break;
     default:
