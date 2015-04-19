@@ -168,7 +168,7 @@
 		};
 		$scope.tbaGrabTeams = function () {
 			if (!$scope.curGame.tbakey) return;
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/teams?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/teams?X-TBA-App-Id=frc4118:scouting:1")
 			.success(function (res) {
 				for (var i in res) {
 					var team = {team:res[i].team_number,name:res[i].nickname};
@@ -415,7 +415,7 @@
 		}
 		$scope.tbaGrabMatches = function () {
 			if (!$scope.curGame.tbakey) return;
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/matches?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/matches?X-TBA-App-Id=frc4118:scouting:1")
 			.success(function (x) {
 				for (var i in x) $scope.changeMatch(parseTBAmatch(x[i]));
 				$scope.sortMatches();
@@ -642,14 +642,11 @@
         .on('editGame',function(x){$scope.$apply(function () {$scope.changeGame(x);});})
 				.on('resetSubs',function(x){$scope.$apply(function () {$scope.resetSubs();});})
 				.on('resetTeams',function(x){$scope.$apply(function () {$scope.resetTeams();});})
-				.on('TBAverification',function(x){$scope.$apply(function () {
-					$scope.curGame.verification = x;
-				});})
 				.on('TBAping',function(x){$scope.$apply(function () {
 					console.log("TBA ping: ",x);
 				});})
 				.on('editMatch',function(x){$scope.$apply(function () {
-					if (x.message_data.match.event_key === $scope.curGame.tbakey) {
+					if (x.message_data.match.event_key === $scope.curGame.tba.event_key) {
 						$scope.changeMatch(parseTBAmatch(x.message_data.match));
 						return;
 					} else console.log("Not using match score beacuase wrong event key",x);
@@ -698,9 +695,19 @@
 		$scope.delPermission = function (user) {
 			delete $scope.curGame.permissions.users[user];
 		};
+		$scope.updateTBAstatus = function () {
+			if (!$scope.curGame._id) return;
+			$http.get("/api/game/"+$scope.curGame._id+"/tba/hook")
+				.success(function (x) {
+					$scope.curGame.tba = x;
+				})
+				.error(function (err) {
+					console.log(err);
+				});
+		};
     $scope.tbaGrabInfo = function () {
 			if (!$scope.curGame.tbakey) return;
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
 					$scope.tbaResponse = x;
 				})

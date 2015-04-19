@@ -1,18 +1,19 @@
 var express = require('express');
 var router = express.Router();
-var crypto = require('crypto');
 var vars = require('./../vars.js'),
   io = vars.io.of('/game');
   games = vars.games;
 
-router.param('game', function (req,res,next,id) {
+
+function findGame(req,res,next,id) {
   if (id.match(/^[0-9a-fA-F]{24}$/)) {
     games.findById(id, function (err, game) {
       if (err) next(err);
       else if (!game) next("No game found with id "+id);
       else {
-        req.game  = game;
-        if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username] || game.permissions.others;
+        req.game = game;
+        if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username];
+        else req.authlevel = game.permissions.others;
         next();
       }
     });
@@ -21,32 +22,45 @@ router.param('game', function (req,res,next,id) {
       if (err) next(err);
       else if (!game) next("No game found with id "+id);
       else {
-        req.game  = game;
-        if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username] || game.permissions.others;
+        req.game = game;
+        if (req.user) req.authlevel = (game.permissions.users || {})[req.user.username];
+        else req.authlevel = game.permissions.others;
         next();
       }
     });
   }
-});
+}
+
+function removeProtected (game,level) {
+    if (level<4) {
+      delete game.tba.verification_key;
+      delete game.tba.key;
+    }
+    return game;
+}
+
+router.param('game',findGame);
 
 router.use('/:game/sub',require('./subs.js'));
 router.use('/:game/team',require('./team.js'));
-
+router.use('/:game/tba',require('./tba.js'));
 
 router.route('/:game')
   .get(function(req,res) {
-    if (req.authlevel < 1) res.status(401).send("Not authorized");
-    else res.send(req.game);
+    if (req.authlevel<1) return res.status(401).end();
+    res.send(removeProtected(req.game,req.authlevel));
   })
   .put(function (req,res) {
     if (req.authlevel < 3) return res.status(401).end();
     if (req.authlevel < 4 && req.body.permissions) delete req.body.permissions;
+    if (req.authlevel < 4 && req.body.tba) delete req.body.tba;
+
     req.game.set(req.body);
     req.game.save(function (err,x) {
       if (err) res.status(500).send(err);
       else {
-        io.to(x.name).emit('editGame',x);
-        res.send(x);
+        io.to(x.name).emit('editGame',removeProtected(x,req.authlevel));
+        res.send(removeProtected(x,req.authlevel));
       }
     });
   })
@@ -79,42 +93,6 @@ router.post('/',function (req,res) {
       });
     }
   });
-});
-
-router.post('/:game/TBAhook', function (req,res) { //Respond to webhook requests from TBA
-
-  var confirm = crypto.createHash('sha1');
-  confirm.update('test');
-  confirm.update(req.rawPayload);
-  var sum = confirm.digest('hex');
-  console.log(sum,"\n",req.headers['x-tba-checksum'],"\n",sum === req.headers['x-tba-checksum'],"\n");
-
-  req.body = JSON.parse(req.rawPayload);
-  switch (req.body.message_type) {
-    case "match_score":
-      io.to(req.game.name).emit("editMatch",req.body);
-      res.end();
-      break;
-    case "upcoming_match":
-      io.to(req.game.name).emit('upcomingMatch',req.body);
-      res.end();
-      break;
-    case "verification" :
-      req.game.verification = (req.body.message_data || {}).verification_key || undefined;
-      req.game.save(function (err) {
-        if (!err) {
-          res.end();
-          io.to(req.game.name).emit('TBAverification',req.game.verification);
-        } else res.end();
-      });
-      break;
-    case "ping" :
-      io.to(req.game.name).emit("TBAping",req.body.message_data);
-      res.end();
-      break;
-    default:
-      res.end();
-  }
 });
 
 module.exports = router;
