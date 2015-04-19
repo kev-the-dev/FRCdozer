@@ -10,8 +10,6 @@ function validTBA (req,res,next) { //confirms
   confirm.update(req.rawPayload);
   var sum = confirm.digest('hex');
 
-  console.log(sum,"\n",req.headers['x-tba-checksum'],"\n",sum === req.headers['x-tba-checksum'],"\n");
-
   if (sum === req.headers['x-tba-checksum']) {
     req.body = JSON.parse(req.rawPayload);
     return next();
