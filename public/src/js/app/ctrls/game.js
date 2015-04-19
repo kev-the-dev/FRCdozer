@@ -414,7 +414,7 @@
 			};
 		}
 		$scope.tbaGrabMatches = function () {
-			if (!$scope.curGame.tbakey) return;
+			if (!$scope.curGame.tba.event_key) return;
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/matches?X-TBA-App-Id=frc4118:scouting:1")
 			.success(function (x) {
 				for (var i in x) $scope.changeMatch(parseTBAmatch(x[i]));
