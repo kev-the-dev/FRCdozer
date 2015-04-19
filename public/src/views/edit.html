@@ -61,13 +61,27 @@
               <td ng-bind="curGame.tba.verification_key"></td>
             </tr>
             <tr ng-show="authlevel>=4 && !curGame.tba.verification_key">
-              <td>
-                Webook url:
-              </td>
-              <td>
-                <a href="http://www.thebluealliance.com/webhooks/add">
-                  {{location.origin+'/api/game/'+curGame._id+'/TBA/hook'}}
-                </a>
+              <td colspan="2">
+                <ul>
+                  <li>
+                    <a target="_blank" href="http://www.thebluealliance.com/webhooks/add">Add a webhook on TBA</a>
+                  </li>
+                  <li>
+                    Enter {{location.origin+'/api/game/'+curGame._id+'/TBA/hook'}} as the URL
+                  </li>
+                  <li>
+                    Enter the same secret key on dozer and on TBA
+                  </li>
+                  <li>
+                    Subscribe to your event on TBA
+                  </li>
+                  <li>
+                    <button class="btn btn-success" ng-click="updateTBAstatus()">
+                      Refresh
+                    </button>
+                  </li>
+                </ul>
+
               </td>
             </tr>
           </tbody>

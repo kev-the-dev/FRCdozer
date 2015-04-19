@@ -697,7 +697,7 @@
 		};
 		$scope.updateTBAstatus = function () {
 			if (!$scope.curGame._id) return;
-			$http.get("/api/game/"+$scope.curGame._id+"/tba/hook")
+			$http.get("/api/game/"+$scope.curGame._id+"/tba")
 				.success(function (x) {
 					$scope.curGame.tba = x;
 				})

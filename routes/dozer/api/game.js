@@ -33,8 +33,8 @@ function findGame(req,res,next,id) {
 
 function removeProtected (game,level) {
     if (level<4) {
-      delete game.tba.verification_key;
-      delete game.tba.key;
+      game.tba.verification_key = undefined;
+      game.tba.key = undefined;
     }
     return game;
 }
@@ -52,8 +52,10 @@ router.route('/:game')
   })
   .put(function (req,res) {
     if (req.authlevel < 3) return res.status(401).end();
-    if (req.authlevel < 4 && req.body.permissions) delete req.body.permissions;
-    if (req.authlevel < 4 && req.body.tba) delete req.body.tba;
+
+    if (req.authlevel < 4) delete req.body.permissions;
+    if (req.authlevel < 4) delete req.body.tba;
+    else if (req.body.tba && req.body.tba.event_key != req.game.tba.event_key) req.body.tba.verification_key = undefined;
 
     req.game.set(req.body);
     req.game.save(function (err,x) {
