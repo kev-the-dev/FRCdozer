@@ -167,7 +167,7 @@
 				});
 		};
 		$scope.tbaGrabTeams = function () {
-			if (!$scope.curGame.tbak.event_key) return;
+			if (!$scope.curGame.tba.event_key) return;
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/teams?X-TBA-App-Id=frc4118:scouting:1")
 			.success(function (res) {
 				for (var i in res) {
