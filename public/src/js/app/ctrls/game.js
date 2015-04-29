@@ -5,6 +5,7 @@
 	};
 })
 .controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
+		$scope.tbaApp = "?X-TBA-App-Id=frc4118:scouting:1";
 		$scope.location = window.location;
 		$scope.authlevel = 1;
     $scope.subs = []; //stores matches for current game
@@ -168,7 +169,7 @@
 		};
 		$scope.tbaGrabTeams = function () {
 			if (!$scope.curGame.tba.event_key) return;
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/teams?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+$scope.tbaApp)
 			.success(function (res) {
 				for (var i in res) {
 					var team = {team:res[i].team_number,name:res[i].nickname};
@@ -415,7 +416,7 @@
 		}
 		$scope.tbaGrabMatches = function () {
 			if (!$scope.curGame.tba.event_key) return;
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/matches?X-TBA-App-Id=frc4118:scouting:1")
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+$scope.tbaApp)
 			.success(function (x) {
 				for (var i in x) $scope.changeMatch(parseTBAmatch(x[i]));
 				$scope.sortMatches();
