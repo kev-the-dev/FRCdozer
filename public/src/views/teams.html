@@ -9,6 +9,7 @@
     </div>
     <button ng-click="editTeam(newTeam)" ng-disabled="authlevel<2" type="submit" class="btn btn-success">Add Team</button>
     <button ng-click="tbaGrabTeams()" ng-disabled="authlevel<2" class="btn btn-primary">Grab Teams from TBA</button>
+    <button ng-click="tbaGrabRanks()" class="btn btn-primary">Update Offical Ranks</button>
   </form>
   <hr>
   <div ng-show='filters.teams.key' class="label label-info" role="alert">
@@ -25,7 +26,12 @@
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
-        <th>#
+        <th>Rank
+          <button class="btn btn-xs btn-primary" ng-click='sort("tbaRanks[\"Rank\"]" ,"teams","Official Rank")'>
+            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+          </button>
+        </th>
+        <th>Team
           <button class="btn btn-xs btn-primary" ng-click='sort("team","teams","Team number")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
@@ -54,6 +60,11 @@
         <td>
           <span class='badge'>{{x.subs.length}}</span>
           <span ng-show="x.pic" class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+        </td>
+        <td>
+          <h4>
+            {{x.tbaRanks.Rank}}
+          </h4>
         </td>
         <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a>
         </td>

@@ -169,7 +169,7 @@
 		};
 		$scope.tbaGrabTeams = function () {
 			if (!$scope.curGame.tba.event_key) return;
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+$scope.tbaApp)
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/teams"+$scope.tbaApp)
 			.success(function (res) {
 				for (var i in res) {
 					var team = {team:res[i].team_number,name:res[i].nickname};
@@ -182,6 +182,30 @@
 			.error(function (x) {
 				console.log(x);
 			});
+		};
+		$scope.tbaGrabRanks = function () {
+			if (!$scope.curGame.tba.event_key) return;
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/rankings"+$scope.tbaApp)
+				.success(function(res) {
+					var metrics = res[0]; //cache the metrics tba resposds (ex: rank, coop, auto)
+					var teamMetric;
+					for (var k = 0; k< metrics.length ;k++) if (metrics[k] === "Team") teamMetric = k; //find the metric that stores the team number
+					resLoop: for (var i = 1; i<res.length;i++) { //For the rest in the response array, add info to the team
+						for (var g = 0; g<$scope.teams.length;g++) { //Search through all teams
+							if (Number($scope.teams[g].team) === res[i][teamMetric]) { //if res item and team have same number, add data
+								$scope.teams[g].tbaRanks = {};
+								for (var j = 0; j< metrics.length ; j++) {
+									if (j === teamMetric) continue;
+									$scope.teams[g].tbaRanks[metrics[j]] = res[i][j];
+								}
+								continue resLoop;
+							}
+						}
+					}
+				})
+				.error(function (err) {
+					console.log(err);
+				});
 		};
 		$scope.changeTeam = function (team) { //if you want a preporty to not be there, set to null
 			for (var x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
@@ -416,7 +440,7 @@
 		}
 		$scope.tbaGrabMatches = function () {
 			if (!$scope.curGame.tba.event_key) return;
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+$scope.tbaApp)
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/matches"+$scope.tbaApp)
 			.success(function (x) {
 				for (var i in x) $scope.changeMatch(parseTBAmatch(x[i]));
 				$scope.sortMatches();
@@ -678,8 +702,12 @@
 					delete $scope.curGame.teams;
 
           socketConf();
+
+					console.log($scope.curGame.tba);
+
     	  	$scope.tbaGrabInfo();
 					$scope.tbaGrabMatches();
+					$scope.tbaGrabRanks();
         }
         else if (err) {
 					if (err.status === 401) $state.go('401');
@@ -707,7 +735,7 @@
 				});
 		};
     $scope.tbaGrabInfo = function () {
-			if (!$scope.curGame.tbakey) return;
+			if (!$scope.curGame.tba.event_key) return;
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
 					$scope.tbaResponse = x;
