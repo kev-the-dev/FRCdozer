@@ -36,8 +36,8 @@
         </form>
     </div>
     <div ng-show ="team.pic" class='col-md-6'>
-      <div>
-        <img ng-src="{{team.pic}}" alt="No Picture" class="img-responsive img-thumbnail">
+      <div class="teamImage">
+        <img ng-src="{{team.pic}}" alt="No Picture" class="img-responsive img-rounded">
         <button ng-disabled="authlevel<2" ng-click="removeTeamPic(team)" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
     </div>
