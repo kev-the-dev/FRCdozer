@@ -1,5 +1,5 @@
 <div>
-  <h3>Team {{team=getTeam(teamNum); teamNum}}</h3>
+  <h3>Team {{team.team}}</h3>
   <div class='row'>
     <div class='col-md-6'>
       <form>
@@ -34,6 +34,21 @@
             </div>
           </div>
         </form>
+        <table ng-show="team.tbaRanks" class="table table-bordered table-striped">
+          <tr>
+            <th colspan="2">
+              Offical Rankings
+            </th>
+          </tr>
+          <tr ng-repeat="(metric,rank) in team.tbaRanks">
+            <td>
+              {{metric}}
+            </td>
+            <td>
+              {{rank}}
+            </td>
+          </tr>
+        </table>
     </div>
     <div ng-show ="team.pic" class='col-md-6'>
       <div class="teamImage">
@@ -91,7 +106,7 @@
     <tbody>
       <tr ng-repeat='x in team.subs | orderBy:filters.team.key:!filters.team.reverse'>
         <td data-title="Links">
-          <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+          <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
           <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
           <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
         </td>
@@ -99,7 +114,7 @@
           <div class='row'>
             <div class="matchRow col-xs-12" >
               <input class='form-control' ng-model='x.match' ng-change="x.matchObj = deserializeMatch(x.match)">
-              <a ui-sref="game.match({id:x.match})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+              <a ui-sref="game.match({match:x.match})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
             </div>
           </div>
         </td>

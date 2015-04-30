@@ -1,3 +1,20 @@
+function oneInstance (list,param,key) { //generates controller for team, match, etc view where you want one of a list updated
+  if (!list || !param) return;
+  key = key || param;
+  var res = ['$stateParams','$scope',function ($stateParams,$scope) {
+    $scope.id = $stateParams[param];
+    function updateTeam (newList) {
+      console.log("called",newList.toSource());
+      newList.forEach(function (x) {
+        console.log(x);
+        if (x[key] == $scope.id) $scope[param] = x;
+      });
+    }
+    $scope.$watch(list,updateTeam);
+    //updateTeam($scope[list]);
+  }];
+  return res;
+}
 angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
   .config(['paginationTemplateProvider',function(paginationTemplateProvider) {
     paginationTemplateProvider.setPath('views/paginate.html');
@@ -50,25 +67,19 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         templateUrl: 'views/teams.html'
       })
       .state('game.team', {
-        url: '/team/:num',
+        url: '/team/:team',
         templateUrl: 'views/team.html',
-        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
-          $scope.teamNum = $stateParams.num;
-        }]
+        controller: oneInstance('teams','team')
       })
       .state('game.match', {
-        url: '/match/:id',
+        url: '/match/:match',
         templateUrl: 'views/match.html',
-        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
-          $scope.matchId= $stateParams.id;
-        }]
+        controller: oneInstance('matches','match')
       })
       .state('game.sub', {
-        url: '/sub/:id',
+        url: '/sub/:sub',
         templateUrl: 'views/sub.html',
-        controller: ['$scope','$stateParams',function ($scope,$stateParams) {
-          $scope.subId = $stateParams.id;
-        }]
+        controller: oneInstance('subs','sub','_id')
       })
       .state('game.matches', {
         url: '/matches',

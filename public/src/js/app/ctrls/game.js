@@ -4,6 +4,29 @@
 		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
 	};
 })
+
+.filter('toArray',function() {
+	return function (object) {
+		//console.log(object);
+		if (!object) return;
+		var keys = Object.keys(object);
+		var res = [];
+		for (var i = 0; i < keys.length; i++) res.push({
+			key: keys[i],
+			val: object[keys[i]]
+		});
+		//console.log(res);
+		return res;
+	};
+})
+.filter('oneTeam', function () {
+	return function (teams,team) {
+		var res = {};
+		for (var i = 0; i< teams.length; i++) if (Number(teams[i].team) === Number(team)) res =  teams[i];
+		console.log(res);
+		return res;
+	};
+})
 .controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
 		$scope.tbaApp = "?X-TBA-App-Id=frc4118:scouting:1";
 		$scope.location = window.location;
@@ -703,8 +726,7 @@
 
           socketConf();
 
-					console.log($scope.curGame.tba);
-
+					$scope.fixSubs();
     	  	$scope.tbaGrabInfo();
 					$scope.tbaGrabMatches();
 					$scope.tbaGrabRanks();

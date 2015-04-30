@@ -66,9 +66,9 @@
             {{x.tbaRanks.Rank}}
           </h4>
         </td>
-        <td><a ui-sref='game.team({num:x.team})'><h4>{{x.team}}</h4></a>
+        <td><a ui-sref='game.team({team:x.team})'><h4>{{x.team}}</h4></a>
         </td>
-        <td><a ui-sref='game.team({num:x.team})'>{{x.name}}</a></td>
+        <td><a ui-sref='game.team({team:x.team})'>{{x.name}}</a></td>
         <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name]}}</h4></td>
         <td data-ng-repeat='y in curGame.calc'><h4>{{x.calc[y.name]}}</h4></td>
       </tr>
