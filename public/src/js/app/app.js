@@ -4,14 +4,11 @@ function oneInstance (list,param,key) { //generates controller for team, match, 
   var res = ['$stateParams','$scope',function ($stateParams,$scope) {
     $scope.id = $stateParams[param];
     function updateTeam (newList) {
-      console.log("called",newList.toSource());
       newList.forEach(function (x) {
-        console.log(x);
         if (x[key] == $scope.id) $scope[param] = x;
       });
     }
     $scope.$watch(list,updateTeam);
-    //updateTeam($scope[list]);
   }];
   return res;
 }
