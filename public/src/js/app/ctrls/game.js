@@ -4,32 +4,37 @@
 		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
 	};
 })
-.filter('toArray',function() {
-	return function (object) {
-		//console.log(object);
-		if (!object) return;
-		var keys = Object.keys(object);
-		var res = [];
-		for (var i = 0; i < keys.length; i++) res.push({
-			key: keys[i],
-			val: object[keys[i]]
+.filter('keys', ['$log',function($log) {
+	return function (items,field,reverse) {
+		if (!items) return [];
+		var keys = Object.keys(items);
+		if (field) keys.sort(function (a,b) {
+			return items[a][field] > items[b][field] ? 1 : -1;
 		});
-		//console.log(res);
-		return res;
+		else if (field === null) keys.sort(function (a,b) {
+			return items[a]> items[b] ? 1 : -1;
+		});
+		if (reverse) keys.reverse();
+		return keys;
 	};
-})
-.filter('oneTeam', function () {
-	return function (teams,team) {
-		var res = {};
-		for (var i = 0; i< teams.length; i++) if (Number(teams[i].team) === Number(team)) res =  teams[i];
-		console.log(res);
-		return res;
-	};
+}])
+.filter('orderByObj', function() {
+  return function(items, field, reverse) {
+    var filtered = [];
+    angular.forEach(items, function(item) {
+      filtered.push(item);
+    });
+    if (field) filtered.sort(function (a, b) {
+      return (a[field] > b[field] ? 1 : -1);
+    });
+    if(reverse) filtered.reverse();
+    return filtered;
+  };
 })
 .controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
-		$scope.tbaApp = "?X-TBA-App-Id=frc4118:scouting:1";
-		$scope.location = window.location;
-		$scope.authlevel = 1;
+	$scope.tbaApp = "?X-TBA-App-Id=frc4118:scouting:1";
+	$scope.location = window.location;
+	$scope.authlevel = 1;
     $scope.subs = []; //stores matches for current game
     $scope.sub = {};
     $scope.matches = [];
@@ -43,12 +48,12 @@
     $scope.team={};
     $scope.newTeam={};
     $scope.filt = $state.params.filter || "";
-		$scope.filters = {};
+	$scope.filters = {};
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
     $scope.newTeam = {};
-		$scope.noMatch = [];
-		$scope.noTeam = [];
+	$scope.noMatch = [];
+	$scope.noTeam = [];
     function discon (x) {
       $scope.$apply(function() {
         $scope.connected=false;
@@ -648,7 +653,7 @@
 			}
 
 			for (var L in teams) teams[L] = $scope.fixTeam(teams[L]);
-
+			
 			$scope.teams = teams;
     };
 		$scope.fixTeam = function (team) {

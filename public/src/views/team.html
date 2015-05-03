@@ -40,12 +40,12 @@
               Offical Rankings
             </th>
           </tr>
-          <tr ng-repeat="(metric,rank) in team.tbaRanks">
+          <tr ng-repeat="k in team.tbaRanks | keys">
             <td>
-              {{metric}}
+              {{k}}
             </td>
             <td>
-              {{rank}}
+              {{team.tbaRanks[k]}}
             </td>
           </tr>
         </table>
