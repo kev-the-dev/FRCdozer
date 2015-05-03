@@ -132,7 +132,7 @@ module.exports = function(grunt) {
       ],
       cssapp : {
         files:['public/src/css/app/**.css'],
-        tasks: ['cssmin:app']
+        tasks: ['csslint:app','cssmin:app']
       },
       cssvendor: {
         files:['public/src/css/vendor/**.css'],
@@ -167,6 +167,11 @@ module.exports = function(grunt) {
         tasks: ['jshint:back']
       }
     },
+    csslint: {
+      app: {
+        src: ['public/src/css/app/**.css']
+      }
+    },
     jshint : {
       front : ['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
       back: ['app.js','routes/dozer/**/**.js']
@@ -183,8 +188,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-csslint');
   // Default task(s).
   grunt.registerTask('build',['concurrent:dist']);
-  grunt.registerTask('test',['jshint:front','jshint:back']);
-  grunt.registerTask('dev', ['jshint:front','jshint:back','concurrent:dist','concurrent:dev']);
+  grunt.registerTask('test',['jshint:front','jshint:back','csslint:app']);
+  grunt.registerTask('dev', ['jshint:front','jshint:back','csslint:app','concurrent:dist','concurrent:dev']);
 };
