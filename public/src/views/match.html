@@ -50,19 +50,19 @@
       </ul>
     </td>
     <td ng-repeat="g in curGame.calc">
-      <b>{{match.blue.calc[g.name] = matchCalc(match.blue.teams,g.elements); match.blue.calc[g.name]}}</b>
+      <b>{{match.blue.calc[g.name]}}</b>
     </td>
     <td>
       <b>{{match.blue.score}}</b>
     </td>
     <td ng-repeat="g in curGame.calc">
-      <b>{{match.red.calc[g.name] = matchCalc(match.red.teams,g.elements)}}</b>
+      <b>{{match.red.calc[g.name]}}</b>
     </td>
     <td>
       <b>{{match.red.score}}</b>
     </td>
     <td>
-      <b>{{match.winner = winnerString(match.blue.score,match.red.score)}}</b>
+      <b>{{match.winner}}</b>
     </td>
   </tr>
 </table>
