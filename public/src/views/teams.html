@@ -12,6 +12,29 @@
     <button ng-click="tbaGrabRanks()" class="btn btn-primary">Update Offical Ranks</button>
   </form>
   <hr>
+  <ul class="list-inline">
+    <li ng-class="{'active': show.teams.Ranks}">
+      <div class="checkbox">
+        <label>
+          <input ng-model="show.teams.Ranks" type="checkbox">Offical Ranks
+        </label>
+      </div>
+    </li>
+    <li ng-class="{'active': show.teams.Metrics}">
+      <div class="checkbox">
+        <label>
+          <input ng-model="show.teams.Metrics" type="checkbox">Game Metrics
+        </label>
+      </div>
+    </li>
+    <li ng-class="{'active': show.teams.Calc}">
+      <div class="checkbox">
+        <label>
+          <input ng-model="show.teams.Calc" type="checkbox">Calculated
+        </label>
+      </div>
+    </li>
+  </ul>
   <div ng-show='filters.teams.key' class="label label-info" role="alert">
     <strong>Filtering by {{filters.teams.name}}<span ng-show='filters.teams.reverse'>, Decending</span></strong>
     <span ng-click='sort(undefined,"teams")' class='glyphicon glyphicon-remove-circle btn' aria-hidden="true"></span>
@@ -36,17 +59,17 @@
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
-        <th ng-repeat="r in tbaRanks">{{r}}
+        <th ng-show="show.teams.Ranks" ng-repeat="r in tbaRanks" >{{r}}
           <button class="btn btn-xs btn-primary" ng-click='sort("tbaRanks["+$index+"]" ,"teams","Official Rank")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
-        <th data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}}
+        <th ng-show="show.teams.Metrics" data-ng-repeat='x in curGame.game | filter: {type:"!String"}'>{{x.name}}
           <button class="btn btn-xs btn-primary" ng-click='sort("averages[\""+x.name+"\"]","teams","Average "+x.name)'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
-        <th data-ng-repeat='y in curGame.calc'>
+        <th ng-show="show.teams.Calc" data-ng-repeat='y in curGame.calc'>
           {{y.name}}
           <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","teams","Average"+y.name)'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
@@ -64,11 +87,11 @@
         <td><a ui-sref='game.team({team:x.team})'><h4>{{x.team}}</h4></a>
         </td>
         <td><a ui-sref='game.team({team:x.team})'>{{x.name}}</a></td>
-        <td ng-repeat="r in tbaRanks">
+        <td ng-show="show.teams.Ranks" ng-repeat="r in tbaRanks">
           {{x.tbaRanks[$index]}}
         </td>
-        <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name]}}</h4></td>
-        <td data-ng-repeat='y in curGame.calc'><h4>{{x.calc[y.name]}}</h4></td>
+        <td ng-show="show.teams.Metrics" data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name]}}</h4></td>
+        <td ng-show="show.teams.Calc" data-ng-repeat='y in curGame.calc'><h4>{{x.calc[y.name]}}</h4></td>
       </tr>
     </tbody>
   </table>

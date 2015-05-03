@@ -28,6 +28,9 @@
 	$scope.noMatch = [];
 	$scope.noTeam = [];
 	$scope.tbaRanks = [];
+	$scope.show = {
+		teams: {Calc:true,Metrics:false,Ranks:true}
+	};
     function discon (x) {
       $scope.$apply(function() {
         $scope.connected=false;
@@ -198,7 +201,6 @@
 							if (Number($scope.teams[g].team) === res[i][teamMetric]) { //if res item and team have same number, add data
 								res[i].splice(teamMetric,1);
 								$scope.teams[g].tbaRanks = res[i];
-								console.log($scope.teams[g].tbaRanks);
 								continue resLoop;
 							}
 						}
