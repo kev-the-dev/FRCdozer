@@ -4,7 +4,6 @@
 		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
 	};
 })
-
 .filter('toArray',function() {
 	return function (object) {
 		//console.log(object);

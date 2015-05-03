@@ -50,13 +50,16 @@ module.exports = function(grunt) {
     },
     concurrent: {
       dev: {
-        tasks: ['nodemon', 'watch:public','watch:server'],
+        tasks: ['nodemon', 'watch:cssvendor','watch:jsapp','watch:jsvendor',
+                'watch:htmlapp','watch:fontsapp','watch:fontsvendor','watch:favicon','watch:server'],
         options: {
+          limit: 10,
           logConcurrentOutput: true
         }
       },
       dist : {
-        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app','copy:fonts','copy:favicon'],
+        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app',
+                'copy:fontsapp','copy:fontsvendor','copy:favicon'],
         options: {
           logConcurrentOutput: true
         }
@@ -65,15 +68,99 @@ module.exports = function(grunt) {
     nodemon: {
       dev: {
         script: 'app.js',
-        options: {
-          ignore: 'public/**'
+        options : {
+          watch: ['app.js','routes/']
         }
       }
     },
+    copy : {
+      fontsapp : {
+        expand: true,
+        src : '*',
+        cwd: 'public/src/fonts/app/',
+        dest: 'public/dist/fonts/'
+      },
+      fontsvendor : {
+        expand: true,
+        src : '*',
+        cwd: 'public/src/fonts/vendor/',
+        dest: 'public/dist/fonts/'
+      },
+      favicon : {
+        src: 'public/src/favicon.ico',
+        dest:'public/dist/favicon.ico'
+      }
+    },
     watch: {
-      public: {
-        files: ['public/src/**'],
-        tasks: ['jshint:front','concurrent:dist']
+      all : [
+        {
+          files:['public/src/css/app/**.css'],
+          tasks: ['cssmin:app']
+        },
+        {
+          files:['public/src/css/vendor/**.css'],
+          tasks: ['cssmin:vendor']
+        },
+        {
+          files:['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
+          tasks: ['jshint:front','uglify:app']
+        },
+        {
+          files:['public/src/js/vendor/**'],
+          tasks: ['uglify:vendor']
+        },
+        {
+          files:['public/src/index.html','public/src/views/**.html'],
+          tasks: ['htmlmin:app']
+        },
+        {
+          files:['public/src/fonts/app/**'],
+          tasks:['copy:fontsapp']
+        },
+        {
+          files:['public/src/fonts/vendor/**'],
+          tasks:['copy:fontsvendor']
+        },
+        {
+          files:['public/src/favicon.ico'],
+          tasks:['copy:favicon']
+        },
+        {
+          files: ['app.js','routes/dozer/**/**.js'],
+          tasks: ['jshint:back']
+        }
+      ],
+      cssapp : {
+        files:['public/src/css/app/**.css'],
+        tasks: ['cssmin:app']
+      },
+      cssvendor: {
+        files:['public/src/css/vendor/**.css'],
+        tasks: ['cssmin:vendor']
+      },
+      jsapp : {
+        files:['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
+        tasks: ['jshint:front','uglify:app']
+      },
+      jsvendor : {
+        files:['public/src/js/vendor/**'],
+        tasks: ['uglify:vendor']
+      },
+      htmlapp : {
+        files:['public/src/index.html','public/src/views/**.html'],
+        tasks: ['htmlmin:app']
+      },
+      fontsapp : {
+        files:['public/src/fonts/app/**'],
+        tasks:['copy:fontsapp']
+      },
+      fontsvendor : {
+        files:['public/src/fonts/vendor/**'],
+        tasks:['copy:fontsvendor']
+      },
+      favicon : {
+        files:['public/src/favicon.ico'],
+        tasks:['copy:favicon']
       },
       server : {
         files: ['app.js','routes/dozer/**/**.js'],
@@ -83,18 +170,6 @@ module.exports = function(grunt) {
     jshint : {
       front : ['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
       back: ['app.js','routes/dozer/**/**.js']
-    },
-    copy : {
-      fonts : {
-        expand: true,
-        src : '*',
-        cwd: 'public/src/fonts/',
-        dest: 'public/dist/fonts/'
-      },
-      favicon : {
-        src: 'public/src/favicon.ico',
-        dest:'public/dist/favicon.ico'
-      }
     }
   });
 
