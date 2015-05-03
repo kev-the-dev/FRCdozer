@@ -1,7 +1,10 @@
 .bg-yellow {
   background-color: lavender;
 }
-
+.teamImage {
+  height : 700px;
+  width: 100%;
+}
 .teamImage img {
   max-width : 100%;
   max-height : 100%;
