@@ -675,6 +675,7 @@
 				});})
 				.on('editMatch',function(x){$scope.$apply(function () {
 					if (x.message_data.match.event_key === $scope.curGame.tba.event_key) {
+						$scope.tbaGrabRanks();
 						$scope.changeMatch(parseTBAmatch(x.message_data.match));
 						return;
 					} else console.log("Not using match score beacuase wrong event key",x);
