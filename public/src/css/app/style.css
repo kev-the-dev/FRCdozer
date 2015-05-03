@@ -10,22 +10,6 @@
   max-height : 100%;
   image-orientation: from-image;
 }
-.averages th {
-  text-align: center;
-}
-.average {
-  border: 1px solid black !important;
-  border-collapse: collapse !important;
-}
-.vertical {
-  -webkit-transform: rotate(-90deg);
-  -moz-transform: rotate(-90deg);
-  -ms-transform: rotate(-90deg);
-  -o-transform: rotate(-90deg);
-  transform: rotate(-90deg);
-  vertical-align:top;
-}
-
 .matchRow input{
   position: relative;
   display: inline-block;
