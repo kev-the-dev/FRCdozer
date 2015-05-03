@@ -4,6 +4,17 @@
 		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
 	};
 })
+.filter('notString', function(){
+	return function (arr) {
+		if (!arr || arr.length<1) return 0;
+		var x = arr.length;
+		angular.forEach(arr,function (obj) {
+			console.log(obj.type);
+			if (obj.type === "String") x--;
+		});
+		return x;
+	};
+})
 .controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
 	$scope.tbaApp = "?X-TBA-App-Id=frc4118:scouting:1";
 	$scope.location = window.location;

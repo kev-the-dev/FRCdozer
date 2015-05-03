@@ -51,9 +51,9 @@ module.exports = function(grunt) {
     concurrent: {
       dev: {
         tasks: ['nodemon', 'watch:cssvendor','watch:jsapp','watch:jsvendor',
-                'watch:htmlapp','watch:fontsapp','watch:fontsvendor','watch:favicon','watch:server'],
+                'watch:htmlapp','watch:fontsapp','watch:fontsvendor','watch:favicon','watch:server','watch:cssapp','watch:cssvendor'],
         options: {
-          limit: 10,
+          limit: 12,
           logConcurrentOutput: true
         }
       },
