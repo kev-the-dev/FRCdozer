@@ -66,17 +66,38 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       .state('game.team', {
         url: '/team/:team',
         templateUrl: 'views/team.html',
-        controller: oneInstance('teams','team')
+        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+          $scope.TeamParam = $stateParams.team;
+          $scope.$watchCollection('teams', function (teams) {
+            teams.forEach(function (team) {
+              if (Number(team.team) === Number($scope.TeamParam)) $scope.team = team;
+            });
+          });
+        }]
       })
       .state('game.match', {
         url: '/match/:match',
         templateUrl: 'views/match.html',
-        controller: oneInstance('matches','match')
+        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+          $scope.MatchParam = $stateParams.match;
+          $scope.$watchCollection('matches', function (matches) {
+            matches.forEach(function (match) {
+              if (match.match === $scope.MatchParam) $scope.match = match;
+            });
+          });
+        }]
       })
       .state('game.sub', {
         url: '/sub/:sub',
         templateUrl: 'views/sub.html',
-        controller: oneInstance('subs','sub','_id')
+        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+          $scope.SubID = $stateParams.sub;
+          $scope.$watchCollection('subs', function (subs) {
+            subs.forEach(function (sub) {
+              if (sub._id === $scope.SubID) $scope.sub = sub;
+            });
+          });
+        }]
       })
       .state('game.matches', {
         url: '/matches',
