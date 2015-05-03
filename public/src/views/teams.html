@@ -26,11 +26,6 @@
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
-        <th>Rank
-          <button class="btn btn-xs btn-primary" ng-click='sort("tbaRanks[\"Rank\"]" ,"teams","Official Rank")'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
         <th>Team
           <button class="btn btn-xs btn-primary" ng-click='sort("team","teams","Team number")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
@@ -38,6 +33,11 @@
         </th>
         <th>Name
           <button class="btn btn-xs btn-primary" ng-click='sort("name","teams","Team name")'>
+            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+          </button>
+        </th>
+        <th ng-repeat="r in tbaRanks">{{r}}
+          <button class="btn btn-xs btn-primary" ng-click='sort("tbaRanks["+$index+"]" ,"teams","Official Rank")'>
             <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
           </button>
         </th>
@@ -61,14 +61,12 @@
           <span class='badge'>{{x.subs.length}}</span>
           <span ng-show="x.pic" class="glyphicon glyphicon-camera" aria-hidden="true"></span>
         </td>
-        <td>
-          <h4>
-            {{x.tbaRanks.Rank}}
-          </h4>
-        </td>
         <td><a ui-sref='game.team({team:x.team})'><h4>{{x.team}}</h4></a>
         </td>
         <td><a ui-sref='game.team({team:x.team})'>{{x.name}}</a></td>
+        <td ng-repeat="r in tbaRanks">
+          {{x.tbaRanks[$index]}}
+        </td>
         <td data-ng-repeat='z in curGame.game | filter: {type:"!String"}'><h4>{{x.averages[z.name]}}</h4></td>
         <td data-ng-repeat='y in curGame.calc'><h4>{{x.calc[y.name]}}</h4></td>
       </tr>

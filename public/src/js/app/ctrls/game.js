@@ -4,33 +4,6 @@
 		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
 	};
 })
-.filter('keys', function() {
-	return function (items,field,reverse) {
-		if (!items) return [];
-		var keys = Object.keys(items);
-		if (field) keys.sort(function (a,b) {
-			return items[a][field] > items[b][field] ? 1 : -1;
-		});
-		else if (field === null) keys.sort(function (a,b) {
-			return items[a]> items[b] ? 1 : -1;
-		});
-		if (reverse) keys.reverse();
-		return keys;
-	};
-})
-.filter('orderByObj', function() {
-  return function(items, field, reverse) {
-    var filtered = [];
-    angular.forEach(items, function(item) {
-      filtered.push(item);
-    });
-    if (field) filtered.sort(function (a, b) {
-      return (a[field] > b[field] ? 1 : -1);
-    });
-    if(reverse) filtered.reverse();
-    return filtered;
-  };
-})
 .controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
 	$scope.tbaApp = "?X-TBA-App-Id=frc4118:scouting:1";
 	$scope.location = window.location;
@@ -54,6 +27,7 @@
     $scope.newTeam = {};
 	$scope.noMatch = [];
 	$scope.noTeam = [];
+	$scope.tbaRanks = [];
     function discon (x) {
       $scope.$apply(function() {
         $scope.connected=false;
@@ -214,17 +188,17 @@
 			if (!$scope.curGame.tba.event_key) return;
 			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/rankings"+$scope.tbaApp)
 				.success(function(res) {
-					var metrics = res[0]; //cache the metrics tba resposds (ex: rank, coop, auto)
 					var teamMetric;
-					for (var k = 0; k< metrics.length ;k++) if (metrics[k] === "Team") teamMetric = k; //find the metric that stores the team number
+					$scope.tbaRanks = res[0];
+					for (var k = 0; k< $scope.tbaRanks.length ;k++) if ($scope.tbaRanks[k] === "Team") teamMetric = k; //find the metric that stores the team number
+					if (!teamMetric) return;
+					$scope.tbaRanks.splice(teamMetric,1); //cache the metrics tba resposds (ex: rank, coop, auto)
 					resLoop: for (var i = 1; i<res.length;i++) { //For the rest in the response array, add info to the team
 						for (var g = 0; g<$scope.teams.length;g++) { //Search through all teams
 							if (Number($scope.teams[g].team) === res[i][teamMetric]) { //if res item and team have same number, add data
-								$scope.teams[g].tbaRanks = {};
-								for (var j = 0; j< metrics.length ; j++) {
-									if (j === teamMetric) continue;
-									$scope.teams[g].tbaRanks[metrics[j]] = res[i][j];
-								}
+								res[i].splice(teamMetric,1);
+								$scope.teams[g].tbaRanks = res[i];
+								console.log($scope.teams[g].tbaRanks);
 								continue resLoop;
 							}
 						}
