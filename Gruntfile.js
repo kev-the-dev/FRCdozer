@@ -92,44 +92,6 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      all : [
-        {
-          files:['public/src/css/app/**.css'],
-          tasks: ['cssmin:app']
-        },
-        {
-          files:['public/src/css/vendor/**.css'],
-          tasks: ['cssmin:vendor']
-        },
-        {
-          files:['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
-          tasks: ['jshint:front','uglify:app']
-        },
-        {
-          files:['public/src/js/vendor/**'],
-          tasks: ['uglify:vendor']
-        },
-        {
-          files:['public/src/index.html','public/src/views/**.html'],
-          tasks: ['htmlmin:app']
-        },
-        {
-          files:['public/src/fonts/app/**'],
-          tasks:['copy:fontsapp']
-        },
-        {
-          files:['public/src/fonts/vendor/**'],
-          tasks:['copy:fontsvendor']
-        },
-        {
-          files:['public/src/favicon.ico'],
-          tasks:['copy:favicon']
-        },
-        {
-          files: ['app.js','routes/dozer/**/**.js'],
-          tasks: ['jshint:back']
-        }
-      ],
       cssapp : {
         files:['public/src/css/app/**.css'],
         tasks: ['csslint:app','cssmin:app']
