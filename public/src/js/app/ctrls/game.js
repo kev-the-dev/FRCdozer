@@ -4,7 +4,7 @@
 		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
 	};
 })
-.filter('keys', ['$log',function($log) {
+.filter('keys', function() {
 	return function (items,field,reverse) {
 		if (!items) return [];
 		var keys = Object.keys(items);
@@ -17,7 +17,7 @@
 		if (reverse) keys.reverse();
 		return keys;
 	};
-}])
+})
 .filter('orderByObj', function() {
   return function(items, field, reverse) {
     var filtered = [];
