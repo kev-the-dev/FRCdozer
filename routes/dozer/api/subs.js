@@ -34,7 +34,7 @@ router.route('/:sub')
       if (err) return res.status(500).send(err);
       io.to(req.game.name).emit('delSub',req.sub);
       res.send(req.sub._id);
-    })
+    });
   });
 
 router.route('/')
@@ -58,7 +58,7 @@ router.route('/')
       if (err) return res.status(500).send(err);
       io.to(req.game.name).emit('resetSubs',[]);
       res.send(x.submissions);
-    })
+    });
   });
 
 module.exports = router;

@@ -1,4 +1,4 @@
-<h2>Match: {{match = getMatch(matchId);matchId}}</h2>
+<h2>Match: {{MatchParam}}</h2>
 <ul ng-show="match.videos.length" class="list-group">
   <li ng-repeat="x in match.videos" class="list-group-item"><a ng-href="{{getVideoUrl(x)}}" target="_blank">
     <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
@@ -50,19 +50,19 @@
       </ul>
     </td>
     <td ng-repeat="g in curGame.calc">
-      <b>{{match.blue.calc[g.name] = matchCalc(match.blue.teams,g.elements); match.blue.calc[g.name]}}</b>
+      <b>{{match.blue.calc[g.name]}}</b>
     </td>
     <td>
       <b>{{match.blue.score}}</b>
     </td>
     <td ng-repeat="g in curGame.calc">
-      <b>{{match.red.calc[g.name] = matchCalc(match.red.teams,g.elements)}}</b>
+      <b>{{match.red.calc[g.name]}}</b>
     </td>
     <td>
       <b>{{match.red.score}}</b>
     </td>
     <td>
-      <b>{{match.winner = winnerString(match.blue.score,match.red.score)}}</b>
+      <b>{{match.winner}}</b>
     </td>
   </tr>
 </table>
@@ -102,7 +102,7 @@
   <tbody>
     <tr ng-repeat='x in matchTeams(match.blue.teams) | orderBy:filters.matchBlue.key:!filters.matchBlue.reverse'>
       <td data-title="Links">
-        <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+        <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
         <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
         <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
       </td>
@@ -110,7 +110,7 @@
         <div class='row'>
           <div class="matchRow col-xs-12" >
             <input class='form-control' ng-model='x.team'>
-            <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+            <a ui-sref='game.team({team:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
           </div>
         </div>
       </td>
@@ -177,7 +177,7 @@
   <tbody>
     <tr ng-repeat='x in matchTeams(match.red.teams) | orderBy:filters.matchRed.key:!filters.matchRed.reverse'>
       <td data-title="Links">
-        <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+        <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
         <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
         <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
       </td>
@@ -185,7 +185,7 @@
         <div class='row'>
           <div class="matchRow col-xs-12" >
             <input class='form-control' ng-model='x.team'>
-            <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+            <a ui-sref='game.team({team:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
           </div>
         </div>
       </td>
@@ -236,7 +236,7 @@
     <tbody>
       <tr ng-repeat='x in match.noAlliance'>
         <td data-title="Links">
-          <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+          <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
           <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
           <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
         </td>
@@ -244,14 +244,14 @@
           <div class='row'>
             <div class="matchRow col-xs-12" >
               <input class='form-control' ng-model='x.team'>
-              <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+              <a ui-sref='game.team({team:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
             </div>
           </div>
         </td>
         <td>
           <button ng-class='x.side!="Red" ? "btn-primary" : "btn-default"' ng-click='x.side="Blue" ' class="btn">Blue</button>
           <button ng-class='x.side!="Blue" ? "btn-danger" : "btn-default"' ng-click='x.side="Red" ' class="btn">Red</button>
-        </td>
+        </td>t
         <td data-ng-repeat='y in curGame.game'>
           <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
           <form data-ng-if='y.type==="Boolean"'>

@@ -41,7 +41,7 @@
           <tbody>
             <tr dir-paginate='x in subs | orderBy:filters.subs.key:!filters.subs.reverse | itemsPerPage: 10'>
               <td data-title="Links">
-                <a class="btn btn-xs btn-info" ui-sref="game.sub({id:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+                <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
                 <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
                 <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
               </td>
@@ -49,7 +49,7 @@
                 <div class='row'>
                   <div class="matchRow col-xs-12" >
                     <input class='form-control' ng-model='x.match' ng-change="x.matchObj = deserializeMatch(x.match)">
-                    <a ui-sref="game.match({id:x.match})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+                    <a ui-sref="game.match({match:x.match})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
                   </div>
                 </div>
               </td>
@@ -57,7 +57,7 @@
                 <div class='row'>
                   <div class="matchRow col-xs-12" >
                     <input class='form-control' ng-model='x.team'>
-                    <a ui-sref='game.team({num:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+                    <a ui-sref='game.team({team:x.team})'><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
                   </div>
                 </div>
               </td>

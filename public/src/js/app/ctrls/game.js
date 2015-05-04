@@ -1,20 +1,29 @@
 ﻿angular.module('FRCdozer')
-/*
-.config(['$compileProvider',function($compileProvider){
-	$compileProvider.aHrefSanitizationWhitelist(/^\s*(|blob|):/);
-}])
-*/
-.config(['$httpProvider', function($httpProvider) {
-	$httpProvider.defaults.useXDomain = true;
-	delete $httpProvider.defaults.headers.common['X-Requested-With'];
-}])
-.controller('frcCtrl',['$scope','$http','$stateParams','$state',function($scope,$http,$stateParams,$state) {
-		$scope.authlevel = 1;
+.filter('mongoDate', function() {
+	return function(id) {
+		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
+	};
+})
+.filter('notString', function(){
+	return function (arr) {
+		if (!arr || arr.length<1) return 0;
+		var x = arr.length;
+		angular.forEach(arr,function (obj) {
+			console.log(obj.type);
+			if (obj.type === "String") x--;
+		});
+		return x;
+	};
+})
+.controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
+	$scope.tbaApp = "?X-TBA-App-Id=frc4118:scouting:1";
+	$scope.location = window.location;
+	$scope.authlevel = 1;
     $scope.subs = []; //stores matches for current game
     $scope.sub = {};
     $scope.matches = [];
     $scope.match = {};
-    $scope.add = {} //stores un-posted add
+    $scope.add = {}; //stores un-posted add
     $scope.game = {}; //stores game that operations are being done on
     $scope.curGame = {}; //game that is currently active, to show in table
     $scope.games = []; //stores all games
@@ -23,26 +32,26 @@
     $scope.team={};
     $scope.newTeam={};
     $scope.filt = $state.params.filter || "";
-		$scope.filters = {};
+	$scope.filters = {};
     $scope.revr = $state.params.reverse || false;
     $scope.connected = false;
-    $scope.newTeam;
-    $scope.getDate = function (id) {
-      if (id) {
-        var date = new Date(parseInt(id.substring(0, 8), 16) * 1000);
-        return date;
-      }
-    };
+    $scope.newTeam = {};
+	$scope.noMatch = [];
+	$scope.noTeam = [];
+	$scope.tbaRanks = [];
+	$scope.show = {
+		teams: {Calc:true,Metrics:false,Ranks:true}
+	};
     function discon (x) {
       $scope.$apply(function() {
         $scope.connected=false;
-				$scope.userInit();
+				//$scope.userInit();
       });
     }
     function con(x) {
       $scope.$apply(function() {
         $scope.connected=true;
-				$scope.userInit();
+				//$scope.userInit();
       });
     }
     $scope.unfilt = function () {
@@ -50,7 +59,7 @@
       $scope.revr=false;
     };
     $scope.sort = function (prop,type,name) {
-			var name = name ? name : prop;
+			name = name ? name : prop;
 			if (!$scope.filters[type]) {
 				$scope.filters[type] = {
 					key:prop,
@@ -72,9 +81,12 @@
     };
     $scope.changeGame = function (game) {
         $scope.curGame = game;
+				$scope.fixSubs();
+				$scope.sortTeams();
+				$scope.sortMatches();
     };
     $scope.appendSubs = function (subs) {
-			for (i in subs) $scope.subs.push($scope.fixSub(subs[i]));
+			for (var i in subs) $scope.subs.push($scope.fixSub(subs[i]));
       $scope.sortTeams();
       $scope.sortMatches();
     };
@@ -83,7 +95,7 @@
 			sub.calc = sub.calc || {};
 			sub.elements = sub.elements || {};
 
-			for (i in $scope.curGame.game) {
+			for (var i in $scope.curGame.game) {
 				ele = $scope.curGame.game[i];
 				if (ele.type === "Boolean") sub.elements[ele.name] = sub.elements[ele.name] || false;
 				else if (ele.type === "Number") sub.elements[ele.name] = sub.elements[ele.name] || 0;
@@ -91,39 +103,31 @@
 			sub.calc = $scope.getValues(sub.elements);
 			return sub;
 		};
+		$scope.fixSubs = function () {
+			for (var i in $scope.subs) $scope.subs[i] = $scope.fixSub($scope.subs[i]);
+		};
     $scope.appendTeam = function (team) {
       $scope.teams.push($scope.fixTeam(team));
       $scope.sortMatches();
     };
     $scope.removeSub = function (id) {
       var a,b,c;
-      for (x in $scope.subs) if (id === $scope.subs[x]._id) {
-        a=x;
-        var team =  $scope.subs[x].team;
-        for (y in $scope.teams) if ($scope.teams[y].team===team) {
-          b=y;
-          var m = $scope.teams[y].subs;
-          for (z in m) if (m[z]._id = id) {
-            c=z;
-            break;
-          }
-          break;
-        }
-        break;
-      };
-      $scope.subs.splice(a,1);
-      $scope.teams[b].subs.splice(c,1);
-      if ($scope.teams[b].subs.length===0 && !$scope.teams[b]._id) $scope.teams.splice(b,1);
-      $scope.sortMatches();
+      for (var x in $scope.subs) if (id === $scope.subs[x]._id) {
+				$scope.subs.splice(x,1);
+				$scope.sortTeams();
+				$scope.sortMatches();
+				break;
+      }
     };
     $scope.removeTeam = function (team) {
-      for (x in $scope.teams) if ($scope.teams[x]._id === team._id) {
+      for (var x in $scope.teams) if ($scope.teams[x]._id === team._id) {
         $scope.teams.splice(x,1);
         break;
       }
+			$scope.sortTeams();
     };
     $scope.changeSub = function (sub) {
-      for (x in $scope.subs) if (sub._id === $scope.subs[x]._id) {
+      for (var x in $scope.subs) if (sub._id === $scope.subs[x]._id) {
         $scope.subs[x]=$scope.fixSub(sub);
         break;
       }
@@ -137,10 +141,10 @@
 			for (var x in $scope.matches) if (match.match === $scope.matches[x].match) {
 				match.time = match.time ? match.time : $scope.matches[x].time; //if change doesn't have team, but original does, keep original
 				for (var y in match.blue.teams) if (match.blue.teams.hasOwnProperty(y)) {
-					match.blue.teams[y] = (typeof $scope.matches[x].blue.teams[y] === "object") ? $scope.matches[x].blue.teams[y] : match.blue.teams[y]
+					match.blue.teams[y] = (typeof $scope.matches[x].blue.teams[y] === "object") ? $scope.matches[x].blue.teams[y] : match.blue.teams[y];
 				}
 				for (var z in match.red.teams) if (match.red.teams.hasOwnProperty(z)) {
-					match.red.teams[z] = (typeof $scope.matches[x].red.teams[z] === "object") ? $scope.matches[x].red.teams[z] : match.red.teams[z]
+					match.red.teams[z] = (typeof $scope.matches[x].red.teams[z] === "object") ? $scope.matches[x].red.teams[z] : match.red.teams[z];
 				}
 				$scope.matches[x] = $scope.fixMatch(match);
 				return;
@@ -179,31 +183,104 @@
 				});
 		};
 		$scope.tbaGrabTeams = function () {
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/teams?X-TBA-App-Id=frc4118:scouting:1")
-			.success(function (x) {
-				$scope.tbaTeams = x;
-				for (i in x) {
-					if ($scope.changeTeam({team:x[i].team_number,name:x[i].nickname})) $scope.editTeam({team:x[i].team_number,name:x[i].nickname});
+			if (!$scope.curGame.tba.event_key) return;
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/teams"+$scope.tbaApp)
+			.success(function (res) {
+				for (var i in res) {
+					var team = {team:res[i].team_number,name:res[i].nickname};
+					for (var x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
+						team._id = $scope.teams[x]._id;
+					}
+					$scope.editTeam(team);
+				}
+			})
+			.error(function (x) {
+				console.log(x);
+			});
+		};
+		$scope.tbaGrabRanks = function () {
+			if (!$scope.curGame.tba.event_key) return;
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/rankings"+$scope.tbaApp)
+				.success(function(res) {
+					var teamMetric;
+					$scope.tbaRanks = res[0];
+					for (var k = 0; k< $scope.tbaRanks.length ;k++) if ($scope.tbaRanks[k] === "Team") teamMetric = k; //find the metric that stores the team number
+					if (!teamMetric) return;
+					$scope.tbaRanks.splice(teamMetric,1); //cache the metrics tba resposds (ex: rank, coop, auto)
+					resLoop: for (var i = 1; i<res.length;i++) { //For the rest in the response array, add info to the team
+						for (var g = 0; g<$scope.teams.length;g++) { //Search through all teams
+							if (Number($scope.teams[g].team) === res[i][teamMetric]) { //if res item and team have same number, add data
+								res[i].splice(teamMetric,1);
+								$scope.teams[g].tbaRanks = res[i];
+								continue resLoop;
+							}
+						}
 					}
 				})
-				.error(function (x) {
-					console.log(x);
+				.error(function (err) {
+					console.log(err);
 				});
-			};
-    $scope.changeTeam = function (team) { //if you want a preporty to not be there, set to null
-      for (x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
-        $scope.teams[x].name = team.name;
-        $scope.teams[x].notes = team.notes;
+		};
+		$scope.changeTeam = function (team) { //if you want a preporty to not be there, set to null
+			for (var x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
+				$scope.teams[x].name = team.name;
+				$scope.teams[x].notes = team.notes;
 
-        $scope.teams[x]._id = team._id  || undefined;
+				$scope.teams[x]._id = team._id  || undefined;
 				$scope.teams[x] = $scope.fixTeam($scope.teams[x]);
-        return false;
-      }
-      $scope.appendTeam(team);
+				return false;
+			}
+			$scope.appendTeam(team);
 			return true;
-    };
+		};
+		$scope.editTeam = function (x,event) {
+			if (event) {
+				var files = event.target.form.elements.files.files;
+				if (files.length > 0) {
+					var file = files[0];
+					var uri = 'api/game/'+$scope.curGame._id+'/team/'+x._id+'/pic';
+					var fd = new FormData();
+					fd.append('pic', file);
+					$http.post(uri,fd,{
+						transformRequest: angular.identity,
+						headers: {'Content-Type': undefined}
+					})
+					.success(function (res) {
+						x.pic = res;
+						$scope.changeTeam(x);
+					})
+					.error(function (x) {
+						console.log(x);
+					});
+				}
+			}
+
+			var req;
+			if (x._id) req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,x);
+			else req = $http.post ('api/game/'+$scope.curGame._id+'/team',x);
+			req
+				.success(function(x,sta){
+					$scope.newTeam = {};
+					$scope.handle('editTeam');
+					$scope.changeTeam(x);
+				})
+				.error(function(x,sta){
+					$scope.handle('editTeam',x);
+				});
+		};
+		$scope.removeTeamPic = function (team) {
+			if (!team._id) return;
+			var req = $http.delete('api/game/'+$scope.curGame._id+'/team/'+team._id+'/pic');
+			req.success(function (x) {
+				team.pic = undefined;
+				$scope.changeTeam(team);
+			});
+			req.error(function (x) {
+				console.log(x);
+			});
+		};
     $scope.getMatch = function (match) {
-      for (x in $scope.matches) if ($scope.matches[x].match === match.toLowerCase()) return $scope.matches[x];
+      for (var x in $scope.matches) if ($scope.matches[x].match === match.toLowerCase()) return $scope.matches[x];
     };
     $scope.sortMatches = function () { //sorts array of submissions, or the scope submissions, into matches
       var subs = $scope.subs;
@@ -221,57 +298,61 @@
 					if (matches[z].red.teams[redkey] !== true) delete matches[z].red.teams[redkey];
 				}
 			}
+
+			$scope.noMatch = [];
       s: for (var x in subs) { //For each submision
-				if (subs[x].match) {
-					for (var y in matches) if (matches[y].match === subs[x].match.toLowerCase()) { //If the match with that sub's match exsists, add it to that match
-						if (subs[x].side === "Blue") matches[y].blue.teams[subs[x].team] = subs[x];
-						else if (subs[x].side === "Red") matches[y].red.teams[subs[x].team] = subs[x];
-						else matches[y].noAlliance.push(subs[x]);
-						continue s;
-					}
-					if (subs[x].side === "Blue") {
-						var o = {}
-						o[subs[x].team] = subs[x];
-						matches[matches.length] = {
-							match:subs[x].match.toLowerCase(),
-							matchObj:$scope.deserializeMatch(subs[x].match),
-							blue:{
-								teams:o
-							},
-							red : {
-								teams:{}
-							},
-							noAlliance : []
-						};
-					}
-					else if (subs[x].side === "Red")  {
-						var o = {}
-						o[subs[x].team] = subs[x];
-						matches[matches.length] = {
-							match:subs[x].match.toLowerCase(),
-							matchObj:$scope.deserializeMatch(subs[x].match),
-							red:{
-								teams:o
-							},
-							blue : {
-								teams:{}
-							},
-							noAlliance : []
-						};
-					}
-					else {
-						matches[matches.length] = {
-							match:subs[x].match.toLowerCase(),
-							matchObj:$scope.deserializeMatch(subs[x].match),
-							red:{
-								teams:{}
-							},
-							blue : {
-								teams:{}
-							},
-							noAlliance : [subs[x]]
-						};
-					}
+				if (!subs[x].match) {
+					$scope.noMatch.push(subs[x]);
+					continue;
+				}
+
+				for (var y in matches) if (matches[y].match === subs[x].match.toLowerCase()) { //If the match with that sub's match exsists, add it to that match
+					if (subs[x].side === "Blue") matches[y].blue.teams[subs[x].team] = subs[x];
+					else if (subs[x].side === "Red") matches[y].red.teams[subs[x].team] = subs[x];
+					else matches[y].noAlliance.push(subs[x]);
+					continue s;
+				}
+				var o = {};
+				if (subs[x].side === "Blue") {
+					o[subs[x].team] = subs[x];
+					matches[matches.length] = {
+						match:subs[x].match.toLowerCase(),
+						matchObj:$scope.deserializeMatch(subs[x].match),
+						blue:{
+							teams:o
+						},
+						red : {
+							teams:{}
+						},
+						noAlliance : []
+					};
+				}
+				else if (subs[x].side === "Red")  {
+					o[subs[x].team] = subs[x];
+					matches[matches.length] = {
+						match:subs[x].match.toLowerCase(),
+						matchObj:$scope.deserializeMatch(subs[x].match),
+						red:{
+							teams:o
+						},
+						blue : {
+							teams:{}
+						},
+						noAlliance : []
+					};
+				}
+				else {
+					matches[matches.length] = {
+						match:subs[x].match.toLowerCase(),
+						matchObj:$scope.deserializeMatch(subs[x].match),
+						red:{
+							teams:{}
+						},
+						blue : {
+							teams:{}
+						},
+						noAlliance : [subs[x]]
+					};
 				}
       }
 			for (var f in matches) matches[f] = $scope.fixMatch(matches[f]);
@@ -279,13 +360,10 @@
     };
 		$scope.matchTeams = function (teams) { //given object of teams, return array of team keys
 			var z = [];
-			for (x in teams) if (teams.hasOwnProperty(x) && teams[x] !== true) z[z.length] = teams[x];
+			for (var x in teams) if (teams.hasOwnProperty(x) && teams[x] !== true) z[z.length] = teams[x];
 			return z;
 		};
 		$scope.matchSort = [ //Array of functions for sorting matches
-			function (pre) {
-				console.log(pre.matchObj);
-			},
 			function (pre,rev) { //sorts first by match level (quaterfinals)
 				var l = pre.matchObj.level;
 				if (l === "qm" || l === "q" ) return 1;
@@ -300,7 +378,7 @@
 			function (pre,rev) { //sorts finnaly by match number
 				return pre.matchObj.number;
 			}
-		]
+		];
 		$scope.serializeMatch = function (match) { //given object, turn in into string containers: level, set, number
 			var ret = "";
 			if (typeof match === "object") {
@@ -375,9 +453,10 @@
 			};
 		}
 		$scope.tbaGrabMatches = function () {
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"/matches?X-TBA-App-Id=frc4118:scouting:1")
+			if (!$scope.curGame.tba.event_key) return;
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/matches"+$scope.tbaApp)
 			.success(function (x) {
-				for (i in x) $scope.changeMatch(parseTBAmatch(x[i]));
+				for (var i in x) $scope.changeMatch(parseTBAmatch(x[i]));
 				$scope.sortMatches();
 			})
 			.error(function (x) {
@@ -389,7 +468,7 @@
 			for (var key in teams) {
 				if (teams.hasOwnProperty(key)) {
 					if (teams[key] !== true) {
-						total = total + $scope.getValue(teams[key].elements,elements)
+						total = total + $scope.getValue(teams[key].elements,elements);
 					}
 				}
 			}
@@ -397,7 +476,7 @@
 		};
 		$scope.matchCalcs = function (teams) {
 			var res = {};
-			for (i in $scope.curGame.calc) res[$scope.curGame.calc[i].name] = $scope.matchCalc(teams,$scope.curGame.calc[i].elements);
+			for (var i in $scope.curGame.calc) res[$scope.curGame.calc[i].name] = $scope.matchCalc(teams,$scope.curGame.calc[i].elements);
 			return res;
 		};
     $scope.getGame = function (id,call) {
@@ -427,84 +506,42 @@
           $scope.sortTeams();
           call();
         })
-        .error(function(x){$scope.handle('getSubs',x)});
+        .error(function(x){$scope.handle('getSubs',x);});
     };
     $scope.getTeams = function (id,call) {
       $http.get('api/game/'+(id || $scope.curGame._id)+'/team')
         .success(function (teams) {
           $scope.handle('getSubs');
-          for (y in teams) $scope.changeTeam(teams[y]);
+          for (var y in teams) $scope.changeTeam(teams[y]);
         })
-        .error(function(x){$scope.handle('getSubs',x)});
+        .error(function(x){$scope.handle('getSubs',x);});
     };
     $scope.deleteGame = function (id,call) {
       $http.delete('api/game/'+id)
         .success(function (data) {
-          call(null,data)
+          call(null,data);
         })
         .error(function (data) {
           call(data,null);
-        })
+        });
     };
     $scope.getSub = function (id) {
-      for (x in $scope.subs) if ($scope.subs[x]._id === id) {
+      for (var x in $scope.subs) if ($scope.subs[x]._id === id) {
         return $scope.subs[x];
       }
     };
     $scope.getTeam = function (team) {
       team = Number(team);
-      for (x in $scope.teams) if (Number($scope.teams[x].team) === team) return $scope.teams[x];
+      for (var x in $scope.teams) if (Number($scope.teams[x].team) === team) return $scope.teams[x];
 			return {team:team,name:""};
-    }
+    };
     $scope.editSub = function (x) {
       $http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
         .success(function(x) {
           $scope.handle('editSub');
           if (!$scope.connected) $scope.changeSub(data);
         })
-        .error(function (x) {$scope.handle('editSub',x)});
-    };
-    $scope.editTeam = function (x,event) {
-			if (event) var file = event.target.form.elements.files.files[0];
-			if (file) {
-					var uri = 'api/game/'+$scope.curGame._id+'/team/'+x._id+'/pic';
-					var fd = new FormData();
-					fd.append('pic', file);
-					$http.post(uri,fd,{
-						transformRequest: angular.identity,
-						headers: {'Content-Type': undefined}
-					})
-					.success(function (res) {
-						x.pic = res;
-						$scope.changeTeam(x);
-					})
-					.error(function (x) {
-						console.log(x);
-					});
-			}
-
-      if (x._id) {
-				var req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,{
-					_id:x._id,
-					name:x.name || "",
-					notes:x.notes || "",
-					team:Number(x.team)
-				});
-			}
-      else var req = $http.post ('api/game/'+$scope.curGame._id+'/team',{
-        name:x.name || "",
-        notes:x.notes || "",
-        team:Number(x.team)
-      });
-      req
-        .success(function(x,sta){
-          $scope.newTeam = {};
-          $scope.handle('editTeam');
-          $scope.changeTeam(x);
-        })
-        .error(function(x,sta){
-					$scope.handle('editTeam',x);
-				});
+        .error(function (x) {$scope.handle('editSub',x);});
     };
     $scope.addSub = function (elements) {
       $http.post ('api/game/'+$scope.curGame._id+'/sub',elements)
@@ -513,7 +550,7 @@
           $scope.handle('newSub');
           if (!$scope.connected) $scope.appendSubs([data]);
         })
-        .error(function (x) {$scope.handle('newSub',x)});
+        .error(function (x) {$scope.handle('newSub',x);});
     };
     $scope.delSub = function (id) {
       $http.delete ('api/game/'+$scope.curGame._id+'/sub/'+id)
@@ -521,7 +558,7 @@
           $scope.handle('delSub');
           if (!$scope.connected) $scope.removeSub(id);
         })
-        .error(function (x){$scope.handle('delSub',x)});
+        .error(function (x){$scope.handle('delSub',x);});
     };
     $scope.delTeam = function (id) {
       $http.delete ('api/game/'+$scope.curGame._id+'/team/'+id)
@@ -529,7 +566,7 @@
           $scope.handle('delTeam');
           if (!$scope.connected) $scope.removeTeam(data);
         })
-        .error(function (x) {$scope.handle('delTeam',x)});
+        .error(function (x) {$scope.handle('delTeam',x);});
     };
     $scope.editGame = function (x) {
       x.teams = undefined;
@@ -537,23 +574,23 @@
       $http.put('api/game/'+x._id,x)
         .success(function (data) {
           $scope.handle('editGame');
-          if (!$scope.connected) $scope.chanVgeGame(data);
+          $scope.changeGame(data);
         })
-        .error(function(x){$scope.handle('editGame',x)});
+        .error(function(x){$scope.handle('editGame',x);});
     };
 		$scope.downloads = {};
 		$scope.subsToCSV = function (subs) {
 			var str = "Match,Team,Alliance";
-			for (y in $scope.curGame.game) str +=","+$scope.curGame.game[y].name;
-			for (y in $scope.curGame.calc) str +=","+$scope.curGame.calc[y].name;
+			for (var y in $scope.curGame.game) str +=","+$scope.curGame.game[y].name;
+			for (var i in $scope.curGame.calc) str +=","+$scope.curGame.calc[i].name;
 			str += "\n";
-			for (x in subs) {
+			for (var x in subs) {
 				str += subs[x].match.toLowerCase()+",";
 				str += subs[x].team+",";
 				str += subs[x].side;
-				for (z in $scope.curGame.game) str+=","+(subs[x].elements[$scope.curGame.game[z].name] || "");
-				for (z in $scope.curGame.calc) str+=","+($scope.getValue(subs[x].elements,$scope.curGame.calc[z].elements) || 0);
-				str += "\n"
+				for (var z in $scope.curGame.game) str+=","+(subs[x].elements[$scope.curGame.game[z].name] || "");
+				for (var g in $scope.curGame.calc) str+=","+($scope.getValue(subs[x].elements,$scope.curGame.calc[g].elements) || 0);
+				str += "\n";
 			}
 			return str;
 		};
@@ -565,28 +602,34 @@
 			var blob = new Blob([ stuff ], { type : (type || 'text/plain')+';charset=utf-8;' });
 			var url = (window.URL || window.webkitURL).createObjectURL( blob );
 			$scope.downloads[prop] = url;
-		}
+		};
     $scope.getValue = function (sub,calc) {
       sub = sub || {};
       calc = calc || [];
       var val = 0;
-      for (x in calc) val=val+(Number(sub[calc[x].name])*calc[x].worth || 0);
+      for (var x in calc) val=val+(Number(sub[calc[x].name])*calc[x].worth || 0);
       return Math.round(val*100)/100 || 0;
     };
 		$scope.getValues = function (elements) {
 			var res = {};
-			for (i in $scope.curGame.calc) res[$scope.curGame.calc[i].name] = $scope.getValue(elements,$scope.curGame.calc[i].elements);
+			for (var i in $scope.curGame.calc) res[$scope.curGame.calc[i].name] = $scope.getValue(elements,$scope.curGame.calc[i].elements);
 			return res;
 		};
     $scope.sortTeams = function () { //sorts aray of submissions or $scope.subs into teams
 			var teams = $scope.teams;
 			var subs = $scope.subs;
-			for (k in teams) teams[k].subs = [];
+			for (var k in teams) teams[k].subs = [];
 
-			s: for (h in subs) {
-				for (i in teams) {
+			$scope.noTeam = [];
+			s: for (var h in subs) {
+				if (!subs[h].team) {
+					$scope.noTeam.push(subs[h]);
+					continue;
+				}
+
+				for (var i in teams) {
 					if (Number(subs[h].team) === Number(teams[i].team)) {
-						teams[i].subs.push(subs[h])
+						teams[i].subs.push(subs[h]);
 						continue s;
 					}
 				}
@@ -596,8 +639,8 @@
 				});
 			}
 
-			for (k in teams) teams[k] = $scope.fixTeam(teams[k]);
-
+			for (var L in teams) teams[L] = $scope.fixTeam(teams[L]);
+			
 			$scope.teams = teams;
     };
 		$scope.fixTeam = function (team) {
@@ -608,18 +651,18 @@
     $scope.getAverage = function (prop,subs) {
       subs = subs || [];
       var avr = 0;
-      for (x in subs) avr = avr+(Number(subs[x].elements[prop])||0);
+      for (var x in subs) avr = avr+(Number(subs[x].elements[prop])||0);
       avr = avr / (subs.length);
       avr = Math.round(avr*100)/100 || 0;
       return avr;
     };
 		$scope.getAverages = function (subs) {
-			var res = {}
-			for (i in $scope.curGame.game) res[$scope.curGame.game[i].name] = $scope.getAverage($scope.curGame.game[i].name,subs);
+			var res = {};
+			for (var i in $scope.curGame.game) res[$scope.curGame.game[i].name] = $scope.getAverage($scope.curGame.game[i].name,subs);
 			return res;
 		};
     function socketConf () {
-      $scope.socket = io('/game?name='+$scope.curGame.name,{path:window.location.pathname+'socket.io/','force new connection' : true})
+      $scope.socket = io(window.location.origin+'/game?name='+$scope.curGame.name,{path:window.location.pathname+'socket.io/','force new connection' : true})
         .on('message', function (data) {console.log(data);})
         .on('connect', con)
 				.on('connect_error',discon)
@@ -638,14 +681,12 @@
         .on('editGame',function(x){$scope.$apply(function () {$scope.changeGame(x);});})
 				.on('resetSubs',function(x){$scope.$apply(function () {$scope.resetSubs();});})
 				.on('resetTeams',function(x){$scope.$apply(function () {$scope.resetTeams();});})
-				.on('TBAverification',function(x){$scope.$apply(function () {
-					console.log(x);
-				});})
 				.on('TBAping',function(x){$scope.$apply(function () {
-					console.log(x);
+					console.log("TBA ping: ",x);
 				});})
 				.on('editMatch',function(x){$scope.$apply(function () {
-					if (x.message_data.match.event_key === $scope.curGame.tbakey) {
+					if (x.message_data.match.event_key === $scope.curGame.tba.event_key) {
+						$scope.tbaGrabRanks();
 						$scope.changeMatch(parseTBAmatch(x.message_data.match));
 						return;
 					} else console.log("Not using match score beacuase wrong event key",x);
@@ -653,10 +694,10 @@
 				.on('upcomingMatch',function(x){$scope.$apply(function () {
 					//if (x.message_data.match.event_key === $scope.curGame.tbakey) {
 						var m = {};
-						m.match = x['message_data']['match_key'].split('_')[1];
+						m.match = x.message_data.match_key.split('_')[1];
 						m.matchObj = $scope.deserializeMatch(m.match);
-						m.predictedTime = x['message_data']['predicted_time'];
-						m.scheduledTime = x['message_data']['scheduled_time'];
+						m.predictedTime = x.message_data.predicted_time;
+						m.scheduledTime = x.message_data.scheduled_time;
 						$scope.nextMatch = m;
 						return;
 					//} else console.log("Not using match score beacuase wrong event key",x);
@@ -670,14 +711,17 @@
 					$scope.curGame = x;
 
 					$scope.teams = x.teams;
-					$scope.appendSubs(x.submissions)
+					$scope.appendSubs(x.submissions);
 
 					delete $scope.curGame.submissions;
 					delete $scope.curGame.teams;
 
           socketConf();
+
+					$scope.fixSubs();
     	  	$scope.tbaGrabInfo();
 					$scope.tbaGrabMatches();
+					$scope.tbaGrabRanks();
         }
         else if (err) {
 					if (err.status === 401) $state.go('401');
@@ -694,8 +738,19 @@
 		$scope.delPermission = function (user) {
 			delete $scope.curGame.permissions.users[user];
 		};
+		$scope.updateTBAstatus = function () {
+			if (!$scope.curGame._id) return;
+			$http.get("/api/game/"+$scope.curGame._id+"/tba")
+				.success(function (x) {
+					$scope.curGame.tba = x;
+				})
+				.error(function (err) {
+					console.log(err);
+				});
+		};
     $scope.tbaGrabInfo = function () {
-			$http.get("api/tbaproxy/event/"+$scope.curGame.tbakey+"?X-TBA-App-Id=frc4118:scouting:1")
+			if (!$scope.curGame.tba.event_key) return;
+			$http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"?X-TBA-App-Id=frc4118:scouting:1")
 				.success(function (x) {
 					$scope.tbaResponse = x;
 				})

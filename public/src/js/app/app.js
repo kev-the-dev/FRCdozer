@@ -1,7 +1,21 @@
+function oneInstance (list,param,key) { //generates controller for team, match, etc view where you want one of a list updated
+  if (!list || !param) return;
+  key = key || param;
+  var res = ['$stateParams','$scope',function ($stateParams,$scope) {
+    $scope.id = $stateParams[param];
+    function updateTeam (newList) {
+      newList.forEach(function (x) {
+        if (x[key] == $scope.id) $scope[param] = x;
+      });
+    }
+    $scope.$watch(list,updateTeam);
+  }];
+  return res;
+}
 angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
-.config(function(paginationTemplateProvider) {
-  paginationTemplateProvider.setPath('views/paginate.html');
-})
+  .config(['paginationTemplateProvider',function(paginationTemplateProvider) {
+    paginationTemplateProvider.setPath('views/paginate.html');
+  }])
   .config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('home', {
@@ -50,24 +64,39 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         templateUrl: 'views/teams.html'
       })
       .state('game.team', {
-        url: '/team/:num',
+        url: '/team/:team',
         templateUrl: 'views/team.html',
         controller: ['$stateParams','$scope',function ($stateParams,$scope) {
-          $scope.teamNum = $stateParams.num;
+          $scope.TeamParam = $stateParams.team;
+          $scope.$watchCollection('teams', function (teams) {
+            teams.forEach(function (team) {
+              if (Number(team.team) === Number($scope.TeamParam)) $scope.team = team;
+            });
+          });
         }]
       })
       .state('game.match', {
-        url: '/match/:id',
+        url: '/match/:match',
         templateUrl: 'views/match.html',
         controller: ['$stateParams','$scope',function ($stateParams,$scope) {
-          $scope.matchId= $stateParams.id;
+          $scope.MatchParam = $stateParams.match;
+          $scope.$watchCollection('matches', function (matches) {
+            matches.forEach(function (match) {
+              if (match.match === $scope.MatchParam) $scope.match = match;
+            });
+          });
         }]
       })
       .state('game.sub', {
-        url: '/sub/:id',
+        url: '/sub/:sub',
         templateUrl: 'views/sub.html',
-        controller: ['$scope','$stateParams',function ($scope,$stateParams) {
-          $scope.subId = $stateParams.id;
+        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+          $scope.SubID = $stateParams.sub;
+          $scope.$watchCollection('subs', function (subs) {
+            subs.forEach(function (sub) {
+              if (sub._id === $scope.SubID) $scope.sub = sub;
+            });
+          });
         }]
       })
       .state('game.matches', {
@@ -77,10 +106,11 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       .state('game.advanced', {
         url:'/advanced',
         templateUrl: 'views/advanced.html'
-      })
+      });
       $urlRouterProvider
-      .when('/g/:name', '/game/:name')
-      .otherwise('/404');
+        .when('/g/:name', '/game/:name')
+        .when('','/')
+        .otherwise('/404');
 
   }])
   .controller('mainCtrl',['$scope','$http','$timeout',function ($scope,$http,$timeout) {
@@ -109,21 +139,21 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         })
         .error(function(x,sta){
           if (sta === 401) $scope.user = undefined;
-          $scope.handle('init',x)
+          $scope.handle('init',x);
         });
     };
     $scope.addGame = function (game) {
-      console.log(game);
       if (!$scope.user || !game || !game.name) return false;
       game.teams = game.teams || [];
       game.submissions = game.submissions || [];
       $http.post('api/game',game)
         .success(function (x) {
-          $scope.newGame == {};
+          $scope.newGame = {};
           console.log(x);
-          $scope.user.games.push({name:x.name,authlevel:x.permissions.users[$scope.user.username] || 4});
+          $scope.user.games.push(x);
         })
         .error(function (x) {
+          $scope.newGame = {};
           console.log(x);
         });
     };
@@ -131,17 +161,16 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       if (!confirm("Are you sure you want to delete "+name+"?")) return;
       $http.delete('api/game/'+name)
       .success(function (x) {
-        console.log(x);
-        for (y in $scope.user.games) {
-          if (name === x.name) $scope.user.games.splice(y);
+        for (var y in $scope.user.games) {
+          if (name === $scope.user.games[y].name) $scope.user.games.splice(y,1);
         }
       })
       .error(function (x){console.log(x);});
-    }
+    };
     $scope.changePassword = function (password) {
       $http.put('api/password',{password:password})
-        .success(function(){$scope.handle('changePassword')})
-        .error(function(x){$scope.handle('changePassword',x)});
+        .success(function(){$scope.handle('changePassword');})
+        .error(function(x){$scope.handle('changePassword',x);});
     };
     $scope.login = function (user,pass) {
       $http.post('api/login',{username:user,password:pass})
@@ -151,7 +180,7 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
           $scope.user = data;
           $scope.handle('login');
         })
-        .error(function (x) {$scope.handle('login',x)});
+        .error(function (x) {$scope.handle('login',x);});
     };
     $scope.logout = function () {
       $http.post('api/logout')
@@ -159,7 +188,7 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         $scope.handle('logout');
         $scope.user = undefined;
       })
-      .error(function(x){$scope.handle('logout',x)});
+      .error(function(x){$scope.handle('logout',x);});
     };
     $scope.register = function (user,pass) {
       $http.post('api/register',{username:user,password:pass})
@@ -167,10 +196,10 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
           $scope.handle('register');
           $scope.login(user,pass);
         })
-        .error(function(x){$scope.handle('register',x)});
+        .error(function(x){$scope.handle('register',x);});
     };
     $scope.back = function () {
-      window.history.back()
-    }
+      window.history.back();
+    };
     $scope.userInit();
   }]);

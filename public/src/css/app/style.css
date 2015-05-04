@@ -1,0 +1,32 @@
+.bg-yellow {
+  background-color: lavender;
+}
+.teamImage {
+  height : 700px;
+  width: 100%;
+}
+.teamImage img {
+  max-width : 100%;
+  max-height : 100%;
+  image-orientation: from-image;
+}
+.matchRow input{
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  min-width: 80px;
+}
+
+.matchRow a {
+  position: absolute;
+  top: 3px;
+  right: 20px;
+}
+
+.navbar.bg-primary {
+  border-radius: 0  !important;
+}
+
+.nav-pills li:nth-child(n+1) a {
+  padding:15px;
+}

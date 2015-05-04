@@ -10,7 +10,7 @@ var cookieParser = require('cookie-parser');
 var vars= require('./vars.js'),
     users=vars.users,
     io=vars.io,
-    games=vars.games
+    games=vars.games;
 
 var COOKIE_SECRET = 'badkey';
 var COOKIE_NAME = 'connect.sid';
@@ -26,6 +26,18 @@ function safe (x) {
   x.password = undefined;
   x.salt = undefined;
   return x;
+}
+function sendUser(req,res) {
+  if (!req.user) return res.status(401).send("Not logged in");
+  if (req.user) {
+    req.user.populate({
+      path: 'games',
+      select: 'name permissions'
+    }, function (err,usr) {
+      if (err) res.status(500).send(err);
+      else res.send(safe(usr));
+    });
+  }
 }
 
 router.use(passport.initialize());
@@ -54,15 +66,15 @@ passport.deserializeUser(function (id,done) {
     if (err) done (err,null);
     else if (x) done(null,x);
     else done(null,null);
-  })
+  });
 });
-router.post('/login',passport.authenticate('local'),function (req,res) {
-  res.send(safe(req.user));
-});
+router.post('/login',passport.authenticate('local'),sendUser);
+
 router.post('/logout', function (req,res) {
   req.logout();
   res.send('You have logged out');
 });
+
 router.post('/register', function (req,res) {
   var user = req.body.username;
   var pass = req.body.password;
@@ -84,33 +96,31 @@ router.post('/register', function (req,res) {
   }
   else res.status(500).send('No username or password');
 });
-router.get('/hello', function (req,res) {
-  if (req.user) res.send (safe(req.user));
-  else res.status(401).send("Not logged in");
-});
+
+router.get('/hello',sendUser);
+
 router.put('/password', function (req,res) { //Change password
   if (req.user && req.body.password && req.user.salt) users.findById(req.user._id, function (err,x) {
     if (err) res.status(500).send(err);
     else if (x) crypto.pbkdf2(req.body.password, req.user.salt, 10000, 64, function(err, derivedKey) {
-      if (err) res.status(500).send(err)
-        else if (derivedKey) {
-          x.password = derivedKey.toString('base64');
-          x.save(function (err,x) {
-            if (err) res.status(500).send(err);
-            else if (x) res.send("Password changed for "+x.username);
-            else res.status(500).send("Not saved.");
-          });
-        }
-        else res.status(500).send("No key made");
-      });
-      else res.status(500).send("No user found");
+      if (err) res.status(500).send(err);
+      else if (derivedKey) {
+        x.password = derivedKey.toString('base64');
+        x.save(function (err,x) {
+          if (err) res.status(500).send(err);
+          else if (x) res.send("Password changed for "+x.username);
+          else res.status(500).send("Not saved.");
+        });
+      }
+      else res.status(500).send("No key made");
     });
-    else res.status(500).send("You are not logged in");
+    else res.status(500).send("No user found");
+  });
+  else res.status(500).send("You are not logged in");
 });
 
-function parseUser(cookies,call) { //given object of cookies, return a user if exsits
-
-  var cookies = cookiejs.parse(cookies);
+function parseUser(rawcookies,call) { //given object of cookies, return a user if exsits
+  var cookies = cookiejs.parse(rawcookies);
   if(!cookies) return ("Could not parse cookies", undefined);
 
   var cookie = cookies[COOKIE_NAME];
