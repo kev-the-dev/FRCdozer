@@ -90,11 +90,11 @@ router.route('/')
   })
   .post(function (req,res) { //add match
     if (req.authLevel < 2) return res.status(401).end();
-    var x = req.game.teams.push(req.body);
-    req.game.save(function (err) {
+    req.game.teams.push(req.body);
+    req.game.save(function (err,game) {
       if (err) return res.status(500).send(err);
-      io.to(req.game.name).emit('newTeam',req.game.teams[x]);
-      res.send(req.body);
+      io.to(req.game.name).emit('newTeam',game.teams[game.teams.length-1]);
+      res.send(game.teams[game.teams.length-1]);
     });
   });
 

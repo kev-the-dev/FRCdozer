@@ -262,6 +262,7 @@
 				.success(function(x,sta){
 					$scope.newTeam = {};
 					$scope.handle('editTeam');
+					console.log(x);
 					$scope.changeTeam(x);
 				})
 				.error(function(x,sta){
