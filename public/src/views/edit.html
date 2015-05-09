@@ -268,6 +268,28 @@
                 <option value="SelectMult">Select Multiple</option>
               </select>
             </td>
+            <td ng-if="x.type === 'SelectOne' || x.type === 'SelectMult' " ng-init="x.options.choices = x.options.choices || ['']">
+              <table>
+                <tr ng-repeat="choice in x.options.choices track by $index">
+                  <td>
+                    <input ng-disabled="authlevel<3" ng-model='x.options.choices[$index]' class="form-control">
+                  </td>
+                  <td>
+                    <button ng-disabled="authlevel<3" class='btn btn-xs btn-danger' 
+                            ng-click="x.options.choices.splice($index,1)">
+                      <span class='glyphicon glyphicon-minus-sign' aria-hidden="true"></span>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                     <button ng-disabled="authlevel<3" class="btn btn-sm btn-success" ng-click='x.options.choices.push("")'>
+                      <span class='glyphicon glyphicon-plus-sign' aria-hidden="true"></span>
+                    </button>                   
+                  </td>
+                </tr>
+              </table>            
+            </td>
             <td>
               <button ng-disabled="authlevel<3" class='btn btn-sm btn-danger' data-ng-click="curGame.teamMetrics.splice($index,1)">
                 <span class='glyphicon glyphicon-minus-sign' aria-hidden="true"></span>
