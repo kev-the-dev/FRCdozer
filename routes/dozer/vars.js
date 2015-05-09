@@ -46,15 +46,3 @@ exports.initDB = function (url) {
 };
 
 module.exports = exports;
-
-/*
-var allow = function can(user,level,permissions) {
-  if (permissions.others >= level) {
-    return true;
-  }
-  if (permissions.users[user] >= level) {
-    return true;
-  }
-  return false;
-}
-*/
