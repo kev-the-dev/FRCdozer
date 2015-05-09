@@ -709,7 +709,6 @@
       $scope.getGame($stateParams.name, function (err,x) {
         if (x) {
 					$scope.curGame = x;
-
 					$scope.teams = x.teams;
 					$scope.appendSubs(x.submissions);
 

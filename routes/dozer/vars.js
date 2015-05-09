@@ -13,6 +13,11 @@ exports.initDB = function (url) {
     description: String,
     game: [new sch({name:String,type:String})],
     calc: [{name:String,elements:[{name:String,worth:Number}]}],
+    teamMetrics: [new sch({
+      name: String,
+      type: String,
+      options:Object
+    })],
     tba: {
       event_key: String,
       key: String,
@@ -27,6 +32,7 @@ exports.initDB = function (url) {
     teams: [new sch({
       team:Number,
       notes:String,
+      metrics:Object,
       name:String,
       pic:String
     })],
