@@ -22,25 +22,25 @@
                 <td>{{x.name}}</td>
                 <td ng-switch="x.type">
                   <span ng-switch-when="Number">
-                  <input type="number" ng-model="team.metrics[x.name]" class="form-control">
+                  <input ng-disabled="authlevel<2" type="number" ng-model="team.metrics[x.name]" class="form-control">
                 </span>
                   <span ng-switch-when="String">
-                  <input type="text" ng-model="team.metrics[x.name]" class="form-control">
+                  <input ng-disabled="authlevel<2" type="text" ng-model="team.metrics[x.name]" class="form-control">
                 </span>
                   <span ng-switch-when="Boolean">
                   <div class="btn-group btn-group-sm" role="group" aria-label="...">
-                    <button ng-class="team.metrics[x.name] ? 'btn-success': 'btn-default'" ng-click='team.metrics[x.name]=true' type="button" class="btn">True</button>
-                    <button ng-class="!team.metrics[x.name] ? 'btn-danger': 'btn-default'" ng-click='team.metrics[x.name]=false' type="button" class="btn">False</button>
+                    <button ng-disabled="authlevel<2" ng-class="team.metrics[x.name] ? 'btn-success': 'btn-default'" ng-click='team.metrics[x.name]=true' type="button" class="btn">True</button>
+                    <button ng-disabled="authlevel<2" ng-class="!team.metrics[x.name] ? 'btn-danger': 'btn-default'" ng-click='team.metrics[x.name]=false' type="button" class="btn">False</button>
                   </div>
                 </span>
                   <span ng-switch-when="SelectOne">
                   <label ng-repeat="z in x.options.choices" class="radio-inline">
-                    <input type="radio" ng-value="z" ng-model="team.metrics[x.name]">{{z}}
+                    <input ng-disabled="authlevel<2" type="radio" ng-value="z" ng-model="team.metrics[x.name]">{{z}}
                   </label>
                 </span>
                   <span ng-switch-when="SelectMult">
                   <label ng-repeat="z in x.options.choices" class="checkbox-inline">
-                    <input type="checkbox" ng-value="z" ng-model="team.metrics[x.name][z]">{{z}}
+                    <input ng-disabled="authlevel<2" type="checkbox" ng-value="z" ng-model="team.metrics[x.name][z]">{{z}}
                   </label>
                 </span>
                 </td>

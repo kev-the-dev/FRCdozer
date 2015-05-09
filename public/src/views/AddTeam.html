@@ -1,0 +1,61 @@
+<div>
+  <form>
+    <div>
+      <div class="form-group">
+        <select class="form-control" ng-model='changingTeam' ng-options="x as (x.team+' ('+x.name+')') for x in teams | orderBy: 'team' ">
+          <option value="">new</option>
+        </select>
+      </div>
+      <span ng-show='!changingTeam.team'>
+        <div class="form-group">
+          <input ng-disabled="authlevel<2" ng-model='newTeam.team' type="number" class="form-control" placeholder="">
+        </div>
+        <button ng-disabled="authlevel<2" ng-click='teams.push({team:newTeam.team});changingTeam.team=newTeam.team;newTeam=null'
+                class="btn btn-default" type="button">Add
+        </button>
+      </span>
+    </div>
+    <table class="table table-bordered">
+      <tbody>
+        <tr ng-repeat="x in curGame.teamMetrics">
+          <td>{{x.name}}</td>
+          <td ng-switch="x.type">
+            <span ng-switch-when="Number">
+              <input ng-disabled="authlevel<2" type="number" ng-model="changingTeam.metrics[x.name]" class="form-control">
+            </span>
+            <span ng-switch-when="String">
+              <input ng-disabled="authlevel<2" type="text" ng-model="changingTeam.metrics[x.name]" class="form-control">
+            </span>
+            <span ng-switch-when="Boolean">
+              <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                <button ng-disabled="authlevel<2" ng-class="changingTeam.metrics[x.name] ? 'btn-success': 'btn-default'" ng-click='changingTeam.metrics[x.name]=true' type="button" class="btn">True</button>
+                <button ng-disabled="authlevel<2" ng-class="!changingTeam.metrics[x.name] ? 'btn-danger': 'btn-default'" ng-click='changingTeam.metrics[x.name]=false' type="button" class="btn">False</button>
+              </div>
+            </span>
+            <span ng-switch-when="SelectOne">
+              <label ng-repeat="z in x.options.choices" class="radio-inline">
+                <input ng-disabled="authlevel<2" type="radio" ng-value="z" ng-model="changingTeam.metrics[x.name]">{{z}}
+              </label>
+            </span>
+            <span ng-switch-when="SelectMult">
+              <label ng-repeat="z in x.options.choices" class="checkbox-inline">
+                <input ng-disabled="authlevel<2" type="checkbox" ng-value="z" ng-model="changingTeam.metrics[x.name][z]">{{z}}
+              </label>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="form-group">
+      <label for="exampleInputFile">Upload Picture
+        <span ng-show="changingTeam.pic" class="bg-warning">Will replace current picture</span>
+     </label>
+      <input ng-disabled="authlevel<2" name="files" type="file">
+    </div>
+    <div class="form-group">
+      <div>
+        <button ng-click="editTeam(changingTeam,$event)" ng-disabled="authlevel<2" type="submit" class="btn btn-success">Save Team</button>
+      </div>
+    </div>
+  </form>
+</div>
