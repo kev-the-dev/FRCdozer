@@ -30,7 +30,7 @@ exports.initDB = function (url) {
       elements: Object
     })],
     teams: [new sch({
-      team:{type:Number,required:true},
+      team:{type:Number},
       notes:String,
       metrics:Object,
       name:String,

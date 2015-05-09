@@ -59,6 +59,10 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         url: '/add',
         templateUrl: 'views/add.html'
       })
+      .state('game.addTeam', {
+        url: '/pit',
+        templateUrl: 'views/AddTeam.html'
+      })
       .state('game.teams', {
         url: '/teams',
         templateUrl: 'views/teams.html'
