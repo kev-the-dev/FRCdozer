@@ -66,8 +66,11 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       .state('game.team', {
         url: '/team/:team',
         templateUrl: 'views/team.html',
-        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+        controller: ['$stateParams','$scope','$state',function ($stateParams,$scope,$state) {
+          if (!$stateParams.team) return $state.go('game.teams');
           $scope.TeamParam = $stateParams.team;
+          $scope.team = {};
+          $scope.team.team = Number($scope.TeamParam);
           $scope.$watchCollection('teams', function (teams) {
             teams.forEach(function (team) {
               if (Number(team.team) === Number($scope.TeamParam)) $scope.team = team;
@@ -78,7 +81,8 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       .state('game.match', {
         url: '/match/:match',
         templateUrl: 'views/match.html',
-        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+        controller: ['$stateParams','$scope','$state',function ($stateParams,$scope,$state) {
+          if (!$stateParams.match) return $state.go('game.matches');
           $scope.MatchParam = $stateParams.match;
           $scope.$watchCollection('matches', function (matches) {
             matches.forEach(function (match) {
@@ -90,7 +94,8 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       .state('game.sub', {
         url: '/sub/:sub',
         templateUrl: 'views/sub.html',
-        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+        controller: ['$stateParams','$scope','$state',function ($stateParams,$scope,$state) {
+          if (!$stateParams.sub) return $state.go('game.submissions');
           $scope.SubID = $stateParams.sub;
           $scope.$watchCollection('subs', function (subs) {
             subs.forEach(function (sub) {
