@@ -67,29 +67,36 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         url: '/teams',
         templateUrl: 'views/teams.html'
       })
+      .state('game.teamID', {
+        url: '/team/{id:[0-9a-fA-F]{24}}',
+        templateUrl: 'views/team.html',
+        controller: ['$stateParams','$scope','$state', function ($stateParams, $scope, $state) {
+          console.log("Teamid",$stateParams.id,$stateParams.id.match(/^[0-9a-fA-F]{24}$/));
+          $scope.team = {};
+          //$scope.team._id  = $stateParams.id;
+          $scope.$watchCollection('teams', function (teams) {
+            teams.forEach(function (team) {
+              if (team._id === $stateParams.id) {
+                $scope.team = team;
+              }
+            });
+          });
+        }]
+      })
       .state('game.team', {
-        url: '/team/:team',
+        url: '/team/{team:[0-9]*}',
         templateUrl: 'views/team.html',
         controller: ['$stateParams','$scope','$state',function ($stateParams,$scope,$state) {
+          console.log("Team Num",$stateParams.team);
           if (!$stateParams.team) return $state.go('game.teams');
-          var mongodbPattern = /^[0-9a-fA-F]{24}$/;
           $scope.param = $stateParams.team;
           $scope.team = {};
-          if ($scope.param.match(mongodbPattern)) {
-            $scope.team._id  = $scope.param;
-            $scope.$watchCollection('teams', function (teams) {
-              teams.forEach(function (team) {
-                if (team._id === $scope.team._id) $scope.team = team;
-              });
+          $scope.team.team = Number($scope.param);
+          $scope.$watchCollection('teams', function (teams) {
+            teams.forEach(function (team) {
+              if (Number(team.team) === $scope.team.team) $scope.team = team;
             });
-          } else {
-            $scope.team.team = Number($scope.param);
-            $scope.$watchCollection('teams', function (teams) {
-              teams.forEach(function (team) {
-                if (Number(team.team) === $scope.team.team) $scope.team = team;
-              });
-            });
-          }
+          });
         }]
       })
       .state('game.match', {

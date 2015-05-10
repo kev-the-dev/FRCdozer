@@ -100,7 +100,7 @@
         </td>
         <td class="bg-warning"><a ui-sref='game.team({team:x.team})'><h4>{{x.team}}</h4></a>
         </td>
-        <td class="bg-warning"><a ui-sref='game.team({team:x.team})'>{{x.name}}</a></td>
+        <td class="bg-warning"><a ui-sref='game.teamID({id:x._id})'>{{x.name || "N/A"}}</a></td>
         <td ng-show="show.teams.Ranks" ng-repeat="r in tbaRanks" class="bg-info">
           <h4>
             {{x.tbaRanks[$index]}}
