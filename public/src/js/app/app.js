@@ -72,14 +72,24 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         templateUrl: 'views/team.html',
         controller: ['$stateParams','$scope','$state',function ($stateParams,$scope,$state) {
           if (!$stateParams.team) return $state.go('game.teams');
-          $scope.TeamParam = $stateParams.team;
+          var mongodbPattern = /^[0-9a-fA-F]{24}$/;
+          $scope.param = $stateParams.team;
           $scope.team = {};
-          $scope.team.team = Number($scope.TeamParam);
-          $scope.$watchCollection('teams', function (teams) {
-            teams.forEach(function (team) {
-              if (Number(team.team) === Number($scope.TeamParam)) $scope.team = team;
+          if ($scope.param.match(mongodbPattern)) {
+            $scope.team._id  = $scope.param;
+            $scope.$watchCollection('teams', function (teams) {
+              teams.forEach(function (team) {
+                if (team._id === $scope.team._id) $scope.team = team;
+              });
             });
-          });
+          } else {
+            $scope.team.team = Number($scope.param);
+            $scope.$watchCollection('teams', function (teams) {
+              teams.forEach(function (team) {
+                if (Number(team.team) === $scope.team.team) $scope.team = team;
+              });
+            });
+          }
         }]
       })
       .state('game.match', {
