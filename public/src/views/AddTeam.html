@@ -25,9 +25,14 @@
       </div>
       <div ng-show="changingTeam.team">
         <div class="col-md-6">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              Upload picture <span ng-show="changingTeam.pic" class="bg-warning">Will replace current picture</span>
+          <div class="panel" ng-class="changingTeam.pic ? 'panel-danger' : 'panel-default' ">
+            <div class="panel-heading" ng-switch="changingTeam.pic">
+              <span ng-switch-when="undefined">
+                Upload Picture
+              </span>
+              <span ng-switch-default>
+                Replace Picture
+              </span>
             </div>
             <div class="panel-body">
               <input ng-disabled="authlevel<2" name="files" type="file">
@@ -73,7 +78,7 @@
           </div>
         </div>
         <div class="col-md-6">
-          <button ng-click="editTeam(changingTeam,$event)" ng-disabled="authlevel<2" type="submit" class="btn btn-success save-button">Save Team</button>
+          <button ng-click="editTeam(changingTeam,$event); changingTeam={team:''}" ng-disabled="authlevel<2" type="submit" class="btn btn-success save-button">Save Team</button>
         </div>
       </div>
     </div>
