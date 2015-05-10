@@ -9,7 +9,6 @@
 		if (!arr || arr.length<1) return 0;
 		var x = arr.length;
 		angular.forEach(arr,function (obj) {
-			console.log(obj.type);
 			if (obj.type === "String") x--;
 		});
 		return x;
@@ -262,7 +261,6 @@
 				.success(function(x,sta){
 					$scope.newTeam = {};
 					$scope.handle('editTeam');
-					console.log(x);
 					$scope.changeTeam(x);
 				})
 				.error(function(x,sta){
