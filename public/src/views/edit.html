@@ -275,7 +275,7 @@
                     <input ng-disabled="authlevel<3" ng-model='x.options.choices[$index]' class="form-control">
                   </td>
                   <td>
-                    <button ng-disabled="authlevel<3" class='btn btn-xs btn-danger' 
+                    <button ng-disabled="authlevel<3" class='btn btn-xs btn-danger'
                             ng-click="x.options.choices.splice($index,1)">
                       <span class='glyphicon glyphicon-minus-sign' aria-hidden="true"></span>
                     </button>
@@ -285,10 +285,10 @@
                   <td>
                      <button ng-disabled="authlevel<3" class="btn btn-sm btn-success" ng-click='x.options.choices.push("")'>
                       <span class='glyphicon glyphicon-plus-sign' aria-hidden="true"></span>
-                    </button>                   
+                    </button>
                   </td>
                 </tr>
-              </table>            
+              </table>
             </td>
             <td>
               <button ng-disabled="authlevel<3" class='btn btn-sm btn-danger' data-ng-click="curGame.teamMetrics.splice($index,1)">
