@@ -48,7 +48,7 @@
           <th colspan="4" class="bg-warning">
             Info
           </th>
-          <th ng-show="show.teams.Ranks" colspan="{{tbaRanks.length}}" class="bg-info">
+          <th ng-show="show.teams.Ranks&& tbaRanks" colspan="{{tbaRanks.length}}" class="bg-info">
             Offical Rankings
           </th>
           <th ng-show="show.teams.Metrics" colspan="{{curGame.game | notString}}" class="bg-yellow">
