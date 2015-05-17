@@ -1,3 +1,13 @@
+.alliance-button {
+  padding: 0px !important;
+}
+.alliance-button div {
+  width: 100% !important;
+}
+.alliance-button div button{
+  width: 50% !important;
+  line-height: 150% !important;
+}
 .bg-yellow {
   background-color: lavender;
 }
