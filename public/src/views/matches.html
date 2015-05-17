@@ -1,82 +1,91 @@
-<button ng-click="tbaGrabMatches()" class="btn btn-primary">Grab Matches from TBA</button>
-<br><br>
-<div ng-show='filters.matches.key' class="label label-info" role="alert">
-  <strong>{{"Filtering by "+ filters.matches.name}}<span ng-show='filters.matches.reverse'>, Decending</span></strong>
-  <span ng-click='sort(undefined,"matches")' class='glyphicon glyphicon-remove-circle btn' aria-hidden="true"></span>
+<div>
+  <h3 class="panel-title">
+    <button ng-click="tbaGrabMatches()" class="btn btn-primary">Grab Matches from TBA</button>
+  </h3>
+  <hr>
+  <div ng-show='filters.matches.key' class="label label-info" role="alert">
+    <strong>{{"Filtering by "+ filters.matches.name}}<span ng-show='filters.matches.reverse'>, Decending</span></strong>
+    <span ng-click='sort(undefined,"matches")' class='glyphicon glyphicon-remove-circle btn' aria-hidden="true"></span>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <span class="panel-title">Matches</span>
+    </div>
+    <table class='table table-bordered table-striped table-hover'>
+      <thead>
+        <tr>
+          <th>
+            Match
+            <button class="btn btn-xs btn-primary" ng-click='sort(matchSort,"matches","Match")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+          </th>
+          <th>
+            Match Time
+            <button class="btn btn-xs btn-primary" ng-click='sort("time","matches","Match Time")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+          </th>
+          <th class="btn-primary">Blue Alliance</th>
+          <th class="btn-danger">Red Alliance</th>
+          <th ng-repeat="g in curGame.calc" class="btn-primary">
+            {{g.name}}
+            <button class="btn btn-xs btn-danger" ng-click='sort("blue.calc[\""+g.name+"\"]","matches","Blue"+g.name)'><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+          </th>
+          <th class="btn-primary">
+            TBA Score
+            <button class="btn btn-xs btn-danger" ng-click='sort("blue.score","matches","Blue TBA Score")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+          </th>
+          <th ng-repeat="g in curGame.calc" class="btn-danger">
+            {{g.name}}
+            <button class="btn btn-xs btn-primary" ng-click='sort("red.calc[\""+g.name+"\"]","matches","Red"+g.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+          </th>
+          <th class="btn-danger">
+            TBA Score
+            <button class="btn btn-xs btn-primary" ng-click='sort("red.score","matches","Red TBA Score")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+          </th>
+          <th class="bg-info">
+            Winner
+            <button class="btn btn-xs btn-primary" ng-click='sort("winner","matches","TBA match Winner")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-ng-repeat='x in matches | orderBy:filters.matches.key:!filters.matches.reverse'>
+          <td>
+            <a href='#/game/{{curGame.name}}/match/{{x.match}}'>{{x.match}}</a>
+            <span ng-show="x.videos.length" class="glyphicon glyphicon-film" aria-hidden="true"></span>
+          </td>
+          <td>{{(x.time | date:'EEEE, h:mm')}}</td>
+          <td>
+            <ul class="list-inline">
+              <li ng-repeat="(y,x) in x.blue.teams">
+                <a ng-show="x !== true" href="#/game/{{curGame.name}}/sub/{{x._id}}" class="text-success"><b>{{y}}</b></a>
+                <a ng-show="x === true" href="#/game/{{curGame.name}}/team/{{y}}" class="text-warning">{{y}}</a>
+              </li>
+            </ul>
+          </td>
+          <td>
+            <ul class="list-inline">
+              <li ng-repeat="(y,x) in x.red.teams">
+                <a ng-show="x !== true" href="#/game/{{curGame.name}}/sub/{{x._id}}" class="text-success"><b>{{y}}</b></a>
+                <a ng-show="x === true" href="#/game/{{curGame.name}}/team/{{y}}" class="text-warning">{{y}}</a>
+              </li>
+            </ul>
+          </td>
+          <td ng-repeat="g in curGame.calc">
+            <b>{{x.blue.calc[g.name]}}</b>
+          </td>
+          <td>
+            <b>{{x.blue.score}}</b>
+          </td>
+          <td ng-repeat="g in curGame.calc">
+            <b>{{x.red.calc[g.name]}}</b>
+          </td>
+          <td>
+            <b>{{x.red.score}}</b>
+          </td>
+          <td>
+            <b>{{x.winner}}</b>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-<table class='table table-bordered table-striped table-hover'>
-  <thead>
-    <tr>
-      <th>
-        Match
-        <button class="btn btn-xs btn-primary" ng-click='sort(matchSort,"matches","Match")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
-      </th>
-      <th>
-        Match Time
-        <button class="btn btn-xs btn-primary" ng-click='sort("time","matches","Match Time")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
-      </th>
-      <th class="btn-primary">Blue Alliance</th>
-      <th class="btn-danger">Red Alliance</th>
-      <th ng-repeat="g in curGame.calc" class="btn-primary">
-        {{g.name}}
-        <button class="btn btn-xs btn-danger" ng-click='sort("blue.calc[\""+g.name+"\"]","matches","Blue"+g.name)'><span class="glyphicon glyphicon-sort" aria-hidden="true"></span></button>
-      </th>
-      <th class="btn-primary">
-        TBA Score
-        <button class="btn btn-xs btn-danger" ng-click='sort("blue.score","matches","Blue TBA Score")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
-      </th>
-      <th ng-repeat="g in curGame.calc" class="btn-danger">
-        {{g.name}}
-        <button class="btn btn-xs btn-primary" ng-click='sort("red.calc[\""+g.name+"\"]","matches","Red"+g.name)'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
-      </th>
-      <th class="btn-danger">
-        TBA Score
-        <button class="btn btn-xs btn-primary" ng-click='sort("red.score","matches","Red TBA Score")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
-      </th>
-      <th class="bg-info">
-        Winner
-        <button class="btn btn-xs btn-primary" ng-click='sort("winner","matches","TBA match Winner")'><span class=" glyphicon glyphicon-sort" aria-hidden="true"></span></button>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr data-ng-repeat='x in matches | orderBy:filters.matches.key:!filters.matches.reverse'>
-      <td>
-        <a href='#/game/{{curGame.name}}/match/{{x.match}}'>{{x.match}}</a>
-        <span ng-show="x.videos.length" class="glyphicon glyphicon-film" aria-hidden="true"></span>
-      </td>
-      <td>{{(x.time | date:'EEEE, h:mm')}}</td>
-      <td>
-        <ul class="list-inline">
-          <li ng-repeat="(y,x) in x.blue.teams">
-            <a ng-show="x !== true" href="#/game/{{curGame.name}}/sub/{{x._id}}" class="text-success"><b>{{y}}</b></a>
-            <a ng-show="x === true" href="#/game/{{curGame.name}}/team/{{y}}" class="text-warning">{{y}}</a>
-          </li>
-        </ul>
-      </td>
-      <td>
-        <ul class="list-inline">
-          <li ng-repeat="(y,x) in x.red.teams">
-            <a ng-show="x !== true" href="#/game/{{curGame.name}}/sub/{{x._id}}" class="text-success"><b>{{y}}</b></a>
-            <a ng-show="x === true" href="#/game/{{curGame.name}}/team/{{y}}" class="text-warning">{{y}}</a>
-          </li>
-        </ul>
-      </td>
-      <td ng-repeat="g in curGame.calc">
-        <b>{{x.blue.calc[g.name]}}</b>
-      </td>
-      <td>
-        <b>{{x.blue.score}}</b>
-      </td>
-      <td ng-repeat="g in curGame.calc">
-        <b>{{x.red.calc[g.name]}}</b>
-      </td>
-      <td>
-        <b>{{x.red.score}}</b>
-      </td>
-      <td>
-        <b>{{x.winner}}</b>
-      </td>
-    </tr>
-  </tbody>
-</table>
