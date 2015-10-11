@@ -9,7 +9,6 @@ function validTBA (req,res,next) { //confirms
   confirm.update(req.game.tba.key || "");
   confirm.update(req.rawPayload);
   var sum = confirm.digest('hex');
-
   if (sum === req.headers['x-tba-checksum']) {
     req.body = JSON.parse(req.rawPayload);
     return next();
