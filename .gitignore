@@ -30,3 +30,4 @@ config.json
 node_modules
 public/uploads/
 public/dist/
+*.save 
