@@ -20,8 +20,15 @@ var defaultSettings = {
     url : "mongodb://localhost/dozer"
   },
   publicDir : "./public/dist",
-  uploadsDir : "./public"
+  uploadsDir : "./public",
+  hostStatic : true,
+  hosts: undefined
 };
+
+var GetSetting = function (test,def) {
+	if (test === undefined) return def;
+	return test;
+}
 
 var settings = JSON.parse(fs.readFileSync("./config.json"));
 
@@ -39,9 +46,10 @@ if (settings.https) {
 
 var vars = require('./routes/dozer/vars.js');
     vars.io=require("socket.io")(server);
-    vars.initDB(settings.database.url || defaultSettings.database.url);
-    vars.publicDir = settings.publicDir || defaultSettings.publicDir;
-    vars.uploadsDir = settings.uploadsDir || defaultSettings.uploadsDir;
+    vars.initDB(GetSetting(settings.database.url,defaultSettings.database.url));
+    vars.hostStatic = GetSetting(settings.hostStatic,defaultSettings.hostStatic);
+    vars.publicDir = GetSetting(settings.publicDir,defaultSettings.publicDir);
+    vars.uploadsDir = GetSetting(settings.uploadsDir,defaultSettings.uploadsDir);
 
 app.use(favicon(vars.publicDir+'/favicon.ico'));
 app.use(logger('dev'));
@@ -73,8 +81,8 @@ app.use(function(err, req, res, next) {
 
 var debug = require('debug')('expressTest');
 
-app.set('port', settings.port || defaultSettings.port);
+app.set('port', GetSetting(settings.port,defaultSettings.port));
 
-server.listen(app.get('port'), function() {
+server.listen(app.get('port'),GetSetting(settings.hosts,defaultSettings.hosts),function() {
   debug('Express server listening on port ' + server.address().port);
 });
