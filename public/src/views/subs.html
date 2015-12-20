@@ -40,7 +40,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr dir-paginate='x in subs | orderBy:filters.subs.key:!filters.subs.reverse | itemsPerPage: 10'>
+          <tr ng-repeat='x in subs | orderBy:filters.subs.key:!filters.subs.reverse'>
             <td data-title="Links">
               <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
               <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>

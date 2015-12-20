@@ -12,10 +12,7 @@ function oneInstance (list,param,key) { //generates controller for team, match, 
   }];
   return res;
 }
-angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
-  .config(['paginationTemplateProvider',function(paginationTemplateProvider) {
-    paginationTemplateProvider.setPath('views/paginate.html');
-  }])
+angular.module('FRCdozer',['ui.router',])
   .config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('home', {
