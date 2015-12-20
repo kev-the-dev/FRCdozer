@@ -28,7 +28,7 @@ var defaultSettings = {
 var GetSetting = function (test,def) {
 	if (test === undefined) return def;
 	return test;
-}
+};
 
 var settings = JSON.parse(fs.readFileSync("./config.json"));
 
