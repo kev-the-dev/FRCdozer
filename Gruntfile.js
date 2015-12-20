@@ -38,12 +38,12 @@ module.exports = function(grunt) {
   	},
     uglify: {
       app : {
-        src : ['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
+        src : ['public/src/js//app.js','public/src/js/ctrls/**.js'],
         dest: 'public/dist/js/app.js'
       },
       vendor : {
         src: [
-          'public/src/js/vendor/socket.io.js'
+          'node_modules/socket.io-client/socket.io.js'
         ],
         dest:'public/vendor/nonbower/vendor.min.js'
       }
@@ -70,7 +70,7 @@ module.exports = function(grunt) {
     },
     cssmin : {
       app : {
-        src: 'public/src/css/app/**.css',
+        src: 'public/src/css/**.css',
         dest: 'public/dist/css/app.css'
       },
     },
@@ -88,11 +88,11 @@ module.exports = function(grunt) {
     },
     csslint: {
       app: {
-        src: ['public/src/css/app/**.css']
+        src: ['public/src/css/**.css']
       }
     },
     jshint : {
-      front : ['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
+      front : ['public/src/js/app.js','public/src/js/ctrls/**.js'],
       back: ['app.js','routes/dozer/**/**.js']
     }
   });
