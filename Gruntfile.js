@@ -24,6 +24,7 @@ module.exports = function(grunt) {
 			src: ['public/vendor/angular/angular.min.js', 
 			  		'public/vendor/angular-ui-router/release/angular-ui-router.min.js',
 			  		'public/vendor/angular-bootstrap/ui-bootstrap.min.js',
+			  		'public/vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
 			  		'public/vendor/nonbower/vendor.min.js'
 			  		],
 			dest: 'public/dist/js/vendor.js'
