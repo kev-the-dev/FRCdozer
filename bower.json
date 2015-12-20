@@ -1,0 +1,16 @@
+{
+  "name": "FRCdozer",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "Kevin Allen <kma1660@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ironmig/FRCdozer",
+  "dependencies": {
+    "bootstrap": "*",
+    "angular": "*",
+    "angular-ui-router": "*",
+    "angular-bootstrap": "*"
+  }
+}

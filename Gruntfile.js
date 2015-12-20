@@ -3,6 +3,39 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    bower : {
+    	vendor: {
+    		options: {
+				targetDir: './public/vendor',
+				layout: 'byType',
+				install: true,
+				verbose: false,
+				cleanTargetDir: false,	
+				cleanBowerDir: false,
+				bowerOptions: {}
+    		}
+    	}
+    },
+    concat: {
+    	js : {
+			options: {
+			  separator: '\r\n',
+			},
+			src: ['public/vendor/angular/angular.min.js', 
+			  		'public/vendor/angular-ui-router/release/angular-ui-router.min.js',
+			  		'public/vendor/angular-bootstrap/ui-bootstrap.min.js',
+			  		'public/vendor/nonbower/vendor.min.js'
+			  		],
+			dest: 'public/dist/js/vendor.js'
+    	},
+    	css: {
+			options: {
+			  separator: '\r\n',
+			},
+			src: ['public/vendor/bootstrap/dist/css/bootstrap.min.css'],
+			dest: 'public/dist/css/vendor.css'
+    	}
+  	},
     uglify: {
       app : {
         src : ['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
@@ -10,12 +43,9 @@ module.exports = function(grunt) {
       },
       vendor : {
         src: [
-          'public/src/js/vendor/angular.js',
-          'public/src/js/vendor/angular-ui-router.js',
-          'public/src/js/vendor/paginate.js',
           'public/src/js/vendor/socket.io.js'
         ],
-        dest:'public/dist/js/vendor.js'
+        dest:'public/vendor/nonbower/vendor.min.js'
       }
     },
     htmlmin: {
@@ -43,90 +73,17 @@ module.exports = function(grunt) {
         src: 'public/src/css/app/**.css',
         dest: 'public/dist/css/app.css'
       },
-      vendor : {
-        src : 'public/src/css/vendor/**.css',
-        dest: 'public/dist/css/vendor.css'
-      }
-    },
-    concurrent: {
-      dev: {
-        tasks: ['nodemon', 'watch:cssvendor','watch:jsapp','watch:jsvendor',
-                'watch:htmlapp','watch:fontsapp','watch:fontsvendor','watch:favicon','watch:server','watch:cssapp','watch:cssvendor'],
-        options: {
-          limit: 12,
-          logConcurrentOutput: true
-        }
-      },
-      dist : {
-        tasks: ['uglify:app','uglify:vendor','cssmin:app','cssmin:vendor','htmlmin:app',
-                'copy:fontsapp','copy:fontsvendor','copy:favicon'],
-        options: {
-          logConcurrentOutput: true
-        }
-      }
-    },
-    nodemon: {
-      dev: {
-        script: 'app.js',
-        options : {
-          watch: ['app.js','routes/']
-        }
-      }
     },
     copy : {
-      fontsapp : {
+      fonts : {
         expand: true,
         src : '*',
-        cwd: 'public/src/fonts/app/',
-        dest: 'public/dist/fonts/'
-      },
-      fontsvendor : {
-        expand: true,
-        src : '*',
-        cwd: 'public/src/fonts/vendor/',
+        cwd: 'public/vendor/bootstrap/dist/fonts/',
         dest: 'public/dist/fonts/'
       },
       favicon : {
         src: 'public/src/favicon.ico',
         dest:'public/dist/favicon.ico'
-      }
-    },
-    watch: {
-      cssapp : {
-        files:['public/src/css/app/**.css'],
-        tasks: ['csslint:app','cssmin:app']
-      },
-      cssvendor: {
-        files:['public/src/css/vendor/**.css'],
-        tasks: ['cssmin:vendor']
-      },
-      jsapp : {
-        files:['public/src/js/app/app.js','public/src/js/app/ctrls/**.js'],
-        tasks: ['jshint:front','uglify:app']
-      },
-      jsvendor : {
-        files:['public/src/js/vendor/**'],
-        tasks: ['uglify:vendor']
-      },
-      htmlapp : {
-        files:['public/src/index.html','public/src/views/**.html'],
-        tasks: ['htmlmin:app']
-      },
-      fontsapp : {
-        files:['public/src/fonts/app/**'],
-        tasks:['copy:fontsapp']
-      },
-      fontsvendor : {
-        files:['public/src/fonts/vendor/**'],
-        tasks:['copy:fontsvendor']
-      },
-      favicon : {
-        files:['public/src/favicon.ico'],
-        tasks:['copy:favicon']
-      },
-      server : {
-        files: ['app.js','routes/dozer/**/**.js'],
-        tasks: ['jshint:back']
       }
     },
     csslint: {
@@ -145,14 +102,21 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-csslint');
+  grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-bower-task');
   // Default task(s).
-  grunt.registerTask('build',['concurrent:dist']);
-  grunt.registerTask('test',['jshint:front','jshint:back','csslint:app']);
-  grunt.registerTask('dev', ['jshint:front','jshint:back','csslint:app','concurrent:dist','concurrent:dev']);
+  grunt.registerTask('build',['bower:vendor',
+  							  'uglify:app',
+  							  'uglify:vendor',
+  							  'cssmin:app',
+  							  'htmlmin:app',
+  							  'concat:js',
+  							  'concat:css',
+  							  'copy:fonts',
+  							  'copy:favicon']);
+  grunt.registerTask('test',['jshint:front','csslint:app','jshint:back']);
 };
