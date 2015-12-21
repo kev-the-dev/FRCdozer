@@ -129,7 +129,12 @@ angular.module('FRCdozer',['ui.router','ui.bootstrap'])
       .state('game.advanced', {
         url:'/advanced',
         templateUrl: 'views/advanced.html'
-      });
+      })
+      .state('org', {
+        url: '/org/:name',
+        templateUrl: 'views/org.html',
+        controller:"orgCtrl"
+	  });
       $urlRouterProvider
         .when('/g/:name', '/game/:name')
         .when('','/')

@@ -49,6 +49,17 @@ exports.initDB = function (url) {
     info:Object,
     games:[{ type: sch.Types.ObjectId, ref: 'games' }]
   }));
+  
+	exports.orgs = con.model('orgs',new sch({
+		name: {type: String, required: true,unique: true},
+		owner: { type: sch.Types.ObjectId, ref: 'users',required: true},
+		meta: {
+			description: {type: String},
+			website: {type: String}
+		},
+		users: [],
+		games: [{ type: sch.Types.ObjectId, ref: 'games' }]
+	}));
 };
 
 module.exports = exports;
