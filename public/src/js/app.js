@@ -12,7 +12,7 @@ function oneInstance (list,param,key) { //generates controller for team, match, 
   }];
   return res;
 }
-angular.module('FRCdozer',['ui.router','ui.bootstrap'])
+angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
   .config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('home', {
