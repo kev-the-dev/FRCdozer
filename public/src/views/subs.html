@@ -40,7 +40,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat='x in subs | orderBy:filters.subs.key:!filters.subs.reverse |  limitTo : 10 : ((page-1)*10)'>
+          <tr dir-paginate='x in subs | orderBy:filters.subs.key:!filters.subs.reverse | itemsPerPage: 10'>
             <td data-title="Links">
               <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
               <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
@@ -93,8 +93,8 @@
         </tbody>
       </table>
     </div>
-    <div class="row ">
-      <uib-pagination class="subspaginaiton" total-items="subs.length" ng-model="page" items-per-page="10" max-size="5" boundary-links="true"></uib-pagination>
+   <div class="row">
+      <dir-pagination-controls></dir-pagination-controls>
     </div>
   </div>
 </div>
