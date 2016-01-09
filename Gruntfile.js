@@ -6,7 +6,7 @@ module.exports = function(grunt) {
     bower : {
     	vendor: {
     		options: {
-				targetDir: './public/vendor',
+				targetDir: './public/vendor/bower',
 				layout: 'byType',
 				install: true,
 				verbose: false,
@@ -20,33 +20,45 @@ module.exports = function(grunt) {
     	js : {
 			options: {
 			  separator: '\r\n',
+			  sourceMap : true
 			},
-			src: ['public/vendor/angular/angular.min.js', 
-			  		'public/vendor/angular-ui-router/release/angular-ui-router.min.js',
-			  		'public/vendor/angular-bootstrap/ui-bootstrap.min.js',
-			  		'public/vendor/angular-bootstrap/ui-bootstrap-tpls.min.js',
-			  		'public/vendor/nonbower/vendor.min.js'
-			  		],
+			src: ['public/vendor/bower/angular/angular.min.js', 
+			  	  'public/vendor/bower/angular-ui-router/release/angular-ui-router.min.js',
+			  	  'public/vendor/socket.io/socket.io.min.js',
+			  	  'public/vendor/min/min.js'
+			  	 ],
 			dest: 'public/dist/js/vendor.js'
     	},
     	css: {
 			options: {
 			  separator: '\r\n',
 			},
-			src: ['public/vendor/bootstrap/dist/css/bootstrap.min.css'],
+			src: ['public/vendor/bower/bootstrap/dist/css/bootstrap.min.css'],
 			dest: 'public/dist/css/vendor.css'
-    	}
+    	},
+    	jsDebug : {
+			options: {
+			  separator: '\r\n',
+			  sourceMap : true
+			},
+			src : ['public/src/js/app.js','public/src/js/ctrls/**.js'],
+            dest: 'public/dist/js/app.js'
+		}
   	},
     uglify: {
       app : {
-        src : ['public/src/js//app.js','public/src/js/ctrls/**.js'],
+		options : {
+			sourceMap : true
+	    },
+        src : ['public/src/js/app.js','public/src/js/ctrls/**.js'],
         dest: 'public/dist/js/app.js'
       },
-      vendor : {
-        src: [
-          'node_modules/socket.io-client/socket.io.js'
-        ],
-        dest:'public/vendor/nonbower/vendor.min.js'
+      vendor: {
+		options : {
+			sourceMap: true
+	    },
+	    src: ['public/vendor/bower/angular-utils-pagination/dirPagination.js'],
+	    dest: 'public/vendor/min/min.js'
       }
     },
     htmlmin: {
@@ -79,12 +91,30 @@ module.exports = function(grunt) {
       fonts : {
         expand: true,
         src : '*',
-        cwd: 'public/vendor/bootstrap/dist/fonts/',
+        cwd: 'public/vendor/bower/bootstrap/dist/fonts/',
         dest: 'public/dist/fonts/'
       },
       favicon : {
         src: 'public/src/favicon.ico',
         dest:'public/dist/favicon.ico'
+      },
+      cssDebug : {
+        src: 'public/src/css/**.css',
+        dest: 'public/dist/css/app.css'
+      },
+      htmlDebug : {
+	   files: [
+          {
+            src: 'public/src/index.html',
+            dest: 'public/dist/index.html'
+          },
+          {
+            expand: true,
+            cwd: 'public/src/views/',
+            src: '*.html',
+            dest: 'public/dist/views/'
+          }
+        ] 
       }
     },
     csslint: {
@@ -115,6 +145,15 @@ module.exports = function(grunt) {
   							  'uglify:vendor',
   							  'cssmin:app',
   							  'htmlmin:app',
+  							  'concat:js',
+  							  'concat:css',
+  							  'copy:fonts',
+  							  'copy:favicon']);
+  grunt.registerTask('build-debug',['bower:vendor',
+  							  'concat:jsDebug',
+  							  'uglify:vendor',
+  							  'copy:cssDebug',
+  							  'copy:htmlDebug',
   							  'concat:js',
   							  'concat:css',
   							  'copy:fonts',
