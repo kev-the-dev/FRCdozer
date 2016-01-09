@@ -13,9 +13,6 @@ function oneInstance (list,param,key) { //generates controller for team, match, 
   return res;
 }
 angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
-  .config(['paginationTemplateProvider',function(paginationTemplateProvider) {
-    paginationTemplateProvider.setPath('views/paginate.html');
-  }])
   .config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('home', {
@@ -59,18 +56,42 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
         url: '/add',
         templateUrl: 'views/add.html'
       })
+      .state('game.addTeam', {
+        url: '/pit',
+        templateUrl: 'views/AddTeam.html'
+      })
       .state('game.teams', {
         url: '/teams',
         templateUrl: 'views/teams.html'
       })
-      .state('game.team', {
-        url: '/team/:team',
+      .state('game.teamID', {
+        url: '/team/{id:[0-9a-fA-F]{24}}',
         templateUrl: 'views/team.html',
-        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
-          $scope.TeamParam = $stateParams.team;
+        controller: ['$stateParams','$scope','$state', function ($stateParams, $scope, $state) {
+          console.log("Teamid",$stateParams.id,$stateParams.id.match(/^[0-9a-fA-F]{24}$/));
+          $scope.team = {};
+          //$scope.team._id  = $stateParams.id;
           $scope.$watchCollection('teams', function (teams) {
             teams.forEach(function (team) {
-              if (Number(team.team) === Number($scope.TeamParam)) $scope.team = team;
+              if (team._id === $stateParams.id) {
+                $scope.team = team;
+              }
+            });
+          });
+        }]
+      })
+      .state('game.team', {
+        url: '/team/{team:[0-9]*}',
+        templateUrl: 'views/team.html',
+        controller: ['$stateParams','$scope','$state',function ($stateParams,$scope,$state) {
+          console.log("Team Num",$stateParams.team);
+          if (!$stateParams.team) return $state.go('game.teams');
+          $scope.param = $stateParams.team;
+          $scope.team = {};
+          $scope.team.team = Number($scope.param);
+          $scope.$watchCollection('teams', function (teams) {
+            teams.forEach(function (team) {
+              if (Number(team.team) === $scope.team.team) $scope.team = team;
             });
           });
         }]
@@ -78,7 +99,8 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       .state('game.match', {
         url: '/match/:match',
         templateUrl: 'views/match.html',
-        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+        controller: ['$stateParams','$scope','$state',function ($stateParams,$scope,$state) {
+          if (!$stateParams.match) return $state.go('game.matches');
           $scope.MatchParam = $stateParams.match;
           $scope.$watchCollection('matches', function (matches) {
             matches.forEach(function (match) {
@@ -90,7 +112,8 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       .state('game.sub', {
         url: '/sub/:sub',
         templateUrl: 'views/sub.html',
-        controller: ['$stateParams','$scope',function ($stateParams,$scope) {
+        controller: ['$stateParams','$scope','$state',function ($stateParams,$scope,$state) {
+          if (!$stateParams.sub) return $state.go('game.submissions');
           $scope.SubID = $stateParams.sub;
           $scope.$watchCollection('subs', function (subs) {
             subs.forEach(function (sub) {
@@ -106,7 +129,12 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       .state('game.advanced', {
         url:'/advanced',
         templateUrl: 'views/advanced.html'
-      });
+      })
+      .state('org', {
+        url: '/org/:name',
+        templateUrl: 'views/org.html',
+        controller:"orgCtrl"
+	  });
       $urlRouterProvider
         .when('/g/:name', '/game/:name')
         .when('','/')

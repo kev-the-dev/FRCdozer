@@ -40,83 +40,86 @@
     <span ng-click='sort(undefined,"teams")' class='glyphicon glyphicon-remove-circle btn' aria-hidden="true"></span>
   </div>
   <br>
-  <table class='table table-bordered'>
-    <thead>
-      <tr>
-        <th colspan="4" class="bg-warning">
-          Info
-        </th>
-        <th ng-show="show.teams.Ranks" colspan="{{tbaRanks.length}}" class="bg-info">
-          Offical Rankings
-        </th>
-        <th ng-show="show.teams.Metrics" colspan="{{curGame.game | notString}}" class="bg-yellow">
-          Game Metrics
-        </th>
-        <th ng-show="show.teams.Calc" colspan="{{curGame.calc.length}}" class="bg-success">
-          Calculated Elements
-        </th>
-      </tr>
-      <tr>
-        <th class="bg-warning">#</th>
-        <th class="bg-warning">Meta
-          <button class="btn btn-xs btn-primary" ng-click='sort("subs.length","teams","# of submissions")'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-        <th class="bg-warning">Team
-          <button class="btn btn-xs btn-primary" ng-click='sort("team","teams","Team number")'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-        <th class="bg-warning">Name
-          <button class="btn btn-xs btn-primary" ng-click='sort("name","teams","Team name")'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-        <th ng-show="show.teams.Ranks" ng-repeat="r in tbaRanks" class="bg-info">{{r}}
-          <button class="btn btn-xs btn-primary" ng-click='sort("tbaRanks["+$index+"]" ,"teams","Official Rank")'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-        <th ng-show="show.teams.Metrics" data-ng-repeat='x in curGame.game | filter: {type:"!String"}' class="bg-yellow">{{x.name}}
-          <button class="btn btn-xs btn-primary" ng-click='sort("averages[\""+x.name+"\"]","teams","Average "+x.name)'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-        <th ng-show="show.teams.Calc" data-ng-repeat='y in curGame.calc' class="bg-success">
-          {{y.name}}
-          <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","teams","Average"+y.name)'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr data-ng-repeat='x in teams | orderBy:filters.teams.key:!filters.teams.reverse'>
-        <td class="bg-warning"><h4>{{$index+1}}</h4></td>
-        <td class="bg-warning">
-          <span class='badge'>{{x.subs.length}}</span>
-          <span ng-show="x.pic" class="glyphicon glyphicon-camera" aria-hidden="true"></span>
-        </td>
-        <td class="bg-warning"><a ui-sref='game.team({team:x.team})'><h4>{{x.team}}</h4></a>
-        </td>
-        <td class="bg-warning"><a ui-sref='game.team({team:x.team})'>{{x.name}}</a></td>
-        <td ng-show="show.teams.Ranks" ng-repeat="r in tbaRanks" class="bg-info">
-          <h4>
-            {{x.tbaRanks[$index]}}
-          </h4>
-        </td>
-        <td ng-show="show.teams.Metrics" data-ng-repeat='z in curGame.game | filter: {type:"!String"}' class="bg-yellow">
-          <h4>
-            {{x.averages[z.name]}}
-          </h4>
-        </td>
-        <td ng-show="show.teams.Calc" data-ng-repeat='y in curGame.calc' class="bg-success">
-          <h4>
-            {{x.calc[y.name]}}
-          </h4>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="panel panel-default">
+    <div class="panel-heading">Teams</div>
+    <table class='table table-bordered'>
+      <thead>
+        <tr>
+          <th colspan="4" class="bg-warning">
+            Info
+          </th>
+          <th ng-show="show.teams.Ranks&& tbaRanks" colspan="{{tbaRanks.length}}" class="bg-info">
+            Offical Rankings
+          </th>
+          <th ng-show="show.teams.Metrics" colspan="{{curGame.game | notString}}" class="bg-yellow">
+            Game Metrics
+          </th>
+          <th ng-show="show.teams.Calc" colspan="{{curGame.calc.length}}" class="bg-success">
+            Calculated Elements
+          </th>
+        </tr>
+        <tr>
+          <th class="bg-warning">#</th>
+          <th class="bg-warning">Meta
+            <button class="btn btn-xs btn-primary" ng-click='sort("subs.length","teams","# of submissions")'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th class="bg-warning">Team
+            <button class="btn btn-xs btn-primary" ng-click='sort("team","teams","Team number")'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th class="bg-warning">Name
+            <button class="btn btn-xs btn-primary" ng-click='sort("name","teams","Team name")'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th ng-show="show.teams.Ranks" ng-repeat="r in tbaRanks" class="bg-info">{{r}}
+            <button class="btn btn-xs btn-primary" ng-click='sort("tbaRanks["+$index+"]" ,"teams","Official Rank")'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th ng-show="show.teams.Metrics" data-ng-repeat='x in curGame.game | filter: {type:"!String"}' class="bg-yellow">{{x.name}}
+            <button class="btn btn-xs btn-primary" ng-click='sort("averages[\""+x.name+"\"]","teams","Average "+x.name)'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th ng-show="show.teams.Calc" data-ng-repeat='y in curGame.calc' class="bg-success">
+            {{y.name}}
+            <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","teams","Average"+y.name)'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-ng-repeat='x in teams | orderBy:filters.teams.key:!filters.teams.reverse'>
+          <td class="bg-warning"><h4>{{$index+1}}</h4></td>
+          <td class="bg-warning">
+            <span class='badge'>{{x.subs.length}}</span>
+            <span ng-show="x.pic" class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+          </td>
+          <td class="bg-warning"><a ui-sref='game.team({team:x.team})'><h4>{{x.team}}</h4></a>
+          </td>
+          <td class="bg-warning"><a ui-sref='game.teamID({id:x._id})'>{{x.name || "N/A"}}</a></td>
+          <td ng-show="show.teams.Ranks" ng-repeat="r in tbaRanks" class="bg-info">
+            <h4>
+              {{x.tbaRanks[$index]}}
+            </h4>
+          </td>
+          <td ng-show="show.teams.Metrics" data-ng-repeat='z in curGame.game | filter: {type:"!String"}' class="bg-yellow">
+            <h4>
+              {{x.averages[z.name]}}
+            </h4>
+          </td>
+          <td ng-show="show.teams.Calc" data-ng-repeat='y in curGame.calc' class="bg-success">
+            <h4>
+              {{x.calc[y.name]}}
+            </h4>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

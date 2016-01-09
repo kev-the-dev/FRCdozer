@@ -13,6 +13,11 @@ exports.initDB = function (url) {
     description: String,
     game: [new sch({name:String,type:String})],
     calc: [{name:String,elements:[{name:String,worth:Number}]}],
+    teamMetrics: [new sch({
+      name: String,
+      type: String,
+      options:Object
+    })],
     tba: {
       event_key: String,
       key: String,
@@ -25,8 +30,9 @@ exports.initDB = function (url) {
       elements: Object
     })],
     teams: [new sch({
-      team:Number,
+      team:{type:Number},
       notes:String,
+      metrics:Object,
       name:String,
       pic:String
     })],
@@ -43,18 +49,17 @@ exports.initDB = function (url) {
     info:Object,
     games:[{ type: sch.Types.ObjectId, ref: 'games' }]
   }));
+  
+	exports.orgs = con.model('orgs',new sch({
+		name: {type: String, required: true,unique: true},
+		owner: { type: sch.Types.ObjectId, ref: 'users',required: true},
+		meta: {
+			description: {type: String},
+			website: {type: String}
+		},
+		users: [],
+		games: [{ type: sch.Types.ObjectId, ref: 'games' }]
+	}));
 };
 
 module.exports = exports;
-
-/*
-var allow = function can(user,level,permissions) {
-  if (permissions.others >= level) {
-    return true;
-  }
-  if (permissions.users[user] >= level) {
-    return true;
-  }
-  return false;
-}
-*/

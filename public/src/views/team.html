@@ -1,59 +1,91 @@
 <div>
-  <h3>Team {{TeamParam}}</h3>
+  <h3 ng-bind=" 'Team ' + team.team"></h3>
+  <h4>ID: {{team._id}}</h4>
   <div class='row'>
     <div class='col-md-6'>
       <form>
-        <div class="form-group">
+        <div ng-show="team.team" class="form-group">
           <label class="control-label">Name</label>
           <div>
             <input ng-disabled="authlevel<2" ng-model='team.name' class="form-control">
           </div>
         </div>
-          <div ng-show="team._id">
-            <div class="form-group">
-              <label class="control-label">Notes</label>
-              <div>
-                <textarea ng-disabled="authlevel<2" ng-model='team.notes' class="form-control"></textarea>
-              </div>
+        <div ng-show="team._id">
+          <div class="form-group">
+            <label class="control-label">Notes</label>
+            <div>
+              <textarea ng-disabled="authlevel<2" ng-model='team.notes' class="form-control"></textarea>
             </div>
-            <div class="form-group">
-              <label for="exampleInputFile">Upload Picture</label>
-              <input ng-disabled="authlevel<2" name="files" type="file">
-            </div>
+          </div>
+          <table class="table table-bordered">
+            <tbody>
+              <tr ng-repeat="x in curGame.teamMetrics">
+                <td>{{x.name}}</td>
+                <td ng-switch="x.type">
+                  <span ng-switch-when="Number">
+                  <input ng-disabled="authlevel<2" type="number" ng-model="team.metrics[x.name]" class="form-control">
+                </span>
+                  <span ng-switch-when="String">
+                  <input ng-disabled="authlevel<2" type="text" ng-model="team.metrics[x.name]" class="form-control">
+                </span>
+                  <span ng-switch-when="Boolean">
+                  <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                    <button ng-disabled="authlevel<2" ng-class="team.metrics[x.name] ? 'btn-success': 'btn-default'" ng-click='team.metrics[x.name]=true' type="button" class="btn">True</button>
+                    <button ng-disabled="authlevel<2" ng-class="!team.metrics[x.name] ? 'btn-danger': 'btn-default'" ng-click='team.metrics[x.name]=false' type="button" class="btn">False</button>
+                  </div>
+                </span>
+                  <span ng-switch-when="SelectOne">
+                  <label ng-repeat="z in x.options.choices" class="radio-inline">
+                    <input ng-disabled="authlevel<2" type="radio" ng-value="z" ng-model="team.metrics[x.name]">{{z}}
+                  </label>
+                </span>
+                  <span ng-switch-when="SelectMult">
+                  <label ng-repeat="z in x.options.choices" class="checkbox-inline">
+                    <input ng-disabled="authlevel<2" type="checkbox" ng-value="z" ng-model="team.metrics[x.name][z]">{{z}}
+                  </label>
+                </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="form-group">
+            <label for="exampleInputFile">Upload Picture</label>
+            <input ng-disabled="authlevel<2" name="files" type="file">
           </div>
           <div class="form-group">
             <div>
-              <button ng-disabled="authlevel<2" ng-click='editTeam(team,$event)' type="submit" class="btn btn-success">Save/Create</button>
-                <span ng-show='success.editTeam' class="text-success">
-                  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Changed team!
-                </span>
-              <button ng-disabled="authlevel<2" ng-show='team._id'
-                      ng-click='delTeam(team._id)' class="btn btn-danger">
-                      Remove/Reset Team Info
+              <button ng-disabled="authlevel<2" ng-click='editTeam(team,$event)' type="submit" class="btn btn-success">Save Team</button>
+              <button ng-disabled="authlevel<2" ng-show='team._id' ng-click='delTeam(team._id)' class="btn btn-danger">
+                Remove/Reset Team Info
               </button>
             </div>
           </div>
-        </form>
-        <table ng-show="team.tbaRanks" class="table table-bordered table-striped">
-          <tr>
-            <th colspan="2">
-              Offical Rankings
-            </th>
-          </tr>
-          <tr ng-repeat="k in tbaRanks">
-            <td>
-              {{k}}
-            </td>
-            <td>
-              {{team.tbaRanks[$index]}}
-            </td>
-          </tr>
-        </table>
+        </div>
+        <div ng-show="!team._id && team.team" class="form-group">
+          <button ng-disabled="authlevel<2" ng-click='editTeam(team)' type="submit" class="btn btn-success">Create Team</button>
+        </div>
+      </form>
+      <table ng-show="team.tbaRanks" class="table table-bordered table-striped">
+        <tr>
+          <th colspan="2">
+            Offical Rankings
+          </th>
+        </tr>
+        <tr ng-repeat="k in tbaRanks">
+          <td>
+            {{k}}
+          </td>
+          <td>
+            {{team.tbaRanks[$index]}}
+          </td>
+        </tr>
+      </table>
     </div>
-    <div ng-show ="team.pic" class='col-md-6'>
+    <div ng-show="team.pic" class='col-md-6'>
       <div class="teamImage">
         <img ng-src="{{team.pic}}" alt="No Picture" class="img-responsive img-rounded">
-        <button ng-disabled="authlevel<2" ng-click="removeTeamPic(team)" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button ng-disabled="authlevel<2" ng-click="removeTeamPic(team)" type="button" class="close pull-left" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
       </div>
     </div>
   </div>
@@ -62,86 +94,93 @@
     <strong>{{"Filtering by "+ filters.team.name}}<span ng-show='filters.team.reverse'>, Decending</span></strong>
     <span ng-click='sort(undefined,"team")' class='glyphicon glyphicon-remove-circle btn' aria-hidden="true"></span>
   </div>
-  <table class='table table-bordered table-striped table-hover table-condensed'>
-    <thead>
-      <tr>
-        <th>Links</th>
-        <th>Match
-          <button class="btn btn-xs btn-primary" ng-click='sort(matchSort,"team","Match")'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-        <th>
-          Aliance
-          <button class="btn btn-xs btn-primary" ng-click='sort("side","team","Team")'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-        <th data-ng-repeat='x in curGame.game'>{{x.name}}
-          <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","team",x.name)'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-        <th data-ng-repeat='y in curGame.calc'>{{y.name}}
-          <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","team",y.name)'>
-            <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
-          </button>
-        </th>
-      </tr>
-      <tr class="averages">
-        <th colspan="3" class="success">
-          Average
-        </th>
-        <th ng-repeat="x in curGame.game" class="info">
-          <span ng-switch="x.type">
-            <span ng-switch-when="Number">{{team.averages[x.name]}}</span>
+  <div ng-show="team.subs" class="panel panel-default">
+    <div class="panel-heading">Team {{team.team}} submissions</div>
+    <table class='table table-bordered table-striped table-hover table-condensed'>
+      <thead>
+        <tr>
+          <th>Links</th>
+          <th>Match
+            <button class="btn btn-xs btn-primary" ng-click='sort(matchSort,"team","Match")'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th>
+            Aliance
+            <button class="btn btn-xs btn-primary" ng-click='sort("side","team","Team")'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th data-ng-repeat='x in curGame.game'>{{x.name}}
+            <button class="btn btn-xs btn-primary" ng-click='sort("elements[\""+x.name+"\"]","team",x.name)'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+          <th data-ng-repeat='y in curGame.calc'>{{y.name}}
+            <button class="btn btn-xs btn-primary" ng-click='sort("calc[\""+y.name+"\"]","team",y.name)'>
+              <span class=" glyphicon glyphicon-sort" aria-hidden="true"></span>
+            </button>
+          </th>
+        </tr>
+        <tr class="averages">
+          <th colspan="3" class="success">
+            Average
+          </th>
+          <th ng-repeat="x in curGame.game" class="info">
+            <span ng-switch="x.type">
+                  <span ng-switch-when="Number">{{team.averages[x.name]}}</span>
             <span ng-switch-when="Boolean">{{team.averages[x.name]*100+"%"}}</span>
-          </span>
-        </th>
-        <th class="success" ng-repeat="y in curGame.calc">
-          {{team.calc[y.name]}}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat='x in team.subs | orderBy:filters.team.key:!filters.team.reverse'>
-        <td data-title="Links">
-          <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
-          <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span></button>
-          <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
-        </td>
-        <td>
-          <div class='row'>
-            <div class="matchRow col-xs-12" >
-              <input class='form-control' ng-model='x.match' ng-change="x.matchObj = deserializeMatch(x.match)">
-              <a ui-sref="game.match({match:x.match})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
-            </div>
-          </div>
-        </td>
-        <td>
-          <button ng-class='x.side!="Red" ? "btn-primary" : "btn-default"' ng-click='x.side="Blue" ' class="btn">Blue</button>
-          <button ng-class='x.side!="Blue" ? "btn-danger" : "btn-default"' ng-click='x.side="Red" ' class="btn">Red</button>
-        </td>
-        <td data-ng-repeat='y in curGame.game'>
-          <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
-          <form data-ng-if='y.type==="Boolean"'>
-            <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
-              <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true;x.calc=getValues(x.elements);team=fixTeam(team)' type="button" class="btn">True</button>
-              <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false;x.calc=getValues(x.elements);team=fixTeam(team)' type="button" class="btn">False</button>
-            </div>
-          </form>
-          <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
-            <button ng-click="x.elements[y.name] = x.elements[y.name] + 1;x.calc=getValues(x.elements);team=fixTeam(team)" type="button" class="btn btn-xs btn-success">
-              <span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span>
+            </span>
+          </th>
+          <th class="success" ng-repeat="y in curGame.calc">
+            {{team.calc[y.name]}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat='x in team.subs | orderBy:filters.team.key:!filters.team.reverse'>
+          <td data-title="Links">
+            <a class="btn btn-xs btn-info" ui-sref="game.sub({sub:x._id})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+            <button data-ng-click='delSub(x._id)' class='btn btn-xs btn-danger'><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
             </button>
-            <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]}}</button>
-            <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1;x.calc=getValues(x.elements);team=fixTeam(team)" type="button" class="btn btn-xs btn-danger">
-              <span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span>
+            <button data-ng-click='editSub(x)' class='btn btn-xs btn-success'><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
             </button>
-          </div>
-        </td>
-        <td data-ng-repeat='r in curGame.calc'><h4>{{x.calc[r.name]}}</h4></td>
-      </tr>
-    </tbody>
-  </table>
+          </td>
+          <td>
+            <div class='row'>
+              <div class="matchRow col-xs-12">
+                <input class='form-control' ng-model='x.match' ng-change="x.matchObj = deserializeMatch(x.match)">
+                <a ui-sref="game.match({match:x.match})"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span></a>
+              </div>
+            </div>
+          </td>
+          <td>
+            <button ng-class='x.side!="Red" ? "btn-primary" : "btn-default"' ng-click='x.side="Blue" ' class="btn">Blue</button>
+            <button ng-class='x.side!="Blue" ? "btn-danger" : "btn-default"' ng-click='x.side="Red" ' class="btn">Red</button>
+          </td>
+          <td data-ng-repeat='y in curGame.game'>
+            <textarea data-ng-if='y.type==="String"' class='form-control' data-ng-model='x.elements[y.name]'></textarea>
+            <form data-ng-if='y.type==="Boolean"'>
+              <div class="btn-group-vertical btn-group-xs" role="group" aria-label="...">
+                <button ng-class="x.elements[y.name] ? 'btn-success': 'btn-default'" ng-click='x.elements[y.name]=true;x.calc=getValues(x.elements);team=fixTeam(team)' type="button" class="btn">True</button>
+                <button ng-class="!x.elements[y.name] ? 'btn-danger': 'btn-default'" ng-click='x.elements[y.name]=false;x.calc=getValues(x.elements);team=fixTeam(team)' type="button" class="btn">False</button>
+              </div>
+            </form>
+            <div data-ng-if='y.type==="Number"' class="btn-group-vertical" role="group">
+              <button ng-click="x.elements[y.name] = x.elements[y.name] + 1;x.calc=getValues(x.elements);team=fixTeam(team)" type="button" class="btn btn-xs btn-success">
+                <span class='glyphicon glyphicon-arrow-up' aria-hidden="true"></span>
+              </button>
+              <button type="button" class="btn btn-sm btn-default">{{x.elements[y.name]}}</button>
+              <button ng-disabled="(x.elements[y.name] || 0)<=0" ng-click="x.elements[y.name] = x.elements[y.name] - 1;x.calc=getValues(x.elements);team=fixTeam(team)" type="button" class="btn btn-xs btn-danger">
+                <span class='glyphicon glyphicon-arrow-down' aria-hidden="true"></span>
+              </button>
+            </div>
+          </td>
+          <td data-ng-repeat='r in curGame.calc'>
+            <h4>{{x.calc[r.name]}}</h4>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

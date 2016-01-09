@@ -1,3 +1,18 @@
+.subspaginaiton {
+	width: 30%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.alliance-button {
+  padding: 0px !important;
+}
+.alliance-button div {
+  width: 100% !important;
+}
+.alliance-button div button{
+  width: 50% !important;
+  line-height: 150% !important;
+}
 .bg-yellow {
   background-color: lavender;
 }
@@ -16,7 +31,9 @@
   max-width: 100%;
   min-width: 80px;
 }
-
+.save-button {
+  width: 100%;
+}
 .matchRow a {
   position: absolute;
   top: 3px;

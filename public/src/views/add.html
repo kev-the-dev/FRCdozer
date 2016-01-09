@@ -18,7 +18,7 @@
                     <input ng-disabled="authlevel<2" ng-model='newTeam.team' type="text" class="form-control" placeholder="team number ex: 4118">
                   </div>
                   <button ng-disabled="authlevel<2" ng-click='teams.push({team:newTeam.team});add.team=newTeam.team;newTeam=null'
-                    class="btn btn-default" type="button">Add
+                    class="btn btn-default" type="submit">Add
                   </button>
                 </span>
               </form>
@@ -32,7 +32,7 @@
         <tbody>
           <tr>
             <td>Match</td>
-            <td>{{nextMatch}}
+            <td>
               <select ng-disabled="authlevel<2" class="form-control" ng-model='add.match'
                       ng-options="x.match as x.match for x in matches | orderBy:matchSort">
                       <option ng-if="nextMatch.match" value="nextMatch.match">{{nextMatch.match}}</option>
@@ -58,11 +58,11 @@
             <td >Alliance</td>
           </tr>
           <tr>
- 	          <td>
-               <div class="btn-group">
+ 	          <td class="alliance-button">
+               <div class="btn-group ">
                  <button ng-disabled="authlevel<2" class="btn btn-xl" ng-class='add.side!="Red" ? "btn-primary" : "btn-default" '  ng-click='add.side="Blue" ' > Blue
                  </button>
-                 <button ng-disabled="authlevel<2" class="btn btn-xl" ng-class='add.side!="Blue" ? "btn-danger" : "bg-default" ' ng-click='add.side="Red" '>Red
+                 <button ng-disabled="authlevel<2" class="btn btn-xl" ng-class='add.side!="Blue" ? "btn-danger" : "btn-default" ' ng-click='add.side="Red" '>Red
                  </button>
                </div>
 	          </td>
