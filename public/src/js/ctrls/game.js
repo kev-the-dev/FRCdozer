@@ -16,6 +16,13 @@
 	};
 })
 .controller('frcCtrl',['$scope','$http','$stateParams','$state','$location',function($scope,$http,$stateParams,$state,$location) {
+	$scope.permOptions = [
+	  {level: 0, name: "(0) Blocked"},
+      {level: 1, name: '(1) Can View'},
+      {level: 2, name: '(2) Can add/edit submissions and teams'},
+      {level: 3, name: '(3) Can edit game critieria'},
+      {level: 4, name: "(4) Can change other user's permissions (Admin)"}
+    ];
 	$scope.tbaApp = "?X-TBA-App-Id=frc4118:scouting:1";
 	$scope.location = window.location;
 	$scope.authlevel = 1;

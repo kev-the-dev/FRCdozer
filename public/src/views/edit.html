@@ -45,7 +45,7 @@
               <input ng-disabled="authlevel<4" data-ng-model='curGame.tba.event_key' class="form-control" placeholder="2015flor">
             </td>
           </tr>
-          <tr ng-show="authlevel>=4">
+          <tr ng-show="authlevel>=4 && !curGame.tba.verification_key">
             <td>
               Secret Key (MUST match secret key on TBA)
             </td>
@@ -106,12 +106,8 @@
             <b>Default/Others</b>
           </td>
           <td>
-            <select ng-disabled="authlevel<4" class="form-control" ng-model="curGame.permissions.others">
-              <option value="0">(0) Blocked</option>
-              <option value="1">(1) Can View</option>
-              <option value="2">(2) Can add/edit submissions and teams</option>
-              <option value="3">(3) Can edit game critieria</option>
-              <option value="4">(4) Can change other user's permissions (Admin)</option>
+            <select ng-disabled="authlevel<4" class="form-control" ng-model="curGame.permissions.others"
+					ng-options="opt.level as opt.name for opt in permOptions">
             </select>
           </td>
         </tr>
@@ -120,12 +116,8 @@
             {{key}}
           </td>
           <td>
-            <select ng-disabled="authlevel<4" class="form-control" ng-model="curGame.permissions.users[key]">
-              <option value="0">(0) Blocked</option>
-              <option value="1">(1) Can View</option>
-              <option value="2">(2) Can add/edit submissions and teams</option>
-              <option value="3">(3) Can edit game critieria</option>
-              <option value="4">(4) Can change other user's permissions (Admin)</option>
+            <select ng-disabled="authlevel<4" class="form-control" ng-model="value" 
+					ng-options="opt.level as opt.name for opt in permOptions">
             </select>
           </td>
           <td>
