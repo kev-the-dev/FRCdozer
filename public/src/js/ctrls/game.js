@@ -1,7 +1,8 @@
 ﻿angular.module('FRCdozer')
 .filter('mongoDate', function() {
 	return function(id) {
-		return new Date(parseInt(id.substring(0, 8), 16) * 1000);
+		if (id) return new Date(parseInt(id.substring(0, 8), 16) * 1000);
+		return "";
 	};
 })
 .filter('notString', function(){
@@ -203,6 +204,7 @@
 	    .success(function(res) {
 		    var teamMetric;
 		    $scope.tbaRanks = res[0];
+		    if ($scope.tbaRanks === undefined) return;
 		    for (var k = 0; k< $scope.tbaRanks.length ;k++) if ($scope.tbaRanks[k] === "Team") teamMetric = k; //find the metric that stores the team number
 		     if (!teamMetric) return;
 		     $scope.tbaRanks.splice(teamMetric,1); //cache the metrics tba resposds (ex: rank, coop, auto)
