@@ -14,7 +14,6 @@
     "debug": "*",
     "mongoose": "*",
     "socket.io": "*",
-	"socket.io-client" : "*",
     "passport": "*",
     "passport-local": "*",
     "express-session": "*",
