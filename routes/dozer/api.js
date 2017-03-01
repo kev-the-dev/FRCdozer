@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var http = require('http');
+var https = require('https');
 var vars = require('./vars.js'),
     games = vars.games,
     users = vars.users,
@@ -11,7 +11,7 @@ router.use('/game',require('./api/game.js'));
 router.use('/org',require('./orgs.js'));
 
 router.get('/tbaproxy*', function(req,res) {
-  http.get('http://www.thebluealliance.com/api/v2'+req.url.slice(9), function (tba) {
+  https.get('https://www.thebluealliance.com/api/v2'+req.url.slice(9), function (tba) {
     tba.on('data',function (x) {
       res.write(x);
     });
