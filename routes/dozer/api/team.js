@@ -5,6 +5,18 @@ var fs = require('fs');
 var vars = require('./../vars.js'),
   io = vars.io.of('/game');
   uploadsDir = vars.uploadsDir;
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    console.log(file)
+    cb(null, 'public/uploads')
+  },
+  filename: function (req, file, cb) {
+    console.log(file)
+    cb(null, String(req.team._id))
+  }
+})
+
+var upload = multer({limits:{files:1},storage: storage})
 
 router.param('team', function (req,res,next,id) {
   if (!req.game) return next(new Error("No game"));
@@ -44,10 +56,9 @@ router.route('/:team/pic')
   .post([function (req,res,next) {
     if (req.authlevel < 2) return res.status(401).end();
     next();
-  },multer({limits:{files:1},dest: uploadsDir+'/uploads', rename: function (fieldname, filename, req, res) {
-    return req.team._id;
-  }}),function (req,res) {
-    req.team.pic = '/uploads/' + req.files.pic.name;
+  }, upload.single("pic") ,function (req,res) {
+    console.log(req.file)
+    req.team.pic = '/uploads/' + req.file.filename;
     req.game.save(function (err) {
       if (err) res.status(500).send("Error saving game");
       else {

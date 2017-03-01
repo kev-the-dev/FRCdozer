@@ -59,7 +59,7 @@ app.use(bodyParser.json({
     if (req.headers["x-tba-checksum"]) req.rawPayload = buf.toString();
   }
 }));
-app.use(bodyParser.urlencoded({}));
+app.use(bodyParser.urlencoded({"extended":true}));
 app.use(cookieParser());
 app.use(compression());
 
@@ -82,7 +82,7 @@ app.use(function(err, req, res, next) {
 var debug = require('debug')('expressTest');
 
 app.set('port', GetSetting(settings.port,defaultSettings.port));
-
-server.listen(app.get('port'),GetSetting(settings.hosts,defaultSettings.hosts),function() {
+console.log(settings)
+server.listen(app.get('port'),false,function() {
   debug('Express server listening on port ' + server.address().port);
 });

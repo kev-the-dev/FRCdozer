@@ -15,8 +15,8 @@ exports.initDB = function (url) {
     calc: [{name:String,elements:[{name:String,worth:Number}]}],
     teamMetrics: [new sch({
       name: String,
-      type: String,
-      options:Object
+      type: String//,
+      //options:Object
     })],
     tba: {
       event_key: String,

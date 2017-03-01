@@ -168,31 +168,30 @@
 	$scope.resetSubs = function () {
 		if (!confirm("Are you sure you want to clear all submissions for "+$scope.curGame.name+"?")) return false;
 	    $http.delete("api/game/"+$scope.curGame._id+"/sub")
-	    .success(function (x) {
+             .then(function (x) {
 		    $scope.subs=[];
 		    $scope.sortMatches();
 		    $scope.sortTeams();
-	    })
-	    .error(function (x) {
+	     },function (x) {
 		    console.log("Error resetting subs",x);
 	    });
 	};
 	$scope.resetTeams = function () {
 		if (!confirm("Are you sure you want delete all teams for "+$scope.curGame.name+"?")) return false;
 	    $http.delete("api/game/"+$scope.curGame._id+"/team")
-	    .success(function (x) {
+	    .then(function (x) {
 		    $scope.teams=[];
 		    $scope.sortMatches();
 		    $scope.sortTeams();
-	    })
-	    .error(function (x) {
+	    },function (x) {
 		    console.log("Error resetting subs",x);
 	    });
 	};
 	$scope.tbaGrabTeams = function () {
 		if (!$scope.curGame.tba.event_key) return;
 	    $http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/teams"+$scope.tbaApp)
-	    .success(function (res) {
+	    .then(function (j) {
+                    res = j.data
 		    for (var i in res) {
 			    var team = {team:res[i].team_number,name:res[i].nickname};
 			    for (var x in $scope.teams) if (Number($scope.teams[x].team) === Number(team.team)) {
@@ -200,15 +199,15 @@
 			    }
 			    $scope.editTeam(team);
 		    }
-	    })
-	    .error(function (x) {
+	    },function (x) {
 		    console.log(x);
 	    });
 	};
 	$scope.tbaGrabRanks = function () {
 		if (!$scope.curGame.tba.event_key) return;
 	    $http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/rankings"+$scope.tbaApp)
-	    .success(function(res) {
+	    .then(function(respobj) {
+                    res =  respobj.data
 		    var teamMetric;
 		    $scope.tbaRanks = res[0];
 		    if ($scope.tbaRanks === undefined) return;
@@ -224,8 +223,7 @@
 					}
 				}
 			}
-	    })
-	    .error(function (err) {
+	    },function (err) {
 		    console.log(err);
 	    });
 	};
@@ -253,11 +251,10 @@
 					transformRequest: angular.identity,
 					headers: {'Content-Type': undefined}
 				})
-				.success(function (res) {
-					x.pic = res;
+				.then(function (res) {
+					x.pic = res.data;
 					$scope.changeTeam(x);
-				})
-				.error(function (x) {
+				},function (x) {
 					console.log(x);
 				});
 			}
@@ -267,23 +264,21 @@
 		if (x._id) req = $http.put('api/game/'+$scope.curGame._id+'/team/'+x._id,x);
 	    else req = $http.post ('api/game/'+$scope.curGame._id+'/team',x);
 	    req
-	    .success(function(x,sta){
+	    .then(function(res){
 		    $scope.newTeam = {};
 		    $scope.handle('editTeam');
-		    $scope.changeTeam(x);
-	    })
-	    .error(function(x,sta){
+		    $scope.changeTeam(res.data);
+	    },function(x){
 		    $scope.handle('editTeam',x);
 	    });
 	};
 	$scope.removeTeamPic = function (team) {
 		if (!team._id) return;
 	    var req = $http.delete('api/game/'+$scope.curGame._id+'/team/'+team._id+'/pic');
-	    req.success(function (x) {
+	    req.then(function (x) {
 		    team.pic = undefined;
 		    $scope.changeTeam(team);
-	    });
-	    req.error(function (x) {
+	    },function (x) {
 		    console.log(x);
 	    });
 	};
@@ -461,11 +456,11 @@
 	$scope.tbaGrabMatches = function () {
 		if (!$scope.curGame.tba.event_key) return;
 	    $http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"/matches"+$scope.tbaApp)
-	    .success(function (x) {
+	    .then(function (res) {
+                    x = res.data
 		    for (var i in x) $scope.changeMatch(parseTBAmatch(x[i]));
 		     $scope.sortMatches();
-	    })
-	    .error(function (x) {
+	    },function (x) {
 		    console.log(x);
 	    });
 	};
@@ -487,48 +482,44 @@
 	};
 	$scope.getGame = function (id,call) {
 		$http.get('api/game/'+id)
-		.success(function (data) {
-			call (null,data);
-		})
-		.error(function (data,status) {
-			call({message:data,status:status},null);
+		.then(function (res) {
+			call (null,res.data);
+		},function (res) {
+			call({message:(res.data),status:(res.stauts)},null);
 		});
 	};
 	$scope.createGame = function (param,call) {
 		$http.post('api/game',params)
-		.success(function (data) {
-			call(null,data);
-		})
-		.error(function (data) {
-			call(data,null);
+		.then(function (res) {
+			call(null,res.data);
+		},function (res) {
+			call(res.data,null);
 		});
 	};
 	$scope.getSubs = function (id,call) {
 		$http.get('api/game/'+(id || $scope.curGame._id)+'/sub')
-		.success(function (x) {
+		.then(function (res) {
+                        x = res.data
 			$scope.handle('getSubs');
 			$scope.subs=x;
 			$scope.sortMatches();
 			$scope.sortTeams();
 			call();
-		})
-		.error(function(x){$scope.handle('getSubs',x);});
+		},function(x){$scope.handle('getSubs',x);});
 	};
 	$scope.getTeams = function (id,call) {
 		$http.get('api/game/'+(id || $scope.curGame._id)+'/team')
-		.success(function (teams) {
+		.then(function (res) {
 			$scope.handle('getSubs');
-			for (var y in teams) $scope.changeTeam(teams[y]);
-		})
-		.error(function(x){$scope.handle('getSubs',x);});
+			for (var y in res.data) $scope.changeTeam(res.data[y]);
+		},function(x){$scope.handle('getSubs',x);});
 	};
 	$scope.deleteGame = function (id,call) {
 		$http.delete('api/game/'+id)
-		.success(function (data) {
-			call(null,data);
-		})
-		.error(function (data) {
-			call(data,null);
+		.then(function (res) {
+			call(null,res.data);
+		},function (res) {
+			call(res.data,null);
 		});
 	};
 	$scope.getSub = function (id) {
@@ -543,34 +534,31 @@
 	};
 	$scope.editSub = function (x) {
 		$http.put('api/game/'+$scope.curGame._id+'/sub/'+x._id,x)
-		.success(function(x) {
+		.then(function(res) {
 			$scope.handle('editSub');
-			if (!$scope.connected) $scope.changeSub(data);
-		})
-		.error(function (x) {$scope.handle('editSub',x);});
+			if (!$scope.connected) $scope.changeSub(res.data);
+		},function (x) {$scope.handle('editSub',x);});
 	};
 	$scope.addSub = function (elements) {
 		$http.post ('api/game/'+$scope.curGame._id+'/sub',elements)
-		.success(function (x) {
+		.then(function (x) {
 			$scope.add = {};
 			$scope.handle('newSub');
-			if (!$scope.connected) $scope.appendSubs([data]);
-		})
-		.error(function (x) {$scope.handle('newSub',x);});
+			if (!$scope.connected) $scope.appendSubs([x.data]);
+		},function (x) {$scope.handle('newSub',x);});
 	};
 	$scope.delSub = function (id) {
 		$http.delete ('api/game/'+$scope.curGame._id+'/sub/'+id)
-		.success(function (x) {
+		.then(function (x) {
 			$scope.handle('delSub');
 			if (!$scope.connected) $scope.removeSub(id);
-		})
-		.error(function (x){$scope.handle('delSub',x);});
+		},function (x){$scope.handle('delSub',x);});
 	};
 	$scope.delTeam = function (id) {
 		$http.delete ('api/game/'+$scope.curGame._id+'/team/'+id)
-		.success(function (x) {
+		.then(function (x) {
 			$scope.handle('delTeam');
-			if (!$scope.connected) $scope.removeTeam(data);
+			if (!$scope.connected) $scope.removeTeam(x.data);
 		})
 		.error(function (x) {$scope.handle('delTeam',x);});
 	};
@@ -578,11 +566,10 @@
 		x.teams = undefined;
 		x.submissions = undefined;
 		$http.put('api/game/'+x._id,x)
-		.success(function (data) {
+		.then(function (res) {
 			$scope.handle('editGame');
-			$scope.changeGame(data);
-		})
-		.error(function(x){$scope.handle('editGame',x);});
+			$scope.changeGame(res.data);
+		},function(x){$scope.handle('editGame',x);});
 	};
 	$scope.downloads = {};
 	$scope.subsToCSV = function (subs) {
@@ -746,20 +733,18 @@
 	$scope.updateTBAstatus = function () {
 		if (!$scope.curGame._id) return;
 	    $http.get("/api/game/"+$scope.curGame._id+"/tba")
-	    .success(function (x) {
-		    $scope.curGame.tba = x;
-	    })
-	    .error(function (err) {
+	    .then(function (x) {
+		    $scope.curGame.tba = x.data;
+	    },function (err) {
 		    console.log(err);
 	    });
 	};
 	$scope.tbaGrabInfo = function () {
 		if (!$scope.curGame.tba.event_key) return;
 	    $http.get("api/tbaproxy/event/"+$scope.curGame.tba.event_key+"?X-TBA-App-Id=frc4118:scouting:1")
-	    .success(function (x) {
-		    $scope.tbaResponse = x;
-	    })
-	    .error(function (x) {
+	    .then(function (x) {
+		    $scope.tbaResponse = x.data;
+	    },function (x) {
 		    console.log(x);
 	    });
 	};

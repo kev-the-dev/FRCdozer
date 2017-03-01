@@ -160,14 +160,12 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       }
     };
     $scope.userInit = function () {
-      $http.get('api/hello')
-        .success(function (data) {
-          $scope.user=data;
+      $http.get('api/hello').then(function (res) {
+          $scope.user=res.data;
           $scope.handle('init');
-        })
-        .error(function(x,sta){
-          if (sta === 401) $scope.user = undefined;
-          $scope.handle('init',x);
+        }, function(res){
+          if (res.status === 401) $scope.user = undefined;
+          $scope.handle('init', res.data);
         });
     };
     $scope.addGame = function (game) {
@@ -175,56 +173,46 @@ angular.module('FRCdozer',['ui.router','angularUtils.directives.dirPagination'])
       game.teams = game.teams || [];
       game.submissions = game.submissions || [];
       $http.post('api/game',game)
-        .success(function (x) {
+        .then(function (res) {
           $scope.newGame = {};
-          console.log(x);
-          $scope.user.games.push(x);
-        })
-        .error(function (x) {
+          $scope.user.games.push(res.data);
+        },function (res) {
           $scope.newGame = {};
-          console.log(x);
+          console.log(res);
         });
     };
     $scope.delGame = function (name) {
       if (!confirm("Are you sure you want to delete "+name+"?")) return;
-      $http.delete('api/game/'+name)
-      .success(function (x) {
+      $http.delete('api/game/'+name).then(function (res) {
+        x = res.data
         for (var y in $scope.user.games) {
           if (name === $scope.user.games[y].name) $scope.user.games.splice(y,1);
         }
-      })
-      .error(function (x){console.log(x);});
+      }, function (x){console.log(x);});
     };
     $scope.changePassword = function (password) {
-      $http.put('api/password',{password:password})
-        .success(function(){$scope.handle('changePassword');})
-        .error(function(x){$scope.handle('changePassword',x);});
+      $http.put('api/password',{password:password}).then(function(){$scope.handle('changePassword');},function(x){$scope.handle('changePassword',x);});
     };
     $scope.login = function (user,pass) {
-      $http.post('api/login',{username:user,password:pass})
-        .success(function (data) {
+      $http.post('api/login',{username:user,password:pass}).then(function (res) {
           $scope.userName  = "";
           $scope.password = "";
-          $scope.user = data;
+          $scope.user = res.data;
           $scope.handle('login');
-        })
-        .error(function (x) {$scope.handle('login',x);});
+        },function (res) {$scope.handle('login',res);});
     };
     $scope.logout = function () {
-      $http.post('api/logout')
-      .success(function () {
+      $http.post('api/logout').then(function () {
         $scope.handle('logout');
         $scope.user = undefined;
-      })
-      .error(function(x){$scope.handle('logout',x);});
+      },function(x){$scope.handle('logout',x);});
     };
     $scope.register = function (user,pass) {
       $http.post('api/register',{username:user,password:pass})
-        .success(function (x) {
+        .then(function (res) {
           $scope.handle('register');
           $scope.login(user,pass);
-        })
-        .error(function(x){$scope.handle('register',x);});
+        },function(x){$scope.handle('register',x);});
     };
     $scope.back = function () {
       window.history.back();
